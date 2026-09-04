@@ -385,27 +385,8 @@
  <body>
   <div class="app-wrapper">
    <main class="main-content">
-    <header class="academic-ribbon">
-     <div>
-      <span class="ribbon-label">Estudiante</span>
-      <span class="ribbon-value">Erandi Palomares Sánchez</span>
-     </div>
-     <div>
-      <span class="ribbon-label">Grupo</span>
-      <span class="ribbon-value">3S1M</span>
-     </div>
-     <div>
-      <span class="ribbon-label">Fecha</span>
-      <span class="ribbon-value">Septiembre 2026</span>
-     </div>
-     <div>
-      <span class="ribbon-label">Materia</span>
-      <span class="ribbon-value">Física General</span>
-     </div>
-    </header>
-
     <section class="hero">
-     <div class="eyebrow">Simulador interactivo modular</div>
+     <div class="eyebrow">Simulador interactivo</div>
      <h1>Mesa de Fuerzas</h1>
      <p>Plataforma integral para modelado físico, descomposición analítica, graficación vectorial de componentes, exportación de datos de laboratorio y evaluación formativa.</p>
     </section>
@@ -465,11 +446,11 @@
       </div>
       <div class="result-grid">
        <div class="result-item">
-        <span class="result-label">ΣFx (Horizontal)</span>
+        <span class="result-label">ΣFₓ (Horizontal)</span>
         <span id="sum-x" class="result-value">0.00 N</span>
        </div>
        <div class="result-item">
-        <span class="result-label">ΣFy (Vertical)</span>
+        <span class="result-label">ΣFᵧ (Vertical)</span>
         <span id="sum-y" class="result-value">0.00 N</span>
        </div>
        <div class="result-item">
@@ -484,7 +465,7 @@
 
       <div style="margin-top: 16px; padding: 14px; border-radius: 10px; background: #120309; border: 1px solid var(--card-border);">
        <span class="result-label" style="margin-bottom:6px;">Desarrollo Matemático:</span>
-       <div id="equation-step-1" style="font-family:monospace; font-size:.8rem; color:#fbcfe8;">R = √[(ΣFx)² + (ΣFy)²]</div>
+       <div id="equation-step-1" style="font-family:monospace; font-size:.8rem; color:#fbcfe8;">R = √[(ΣFₓ)² + (ΣFᵧ)²]</div>
        <div id="equation-step-2" style="font-family:monospace; font-size:.8rem; color:var(--accent-pink); margin-top:4px;">R = √[(0.00)² + (0.00)²] = 0.00 N</div>
       </div>
      </aside>
@@ -553,8 +534,8 @@
           <th>Vector</th>
           <th>Magnitud (F)</th>
           <th>Ángulo (θ)</th>
-          <th>Componente Fx = F·cos(θ)</th>
-          <th>Componente Fy = F·sen(θ)</th>
+          <th>Componente Fₓ = F·cos(θ)</th>
+          <th>Componente Fᵧ = F·sen(θ)</th>
          </tr>
         </thead>
         <tbody id="components-body"></tbody>
@@ -613,9 +594,9 @@
          <br><br>
          La magnitud de la resultante R y su dirección θR se obtienen mediante:
          <br>
-         <strong>R = √[(ΣFx)² + (ΣFy)²]</strong>
+         <strong>R = √[(ΣFₓ)² + (ΣFᵧ)²]</strong>
          <br>
-         <strong>θR = tan⁻¹(ΣFy/ΣFx)</strong>
+         <strong>θR = tan⁻¹(ΣFᵧ/ΣFₓ)</strong>
         </div>
        </div>
       </div>
