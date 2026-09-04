@@ -6,9 +6,7 @@
     <title>Laboratorio Virtual de Física</title>
 
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
-
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
@@ -152,8 +150,8 @@
         /* Grid */
         .simulators-grid {
             display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
         }
 
         /* Tarjeta */
@@ -171,13 +169,16 @@
         }
 
         .simulator-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple), var(--accent-cyan));
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 16px;
+            border-radius: 12px;
+            background: linear-gradient(145deg, #180610, #0e0208);
+            border: 1px solid var(--card-border);
+            transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+            overflow: hidden;
         }
 
         .simulator-card:hover {
@@ -187,60 +188,60 @@
         }
 
         .simulator-number {
-            font-size: .7rem;
+            font-size: .65rem;
             font-weight: 800;
             letter-spacing: .1em;
             text-transform: uppercase;
             color: var(--accent-pink);
-            margin-bottom: 15px;
+            margin-bottom: 8px;
         }
 
         .simulator-icon {
-            width: 50px;
-            height: 50px;
+            width: 38px;
+            height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 12px;
+            border-radius: 8px;
             background: rgba(236, 72, 153, .1);
             border: 1px solid var(--card-border);
-            margin-bottom: 18px;
+            margin-bottom: 10px;
         }
 
         .simulator-icon svg {
-            width: 25px;
-            height: 25px;
+            width: 18px;
+            height: 18px;
             color: var(--accent-pink);
         }
 
         .simulator-card h3 {
-            margin: 0 0 10px;
-            font-size: 1.15rem;
+            margin: 0 0 6px;
+            font-size: 1rem;
             font-weight: 700;
             color: #ffffff;
         }
 
         .simulator-card p {
-            margin: 0 0 20px;
-            min-height: 48px;
-            font-size: .85rem;
-            line-height: 1.6;
+            margin: 0 0 12px;
+            min-height: auto;
+            font-size: .78rem;
+            line-height: 1.4;
             color: var(--pink-light);
         }
 
         .simulator-info {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .tag {
-            padding: 5px 9px;
+            padding: 3px 7px;
             border-radius: 6px;
             background: #3b1124;
             color: var(--pink-light);
-            font-size: .7rem;
+            font-size: .65rem;
             font-weight: 700;
         }
 
@@ -250,13 +251,13 @@
             justify-content: center;
             gap: 8px;
             width: 100%;
-            padding: 11px 16px;
-            border-radius: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
             border: 1px solid var(--card-border);
             background: #3b1124;
             color: #ffffff;
             text-decoration: none;
-            font-size: .85rem;
+            font-size: .78rem;
             font-weight: 700;
             transition: all .2s ease;
         }
@@ -421,18 +422,22 @@
 
             <section class="project-info">
                 <div class="info-card">
-                    <span>Estado del Proyecto</span>
-                    <strong>2 Simuladores</strong>
-                </div>
-                <div class="info-card">
                     <span>Materia</span>
                     <strong>Física General</strong>
+                </div>
+                <div class="info-card">
+                    <span>Carrera</span>
+                    <strong>Ingeniería en Sistemas Computacionales</strong>
+                </div>
+                <div class="info-card">
+                    <span>Estado del Proyecto</span>
+                    <strong>2 Simuladores</strong>
                 </div>
             </section>
 
             <footer>
                 <p>Laboratorio Virtual de Física</p>
-                <p>2026</p>
+                <p>AGOS-DIC 2026</p>
             </footer>
 
         </main>
