@@ -1,0 +1,1024 @@
+<!doctype html>
+<html lang="es">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Mesa de Fuerzas</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #120309;
+      --card-bg: #1f0813;
+      --card-border: #3b1124;
+      --ink: #fce7f3;
+      --muted: #f472b6;
+      --accent-pink: #ec4899;
+      --accent-rose: #f43f5e;
+      --accent-bright: #ff1493;
+      --pink-light: #fbcfe8;
+      --success: #10b981;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      width: 100%;
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--ink);
+    }
+
+    button, input, select { font: inherit; }
+
+    .app-wrapper {
+      width: 100%;
+      min-height: 100vh;
+      padding: 20px;
+      background-image:
+        radial-gradient(circle at 10% 10%, rgba(236, 72, 153, 0.15), transparent 25rem),
+        radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.15), transparent 25rem);
+    }
+
+    .main-content {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .academic-ribbon {
+      display: grid;
+      grid-template-columns: 1.2fr repeat(4, auto);
+      gap: 12px;
+      padding: 16px 20px;
+      border-radius: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      box-shadow: 0 10px 30px rgba(236, 72, 153, 0.2);
+    }
+
+    .ribbon-label {
+      display: block;
+      font-size: .67rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent-pink);
+    }
+
+    .ribbon-value {
+      display: block;
+      font-size: .85rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .hero { padding: 24px 4px 20px; }
+
+    .eyebrow {
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent-rose);
+    }
+
+    .hero h1 {
+      margin: 6px 0;
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 0 12px rgba(236, 72, 153, 0.4);
+    }
+
+    .hero p {
+      max-width: 820px;
+      margin: 0;
+      line-height: 1.6;
+      color: var(--pink-light);
+      font-size: .92rem;
+    }
+
+    .lab-panel {
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      background: var(--card-bg);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .panel-pad { padding: 20px; }
+
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .panel-heading svg {
+      width: 20px;
+      height: 20px;
+      color: var(--accent-pink);
+    }
+
+    .panel-heading h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .sim-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
+      gap: 20px;
+    }
+
+    .force-table {
+      position: relative;
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 8px solid #3b1124;
+      background: radial-gradient(circle, #120309 0%, #1f0813 70%, #2a0a1a 100%);
+      box-shadow: inset 0 0 25px rgba(0,0,0,0.9), 0 0 20px rgba(236, 72, 153, 0.2);
+    }
+
+    #force-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .svg-label {
+      fill: var(--pink-light);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-card {
+      padding: 16px;
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      background: rgba(42, 10, 26, 0.7);
+    }
+
+    .status-orb {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--danger);
+      box-shadow: 0 0 10px var(--danger);
+    }
+
+    .status-card.equilibrium .status-orb {
+      background: var(--success);
+      box-shadow: 0 0 10px var(--success);
+    }
+
+    .action-button, .btn-ctrl {
+      border: 0;
+      cursor: pointer;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .btn-ctrl {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+      font-size: .82rem;
+      background: #3b1124;
+      color: #ffffff;
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-ctrl:hover {
+      background: var(--accent-pink);
+      color: #ffffff;
+    }
+
+    .stack { display: grid; gap: 20px; margin-top: 20px; }
+
+    .force-grid { display: grid; gap: 12px; }
+
+    .force-card {
+      padding: 16px;
+      border: 1px solid var(--card-border);
+      border-left: 5px solid var(--force-color, var(--accent-pink));
+      border-radius: 12px;
+      background: rgba(31, 8, 19, 0.9);
+    }
+
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .field-group label {
+      font-size: .75rem;
+      color: var(--pink-light);
+    }
+
+    .num-input {
+      width: 100%;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--card-border);
+      background: #120309;
+      color: #ffffff;
+      font-size: .85rem;
+    }
+
+    .num-input:focus {
+      outline: 1px solid var(--accent-pink);
+    }
+
+    input[type=range] {
+      width: 100%;
+      height: 6px;
+      border-radius: 5px;
+      background: #3b1124;
+      accent-color: var(--accent-pink);
+      cursor: pointer;
+    }
+
+    .action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      font-size: .85rem;
+      background: var(--accent-pink);
+      color: #ffffff;
+    }
+
+    .action-button:hover { background: var(--accent-rose); }
+
+    .button-muted {
+      background: #3b1124;
+      color: #ffffff;
+    }
+
+    .button-muted:hover { background: #4a152e; }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .result-item {
+      padding: 12px;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      background: #120309;
+    }
+
+    .result-label {
+      font-size: .7rem;
+      color: var(--pink-light);
+      display: block;
+    }
+
+    .result-value {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent-pink);
+    }
+
+    .components-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .82rem;
+    }
+
+    .components-table th, .components-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .components-table th {
+      color: var(--accent-pink);
+      font-size: .72rem;
+      text-transform: uppercase;
+    }
+
+    .accordion-item {
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      background: #120309;
+      margin-bottom: 8px;
+    }
+
+    .accordion-trigger {
+      width: 100%;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      background: transparent;
+      border: 0;
+      color: #ffffff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .accordion-content {
+      display: none;
+      padding: 0 16px 16px;
+      color: var(--pink-light);
+      font-size: .85rem;
+      line-height: 1.6;
+    }
+
+    .accordion-item.open .accordion-content { display: block; }
+
+    /* Quiz styles */
+    .quiz-option {
+      display: block;
+      padding: 10px 14px;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      background: #120309;
+      color: var(--pink-light);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--accent-pink);
+      background: rgba(236, 72, 153, 0.1);
+    }
+
+    .quiz-option.selected {
+      border-color: var(--accent-pink);
+      background: var(--accent-pink);
+      color: #ffffff;
+    }
+
+    @media (max-width: 860px) {
+      .sim-layout, .academic-ribbon { grid-template-columns: 1fr; }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="app-wrapper">
+   <main class="main-content">
+    <header class="academic-ribbon">
+     <div>
+      <span class="ribbon-label">Estudiante</span>
+      <span class="ribbon-value">Erandi Palomares Sánchez</span>
+     </div>
+     <div>
+      <span class="ribbon-label">Grupo</span>
+      <span class="ribbon-value">3S1M</span>
+     </div>
+     <div>
+      <span class="ribbon-label">Fecha</span>
+      <span class="ribbon-value">Septiembre 2026</span>
+     </div>
+     <div>
+      <span class="ribbon-label">Materia</span>
+      <span class="ribbon-value">Física General</span>
+     </div>
+    </header>
+
+    <section class="hero">
+     <div class="eyebrow">Simulador interactivo modular</div>
+     <h1>Mesa de Fuerzas</h1>
+     <p>Plataforma integral para modelado físico, descomposición analítica, graficación vectorial de componentes, exportación de datos de laboratorio y evaluación formativa.</p>
+    </section>
+
+    <section class="sim-layout">
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading">
+       <i data-lucide="crosshair"></i>
+       <h2>Mesa de Fuerzas</h2>
+      </div>
+
+      <div style="display:flex; gap:8px; margin-bottom:14px;">
+       <button id="btn-play" class="btn-ctrl"><i data-lucide="play"></i> Correr</button>
+       <button id="btn-pause" class="btn-ctrl"><i data-lucide="pause"></i> Pausar</button>
+       <button id="btn-stop" class="btn-ctrl"><i data-lucide="square"></i> Detener</button>
+      </div>
+
+      <div class="force-table">
+       <svg id="force-svg" viewBox="0 0 500 500">
+        <g opacity=".25">
+         <circle cx="250" cy="250" r="180" fill="none" stroke="#f472b6"></circle>
+         <circle cx="250" cy="250" r="120" fill="none" stroke="#f472b6"></circle>
+         <line x1="250" y1="20" x2="250" y2="480" stroke="#f472b6"></line>
+         <line x1="20" y1="250" x2="480" y2="250" stroke="#f472b6"></line>
+        </g>
+        <text class="svg-label" x="460" y="245">0°</text>
+        <text class="svg-label" x="242" y="35">90°</text>
+        <text class="svg-label" x="15" y="245">180°</text>
+        <text class="svg-label" x="235" y="475">270°</text>
+        
+        <g id="force-lines"></g>
+
+        <circle id="ring-center" cx="250" cy="250" r="10" fill="none" stroke="#ff1493" stroke-width="4"></circle>
+        <circle cx="250" cy="250" r="2" fill="#ffffff"></circle>
+       </svg>
+      </div>
+     </section>
+
+     <aside class="lab-panel panel-pad">
+      <div class="panel-heading">
+       <i data-lucide="activity"></i>
+       <h2>Estado de Equilibrio</h2>
+      </div>
+      <div id="status-card" class="status-card">
+       <div style="display:flex; align-items:center; gap:10px;">
+        <span class="status-orb"></span>
+        <h3 id="status-message" style="margin:0; font-size:1rem; color:#ffffff;">Sistema Fuera de Equilibrio</h3>
+       </div>
+       <p id="status-note" style="margin:8px 0 0; font-size:.82rem; color:var(--pink-light);">
+        Existe una fuerza resultante actuando sobre el pivote central.
+       </p>
+      </div>
+
+      <div class="panel-heading" style="margin-top: 24px;">
+       <i data-lucide="calculator"></i>
+       <h2>Resultados y Desarrollo</h2>
+      </div>
+      <div class="result-grid">
+       <div class="result-item">
+        <span class="result-label">ΣFx (Horizontal)</span>
+        <span id="sum-x" class="result-value">0.00 N</span>
+       </div>
+       <div class="result-item">
+        <span class="result-label">ΣFy (Vertical)</span>
+        <span id="sum-y" class="result-value">0.00 N</span>
+       </div>
+       <div class="result-item">
+        <span class="result-label">Magnitud Resultante (R)</span>
+        <span id="resultant" class="result-value" style="color:var(--accent-rose);">0.00 N</span>
+       </div>
+       <div class="result-item">
+        <span class="result-label">Dirección (θ)</span>
+        <span id="resultant-angle" class="result-value">0.0°</span>
+       </div>
+      </div>
+
+      <div style="margin-top: 16px; padding: 14px; border-radius: 10px; background: #120309; border: 1px solid var(--card-border);">
+       <span class="result-label" style="margin-bottom:6px;">Desarrollo Matemático:</span>
+       <div id="equation-step-1" style="font-family:monospace; font-size:.8rem; color:#fbcfe8;">R = √[(ΣFx)² + (ΣFy)²]</div>
+       <div id="equation-step-2" style="font-family:monospace; font-size:.8rem; color:var(--accent-pink); margin-top:4px;">R = √[(0.00)² + (0.00)²] = 0.00 N</div>
+      </div>
+     </aside>
+    </section>
+
+    <div class="stack">
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading">
+       <i data-lucide="sliders"></i>
+       <h2>Tablero de Control Interactivo</h2>
+      </div>
+      
+      <div id="force-grid" class="force-grid"></div>
+
+      <template id="force-card-template">
+       <div class="force-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+         <span class="force-name" style="font-weight:700; font-size:.9rem; color:#ffffff;">Fuerza</span>
+         <button class="remove-force" style="background:transparent; color:var(--danger); border:0; cursor:pointer;" title="Eliminar fuerza">
+          <i data-lucide="trash-2"></i>
+         </button>
+        </div>
+        
+        <div class="input-row">
+         <div class="field-group">
+          <label>Magnitud (N):</label>
+          <input class="num-input num-mag" type="number" min="0" max="200" step="1">
+         </div>
+         <div class="field-group">
+          <label>Ángulo (°):</label>
+          <input class="num-input num-angle" type="number" min="0" max="360" step="1">
+         </div>
+        </div>
+
+        <div style="display:grid; gap:8px; margin-top:10px;">
+         <div class="field-group">
+          <input class="slider-mag" type="range" min="0" max="200" step="1">
+         </div>
+         <div class="field-group">
+          <input class="slider-angle" type="range" min="0" max="360" step="1">
+         </div>
+        </div>
+       </div>
+      </template>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:16px;">
+       <button id="add-force" class="action-button"><i data-lucide="plus"></i> Agregar Fuerza</button>
+       <button id="reset-all" class="action-button button-muted"><i data-lucide="rotate-ccw"></i> Restablecer Ajustes</button>
+      </div>
+     </section>
+
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading" style="justify-content: space-between;">
+       <div style="display:flex; align-items:center; gap:10px;">
+        <i data-lucide="table"></i>
+        <h2>Tabla de Componentes y Exportación</h2>
+       </div>
+       <button id="btn-export-csv" class="btn-ctrl" style="background:var(--accent-pink);">
+        <i data-lucide="download"></i> Exportar CSV
+       </button>
+      </div>
+      <div style="overflow-x:auto;">
+       <table class="components-table">
+        <thead>
+         <tr>
+          <th>Vector</th>
+          <th>Magnitud (F)</th>
+          <th>Ángulo (θ)</th>
+          <th>Componente Fx = F·cos(θ)</th>
+          <th>Componente Fy = F·sen(θ)</th>
+         </tr>
+        </thead>
+        <tbody id="components-body"></tbody>
+       </table>
+      </div>
+     </section>
+
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading">
+       <i data-lucide="bar-chart-3"></i>
+       <h2>Graficación Vectorial de Componentes Rectangulares</h2>
+      </div>
+      <div style="height: 320px; position: relative;">
+       <canvas id="componentsChart"></canvas>
+      </div>
+     </section>
+
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading">
+       <i data-lucide="book-open"></i>
+       <h2>Teoría y Ecuaciones Fundamentales</h2>
+      </div>
+      <div>
+       <div class="accordion-item open">
+        <button class="accordion-trigger">
+         <span>1. Concepto de Fuerza y Sistemas Coplanares Concurrentes</span>
+         <i data-lucide="chevron-down"></i>
+        </button>
+        <div class="accordion-content">
+         Una fuerza es una magnitud vectorial capaz de alterar la cantidad de movimiento o causar deformaciones en un cuerpo. Cuando múltiples fuerzas se encuentran actuando sobre el mismo plano bidimensional y sus líneas de acción convergen en un único punto común (origen de la mesa de fuerzas), se denomina <strong>sistema de fuerzas coplanares concurrentes</strong>.
+        </div>
+       </div>
+
+       <div class="accordion-item">
+        <button class="accordion-trigger">
+         <span>2. Primera Condición de Equilibrio (Estática)</span>
+         <i data-lucide="chevron-down"></i>
+        </button>
+        <div class="accordion-content">
+         Establece que para que una partícula permanezca en reposo o con velocidad constante (sin aceleración traslacional), la suma vectorial de todas las fuerzas externas ejercidas sobre ella debe ser exactamente igual a cero:
+         <br><br>
+         <strong>∑ F⃗ = 0 ⇔ ∑ Fₓ = 0 y ∑ Fᵧ = 0</strong>
+        </div>
+       </div>
+
+       <div class="accordion-item">
+        <button class="accordion-trigger">
+         <span>3. Método Analítico de Componentes Rectangulares</span>
+         <i data-lucide="chevron-down"></i>
+        </button>
+        <div class="accordion-content">
+         Cualquier vector fuerza F en el plano XY se descompone trigonométricamente respecto al eje horizontal positivo:
+         <br><br>
+         • Componente Horizontal: <strong>Fx = F·cos(θ)</strong><br>
+         • Componente Vertical: <strong>Fy = F·sen(θ)</strong>
+         <br><br>
+         La magnitud de la resultante R y su dirección θR se obtienen mediante:
+         <br>
+         <strong>R = √[(ΣFx)² + (ΣFy)²]</strong>
+         <br>
+         <strong>θR = tan⁻¹(ΣFy/ΣFx)</strong>
+        </div>
+       </div>
+      </div>
+     </section>
+
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading" style="justify-content: space-between;">
+       <div style="display:flex; align-items:center; gap:10px;">
+        <i data-lucide="award"></i>
+        <h2>Evaluación Diagnóstica y Formativa</h2>
+       </div>
+       <button id="btn-new-quiz" class="btn-ctrl">
+        <i data-lucide="refresh-cw"></i> Generar Cuestionario
+       </button>
+      </div>
+
+      <div id="quiz-container"></div>
+      
+      <div style="margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
+       <button id="btn-submit-quiz" class="action-button"><i data-lucide="check-circle"></i> Evaluar Cuestionario</button>
+       <span id="quiz-score" style="font-size:1.1rem; font-weight:700; color:var(--accent-pink);"></span>
+      </div>
+     </section>
+    </div>
+   </main>
+  </div>
+
+  <script>
+    const palette = ["#ec4899", "#f43f5e", "#ff1493", "#fb7185", "#e11d48", "#f472b6"];
+    
+    let forces = [{ id: 1, magnitude: 80, angle: 45 }];
+    let nextId = 2;
+
+    let isRunning = false;
+    let animFrameId = null;
+    let ringPos = { x: 250, y: 250 };
+    let ringVel = { x: 0, y: 0 };
+    let chartInstance = null;
+
+    // Banco de 20 preguntas teóricas y analíticas
+    const questionBank = [
+      { q: "¿Qué condición se debe cumplir para que un cuerpo esté en equilibrio traslacional?", options: ["ΣF = 0", "ΣF > 0", "ΣF = m·a", "ΣF_x = ΣF_y"], correct: 0 },
+      { q: "¿Cómo se calcula la componente horizontal (Fx) de una fuerza F con ángulo θ respecto al eje X?", options: ["F · sen(θ)", "F · cos(θ)", "F · tan(θ)", "F / cos(θ)"], correct: 1 },
+      { q: "¿Cuál es la ecuación para obtener el módulo de la fuerza resultante en 2D?", options: ["R = ΣFx + ΣFy", "R = √(ΣFx + ΣFy)", "R = √[(ΣFx)² + (ΣFy)²]", "R = tan⁻¹(ΣFy/ΣFx)"], correct: 2 },
+      { q: "¿Qué relación existe entre el vector resultante R y la fuerza equilibrante E?", options: ["Tienen diferente magnitud", "Tienen igual magnitud y dirección opuesta", "Son perpendiculares", "Son vectores idénticos"], correct: 1 },
+      { q: "Un sistema de fuerzas concurrentes se caracteriza porque sus líneas de acción...", options: ["Son paralelas", "Se cruzan en diferentes planos", "Se cortan en un único punto común", "Forman un ángulo recto continuo"], correct: 2 },
+      { q: "Si ΣFx = 3 N y ΣFy = 4 N, ¿cuál es la magnitud de la fuerza resultante?", options: ["7 N", "5 N", "1 N", "12 N"], correct: 1 },
+      { q: "Si una fuerza de 100 N actúa exactamente a 180°, su componente Fy es:", options: ["100 N", "-100 N", "0 N", "50 N"], correct: 2 },
+      { q: "Si una fuerza actúa a 270°, ¿en qué sentido se dirige su componente vertical?", options: ["Hacia el eje +Y", "Hacia el eje -Y", "Hacia el eje +X", "Hacia el eje -X"], correct: 1 },
+      { q: "¿En qué cuadrante se ubica un vector cuyas componentes son Fx < 0 y Fy > 0?", options: ["Primer Cuadrante", "Segundo Cuadrante", "Tercer Cuadrante", "Cuarto Cuadrante"], correct: 1 },
+      { q: "La unidad de medida de la fuerza en el Sistema Internacional de Unidades (SI) es el:", options: ["Joule", "Pascal", "Newton", "Watt"], correct: 2 },
+      { q: "¿Qué representa la primera ley de Newton?", options: ["Principio de Inercia", "Ley de Fuerza y Aceleración", "Ley de Acción y Reacción", "Ley de Gravitación Universal"], correct: 0 },
+      { q: "Si la suma de fuerzas sobre la mesa es cero, el pivote central...", options: ["Acelera constantemente", "Permanece en reposo", "Gira en círculos", "Se desplaza al cuadrante I"], correct: 1 },
+      { q: "¿Cuál es el valor del coseno de 90°?", options: ["1", "0.5", "0", "-1"], correct: 2 },
+      { q: "¿Cuál es el valor del seno de 90°?", options: ["0", "0.5", "1", "-1"], correct: 2 },
+      { q: "Para calcular el ángulo de la resultante se utiliza la función:", options: ["seno", "coseno", "arcotangente", "secante"], correct: 2 },
+      { q: "Si un vector tiene componentes Fx = -5 N y Fy = -5 N, su dirección en grados es:", options: ["45°", "135°", "225°", "315°"], correct: 2 },
+      { q: "Las fuerzas coplanares son aquellas que:", options: ["Actúan en un mismo plano", "Tienen la misma magnitud", "Tienen el mismo sentido", "Varían con el tiempo"], correct: 0 },
+      { q: "La fuerza equilibrante es aquella que:", options: ["Aumenta el desequilibrio", "Anula el efecto de la resultante", "Es el doble de la resultante", "Actúa en un plano perpendicular"], correct: 1 },
+      { q: "Un Newton equivale a:", options: ["1 kg·m/s", "1 kg·m/s²", "1 g·cm/s²", "1 kg/m²"], correct: 1 },
+      { q: "Si un sistema tiene dos fuerzas iguales en magnitud actuando a 0° y 180°, la resultante es:", options: ["El doble de una fuerza", "Cero", "La mitad de una fuerza", "Indeterminada"], correct: 1 }
+    ];
+
+    let currentQuizQuestions = [];
+
+    function getCalculations() {
+      let sumX = 0, sumY = 0;
+      const rows = forces.map(f => {
+        const rad = (f.angle * Math.PI) / 180;
+        const fx = f.magnitude * Math.cos(rad);
+        const fy = f.magnitude * Math.sin(rad);
+        sumX += fx;
+        sumY += fy;
+        return { ...f, fx, fy };
+      });
+      const resultant = Math.sqrt(sumX**2 + sumY**2);
+      let angleR = resultant > 0.001 ? Math.atan2(sumY, sumX) * (180 / Math.PI) : 0;
+      if (angleR < 0) angleR += 360;
+      return { rows, sumX, sumY, resultant, angleR };
+    }
+
+    function renderCards() {
+      const grid = document.getElementById("force-grid");
+      grid.innerHTML = "";
+      const template = document.getElementById("force-card-template");
+
+      forces.forEach((f, idx) => {
+        const clone = template.content.cloneNode(true);
+        const card = clone.querySelector(".force-card");
+        const color = palette[idx % palette.length];
+        card.style.setProperty("--force-color", color);
+        
+        clone.querySelector(".force-name").textContent = `Fuerza F${idx + 1}`;
+        
+        const numMag = clone.querySelector(".num-mag");
+        const numAngle = clone.querySelector(".num-angle");
+        const sliderMag = clone.querySelector(".slider-mag");
+        const sliderAngle = clone.querySelector(".slider-angle");
+
+        numMag.value = f.magnitude;
+        numAngle.value = f.angle;
+        sliderMag.value = f.magnitude;
+        sliderAngle.value = f.angle;
+
+        const updateMag = (val) => {
+          let v = Math.max(0, Math.min(200, parseFloat(val) || 0));
+          f.magnitude = v;
+          numMag.value = v;
+          sliderMag.value = v;
+          update();
+        };
+
+        const updateAngle = (val) => {
+          let v = (parseFloat(val) || 0) % 360;
+          if (v < 0) v += 360;
+          f.angle = v;
+          numAngle.value = v;
+          sliderAngle.value = v;
+          update();
+        };
+
+        numMag.addEventListener("input", (e) => updateMag(e.target.value));
+        sliderMag.addEventListener("input", (e) => updateMag(e.target.value));
+        numAngle.addEventListener("input", (e) => updateAngle(e.target.value));
+        sliderAngle.addEventListener("input", (e) => updateAngle(e.target.value));
+
+        const removeBtn = clone.querySelector(".remove-force");
+        if (forces.length === 1) {
+          removeBtn.style.display = "none";
+        } else {
+          removeBtn.addEventListener("click", () => {
+            forces = forces.filter(item => item.id !== f.id);
+            renderCards();
+            update();
+          });
+        }
+
+        grid.appendChild(clone);
+      });
+      lucide.createIcons();
+    }
+
+    function drawSVG(calc) {
+      const container = document.getElementById("force-lines");
+      container.innerHTML = "";
+      const scale = 1.1;
+
+      calc.rows.forEach((f, i) => {
+        const rad = (f.angle * Math.PI) / 180;
+        const x2 = 250 + f.magnitude * scale * Math.cos(rad);
+        const y2 = 250 - f.magnitude * scale * Math.sin(rad);
+        const color = palette[i % palette.length];
+
+        const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        line.setAttribute("x1", 250);
+        line.setAttribute("y1", 250);
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+        line.setAttribute("stroke", color);
+        line.setAttribute("stroke-width", "3.5");
+        line.setAttribute("stroke-linecap", "round");
+        container.appendChild(line);
+
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", x2);
+        circle.setAttribute("cy", y2);
+        circle.setAttribute("r", "4");
+        circle.setAttribute("fill", color);
+        container.appendChild(circle);
+      });
+    }
+
+    function updatePhysicsAnimation() {
+      if (!isRunning) return;
+
+      const calc = getCalculations();
+      
+      if (calc.resultant > 0.5) {
+        const rad = (calc.angleR * Math.PI) / 180;
+        const ax = Math.cos(rad) * (calc.resultant * 0.002);
+        const ay = -Math.sin(rad) * (calc.resultant * 0.002);
+
+        ringVel.x += ax;
+        ringVel.y += ay;
+
+        ringPos.x += ringVel.x;
+        ringPos.y += ringVel.y;
+
+        ringVel.x *= 0.95;
+        ringVel.y *= 0.95;
+
+        const dx = ringPos.x - 250;
+        const dy = ringPos.y - 250;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist > 160) {
+          ringPos.x = 250 + (dx / dist) * 160;
+          ringPos.y = 250 + (dy / dist) * 160;
+          ringVel.x = 0;
+          ringVel.y = 0;
+        }
+      } else {
+        ringPos.x += (250 - ringPos.x) * 0.1;
+        ringPos.y += (250 - ringPos.y) * 0.1;
+      }
+
+      const ring = document.getElementById("ring-center");
+      ring.setAttribute("cx", ringPos.x);
+      ring.setAttribute("cy", ringPos.y);
+
+      animFrameId = requestAnimationFrame(updatePhysicsAnimation);
+    }
+
+    function updateChart(calc) {
+      const labels = calc.rows.map((_, i) => `F${i+1}`);
+      const dataFx = calc.rows.map(r => r.fx.toFixed(2));
+      const dataFy = calc.rows.map(r => r.fy.toFixed(2));
+
+      if (!chartInstance) {
+        const ctx = document.getElementById('componentsChart').getContext('2d');
+        chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [
+              { label: 'Fx (Horizontal)', data: dataFx, backgroundColor: '#ec4899' },
+              { label: 'Fy (Vertical)', data: dataFy, backgroundColor: '#f43f5e' }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { grid: { color: '#3b1124' }, ticks: { color: '#fbcfe8' } },
+              x: { grid: { color: '#3b1124' }, ticks: { color: '#fbcfe8' } }
+            },
+            plugins: {
+              legend: { labels: { color: '#ffffff' } }
+            }
+          }
+        });
+      } else {
+        chartInstance.data.labels = labels;
+        chartInstance.data.datasets[0].data = dataFx;
+        chartInstance.data.datasets[1].data = dataFy;
+        chartInstance.update();
+      }
+    }
+
+    function update() {
+      const calc = getCalculations();
+      document.getElementById("sum-x").textContent = `${calc.sumX.toFixed(2)} N`;
+      document.getElementById("sum-y").textContent = `${calc.sumY.toFixed(2)} N`;
+      document.getElementById("resultant").textContent = `${calc.resultant.toFixed(2)} N`;
+      document.getElementById("resultant-angle").textContent = `${calc.angleR.toFixed(1)}°`;
+
+      const statusCard = document.getElementById("status-card");
+      if (calc.resultant <= 0.1) {
+        statusCard.classList.add("equilibrium");
+        document.getElementById("status-message").textContent = "Sistema en Equilibrio (ΣF = 0)";
+        document.getElementById("status-note").textContent = "La suma de las componentes es nula. El pivote no acelera.";
+      } else {
+        statusCard.classList.remove("equilibrium");
+        document.getElementById("status-message").textContent = "Sistema Fuera de Equilibrio";
+        document.getElementById("status-note").textContent = "Existe una fuerza resultante actuando sobre el anillo central.";
+      }
+
+      document.getElementById("equation-step-2").textContent = 
+        `R = √[(${calc.sumX.toFixed(2)})² + (${calc.sumY.toFixed(2)})²] = ${calc.resultant.toFixed(2)} N`;
+
+      const tbody = document.getElementById("components-body");
+      tbody.innerHTML = "";
+      calc.rows.forEach((r, i) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong style="color:${palette[i % palette.length]}">F${i+1}</strong></td>
+          <td>${r.magnitude} N</td>
+          <td>${r.angle}°</td>
+          <td>${r.fx.toFixed(2)} N</td>
+          <td>${r.fy.toFixed(2)} N</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      drawSVG(calc);
+      updateChart(calc);
+    }
+
+    function exportToCSV() {
+      const calc = getCalculations();
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Vector,Magnitud (N),Angulo (grados),Fx (N),Fy (N)\n";
+
+      calc.rows.forEach((r, i) => {
+        csvContent += `F${i+1},${r.magnitude},${r.angle},${r.fx.toFixed(2)},${r.fy.toFixed(2)}\n`;
+      });
+
+      csvContent += `\nResultante (R),${calc.resultant.toFixed(2)},${calc.angleR.toFixed(1)},${calc.sumX.toFixed(2)},${calc.sumY.toFixed(2)}\n`;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "mesa_de_fuerzas_componentes.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function generateQuiz() {
+      const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+      currentQuizQuestions = shuffled.slice(0, 5);
+      const container = document.getElementById("quiz-container");
+      container.innerHTML = "";
+      document.getElementById("quiz-score").textContent = "";
+
+      currentQuizQuestions.forEach((qObj, idx) => {
+        const qDiv = document.createElement("div");
+        qDiv.style.marginBottom = "16px";
+        qDiv.innerHTML = `
+          <p style="font-weight:600; color:#ffffff; font-size:.9rem; margin-bottom:8px;">${idx + 1}. ${qObj.q}</p>
+          <div class="options-group" data-qidx="${idx}">
+            ${qObj.options.map((opt, oIdx) => `
+              <div class="quiz-option" data-oidx="${oIdx}">${opt}</div>
+            `).join("")}
+          </div>
+        `;
+        container.appendChild(qDiv);
+      });
+
+      document.querySelectorAll(".quiz-option").forEach(opt => {
+        opt.addEventListener("click", function() {
+          const parent = this.parentElement;
+          parent.querySelectorAll(".quiz-option").forEach(o => o.classList.remove("selected"));
+          this.classList.add("selected");
+        });
+      });
+    }
+
+    function evaluateQuiz() {
+      let score = 0;
+      currentQuizQuestions.forEach((qObj, idx) => {
+        const selected = document.querySelector(`.options-group[data-qidx="${idx}"] .quiz-option.selected`);
+        if (selected) {
+          const chosenIdx = parseInt(selected.getAttribute("data-oidx"));
+          if (chosenIdx === qObj.correct) {
+            score++;
+            selected.style.background = "#10b981";
+            selected.style.borderColor = "#10b981";
+          } else {
+            selected.style.background = "#ef4444";
+            selected.style.borderColor = "#ef4444";
+          }
+        }
+      });
+      document.getElementById("quiz-score").textContent = `Calificación: ${score} / 5 (${(score * 20)}%)`;
+    }
+
+    document.getElementById("btn-play").addEventListener("click", () => {
+      if (!isRunning) {
+        isRunning = true;
+        updatePhysicsAnimation();
+      }
+    });
+
+    document.getElementById("btn-pause").addEventListener("click", () => {
+      isRunning = false;
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+    });
+
+    document.getElementById("btn-stop").addEventListener("click", () => {
+      isRunning = false;
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+      ringPos = { x: 250, y: 250 };
+      ringVel = { x: 0, y: 0 };
+      const ring = document.getElementById("ring-center");
+      ring.setAttribute("cx", 250);
+      ring.setAttribute("cy", 250);
+    });
+
+    document.getElementById("add-force").addEventListener("click", () => {
+      forces.push({ id: nextId++, magnitude: 60, angle: 120 });
+      renderCards();
+      update();
+    });
+
+    document.getElementById("reset-all").addEventListener("click", () => {
+      forces = [{ id: 1, magnitude: 80, angle: 45 }];
+      renderCards();
+      update();
+    });
+
+    document.getElementById("btn-export-csv").addEventListener("click", exportToCSV);
+    document.getElementById("btn-new-quiz").addEventListener("click", generateQuiz);
+    document.getElementById("btn-submit-quiz").addEventListener("click", evaluateQuiz);
+
+    document.querySelectorAll(".accordion-trigger").forEach(btn => {
+      btn.addEventListener("click", () => {
+        btn.parentElement.classList.toggle("open");
+      });
+    });
+
+    renderCards();
+    update();
+    generateQuiz();
+  </script>
+ </body>
+</html>

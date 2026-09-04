@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio Virtual de Física | Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-main: #0b0307;
+            --card-bg: #180610;
+            --card-border: #3b1124;
+            --ink: #fce7f3;
+            --muted: #f472b6;
+            --accent-pink: #ec4899;
+            --accent-rose: #f43f5e;
+            --accent-cyan: #38bdf8;
+            --accent-purple: #c084fc;
+            --pink-light: #fbcfe8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            margin: 0;
+            font-family: "Poppins", sans-serif;
+            background-color: var(--bg-main);
+            color: var(--ink);
+        }
+
+        .app-wrapper {
+            width: 100%;
+            min-height: 100vh;
+            padding: 24px;
+            background-image:
+                radial-gradient(
+                    circle at 15% 15%,
+                    rgba(236, 72, 153, 0.18),
+                    transparent 30rem
+                ),
+                radial-gradient(
+                    circle at 85% 85%,
+                    rgba(56, 189, 248, 0.12),
+                    transparent 30rem
+                );
+        }
+
+        .main-content {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Cinta Académica */
+        .academic-ribbon {
+            display: grid;
+            grid-template-columns: 1.2fr repeat(3, auto);
+            gap: 16px;
+            padding: 16px 24px;
+            border-radius: 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.15);
+        }
+
+        .ribbon-label {
+            display: block;
+            font-size: .67rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--accent-pink);
+        }
+
+        .ribbon-value {
+            display: block;
+            font-size: .88rem;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 45px 4px 35px;
+        }
+
+        .eyebrow {
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--accent-rose);
+        }
+
+        .hero h1 {
+            margin: 6px 0;
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 0 16px rgba(236, 72, 153, 0.4);
+        }
+
+        .hero p {
+            max-width: 850px;
+            margin: 0;
+            line-height: 1.7;
+            color: var(--pink-light);
+            font-size: .95rem;
+        }
+
+        /* Panel Principal */
+        .lab-panel {
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            background: var(--card-bg);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+        }
+
+        .panel-pad {
+            padding: 24px;
+        }
+
+        .panel-heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .panel-heading svg {
+            width: 22px;
+            height: 22px;
+            color: var(--accent-pink);
+        }
+
+        .panel-heading h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Grid */
+        .simulators-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px;
+        }
+
+        /* Tarjeta */
+        .simulator-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 25px;
+            border-radius: 16px;
+            background: linear-gradient(145deg, #180610, #0e0208);
+            border: 1px solid var(--card-border);
+            transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+            overflow: hidden;
+        }
+
+        .simulator-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple), var(--accent-cyan));
+        }
+
+        .simulator-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-pink);
+            box-shadow: 0 10px 30px rgba(236, 72, 153, .18);
+        }
+
+        .simulator-number {
+            font-size: .7rem;
+            font-weight: 800;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--accent-pink);
+            margin-bottom: 15px;
+        }
+
+        .simulator-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(236, 72, 153, .1);
+            border: 1px solid var(--card-border);
+            margin-bottom: 18px;
+        }
+
+        .simulator-icon svg {
+            width: 25px;
+            height: 25px;
+            color: var(--accent-pink);
+        }
+
+        .simulator-card h3 {
+            margin: 0 0 10px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .simulator-card p {
+            margin: 0 0 20px;
+            min-height: 48px;
+            font-size: .85rem;
+            line-height: 1.6;
+            color: var(--pink-light);
+        }
+
+        .simulator-info {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            padding: 5px 9px;
+            border-radius: 6px;
+            background: #3b1124;
+            color: var(--pink-light);
+            font-size: .7rem;
+            font-weight: 700;
+        }
+
+        .open-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 11px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background: #3b1124;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: .85rem;
+            font-weight: 700;
+            transition: all .2s ease;
+        }
+
+        .open-button:hover {
+            background: var(--accent-pink);
+            border-color: var(--accent-pink);
+            box-shadow: 0 0 15px rgba(236, 72, 153, .4);
+        }
+
+        /* Información Proyecto */
+        .project-info {
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .info-card {
+            padding: 20px;
+            border-radius: 14px;
+            background: #0e0208;
+            border: 1px solid var(--card-border);
+        }
+
+        .info-card span {
+            display: block;
+            font-size: .7rem;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-weight: 700;
+            color: var(--accent-pink);
+            margin-bottom: 5px;
+        }
+
+        .info-card strong {
+            color: #ffffff;
+            font-size: .95rem;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            padding: 25px;
+            text-align: center;
+            border-top: 1px solid var(--card-border);
+            color: var(--muted);
+            font-size: .8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .academic-ribbon {
+                grid-template-columns: 1fr 1fr;
+            }
+            .simulators-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .app-wrapper {
+                padding: 15px;
+            }
+            .academic-ribbon {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .project-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <main class="main-content">
+
+            <header class="academic-ribbon">
+                <div>
+                    <span class="ribbon-label">Estudiante</span>
+                    <span class="ribbon-value">Erandi Palomares Sánchez</span>
+                </div>
+                <div>
+                    <span class="ribbon-label">Grupo</span>
+                    <span class="ribbon-value">3S1M</span>
+                </div>
+                <div>
+                    <span class="ribbon-label">Fecha</span>
+                    <span class="ribbon-value">Septiembre 2026</span>
+                </div>
+                <div>
+                    <span class="ribbon-label">Materia</span>
+                    <span class="ribbon-value">Física General</span>
+                </div>
+            </header>
+
+            <section class="hero">
+                <div class="eyebrow">Laboratorio Virtual de Física</div>
+                <h1>Simuladores Interactivos</h1>
+                <p>
+                    Colección de simuladores desarrollados durante el semestre para analizar, visualizar y comprender fenómenos físicos mediante modelos matemáticos interactivos.
+                </p>
+            </section>
+
+            <section class="lab-panel panel-pad">
+                <div class="panel-heading">
+                    <i data-lucide="flask-conical"></i>
+                    <h2>Simuladores Disponibles</h2>
+                </div>
+
+                <div class="simulators-grid">
+
+                    <article class="simulator-card">
+                        <div>
+                            <div class="simulator-number">Simulador 01</div>
+                            <div class="simulator-icon">
+                                <i data-lucide="split"></i>
+                            </div>
+                            <h3>Componentes Rectangulares</h3>
+                            <p>
+                                Descomposición de una fuerza en sus componentes horizontal y vertical mediante trigonometría vectorial.
+                            </p>
+                            <div class="simulator-info">
+                                <span class="tag">Vectores</span>
+                                <span class="tag">Trigonometría</span>
+                                <span class="tag">Fuerzas</span>
+                            </div>
+                        </div>
+                        <a href="componentes-rectangulares.html" class="open-button">
+                            Abrir simulador
+                            <i data-lucide="arrow-up-right"></i>
+                        </a>
+                    </article>
+
+                    <article class="simulator-card">
+                        <div>
+                            <div class="simulator-number">Simulador 02</div>
+                            <div class="simulator-icon">
+                                <i data-lucide="compass"></i>
+                            </div>
+                            <h3>Mesa de Fuerzas</h3>
+                            <p>
+                                Simulación interactiva para analizar el equilibrio de un objeto expuesto a múltiples fuerzas concurrentes.
+                            </p>
+                            <div class="simulator-info">
+                                <span class="tag">Vectores</span>
+                                <span class="tag">Equilibrio</span>
+                                <span class="tag">Estática</span>
+                            </div>
+                        </div>
+                        <a href="mesa-de-fuerzas.html" class="open-button">
+                            Abrir simulador
+                            <i data-lucide="arrow-up-right"></i>
+                        </a>
+                    </article>
+
+                </div>
+            </section>
+
+            <section class="project-info">
+                <div class="info-card">
+                    <span>Estado del Proyecto</span>
+                    <strong>2 Simuladores</strong>
+                </div>
+                <div class="info-card">
+                    <span>Materia</span>
+                    <strong>Física General</strong>
+                </div>
+            </section>
+
+            <footer>
+                <p>Laboratorio Virtual de Física</p>
+                <p>2026</p>
+            </footer>
+
+        </main>
+    </div>
+
+    <script>
+        window.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

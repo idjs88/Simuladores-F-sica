@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="es">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Componentes Rectangulares</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0b0307;
+      --card-bg: #180610;
+      --card-border: #3b1124;
+      --ink: #fce7f3;
+      --muted: #f472b6;
+      --accent-pink: #ec4899;
+      --accent-rose: #f43f5e;
+      --accent-cyan: #38bdf8;
+      --accent-purple: #c084fc;
+      --pink-light: #fbcfe8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      width: 100%;
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--ink);
+    }
+
+    button, input, select { font: inherit; }
+
+    .app-wrapper {
+      width: 100%;
+      min-height: 100vh;
+      padding: 24px;
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(236, 72, 153, 0.18), transparent 30rem),
+        radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.12), transparent 30rem);
+    }
+
+    .main-content {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .academic-ribbon {
+      display: grid;
+      grid-template-columns: 1.2fr repeat(4, auto);
+      gap: 16px;
+      padding: 16px 24px;
+      border-radius: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      box-shadow: 0 10px 30px rgba(236, 72, 153, 0.15);
+    }
+
+    .ribbon-label {
+      display: block;
+      font-size: .67rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent-pink);
+    }
+
+    .ribbon-value {
+      display: block;
+      font-size: .88rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .hero { padding: 24px 4px 20px; }
+
+    .eyebrow {
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--accent-rose);
+    }
+
+    .hero h1 {
+      margin: 6px 0;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #ffffff;
+      text-shadow: 0 0 16px rgba(236, 72, 153, 0.4);
+    }
+
+    .hero p {
+      max-width: 850px;
+      margin: 0;
+      line-height: 1.6;
+      color: var(--pink-light);
+      font-size: .95rem;
+    }
+
+    .lab-panel {
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      background: var(--card-bg);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+    }
+
+    .panel-pad { padding: 24px; }
+
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .panel-heading svg {
+      width: 22px;
+      height: 22px;
+      color: var(--accent-pink);
+    }
+
+    .panel-heading h2 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .sim-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, .85fr);
+      gap: 24px;
+    }
+
+    .cartesian-plane {
+      position: relative;
+      width: 100%;
+      max-width: 580px;
+      margin: 0 auto;
+      aspect-ratio: 1;
+      border-radius: 20px;
+      border: 4px solid #3b1124;
+      background: radial-gradient(circle, #0e0208 0%, #180610 70%, #250818 100%);
+      box-shadow: inset 0 0 35px rgba(0,0,0,0.95), 0 0 25px rgba(236, 72, 153, 0.25);
+      overflow: hidden;
+    }
+
+    #cartesian-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .svg-label {
+      fill: var(--pink-light);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .btn-ctrl {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      font-size: .85rem;
+      font-weight: 600;
+      background: #3b1124;
+      color: #ffffff;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-ctrl:hover {
+      background: var(--accent-pink);
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(236, 72, 153, 0.4);
+    }
+
+    .stack { display: grid; gap: 24px; margin-top: 24px; }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-group label {
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--pink-light);
+    }
+
+    .num-input {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+      background: #0e0208;
+      color: #ffffff;
+      font-size: .95rem;
+      font-weight: 600;
+    }
+
+    .num-input:focus {
+      outline: 2px solid var(--accent-pink);
+    }
+
+    input[type=range] {
+      width: 100%;
+      height: 8px;
+      border-radius: 6px;
+      background: #3b1124;
+      accent-color: var(--accent-pink);
+      cursor: pointer;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .result-card-large {
+      padding: 16px;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: rgba(14, 2, 8, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-card-large::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 5px;
+      background: var(--card-color, var(--accent-pink));
+    }
+
+    .result-label {
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--pink-light);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .result-value {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .result-formula {
+      font-family: monospace;
+      font-size: .82rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .components-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .88rem;
+    }
+
+    .components-table th, .components-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .components-table th {
+      color: var(--accent-pink);
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .accordion-item {
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: #0e0208;
+      margin-bottom: 10px;
+    }
+
+    .accordion-trigger {
+      width: 100%;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: transparent;
+      border: 0;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: .95rem;
+      cursor: pointer;
+    }
+
+    .accordion-content {
+      display: none;
+      padding: 0 18px 18px;
+      color: var(--pink-light);
+      font-size: .88rem;
+      line-height: 1.6;
+    }
+
+    .accordion-item.open .accordion-content { display: block; }
+
+    .quiz-option {
+      display: block;
+      padding: 12px 16px;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      background: #0e0208;
+      color: var(--pink-light);
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: .9rem;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--accent-pink);
+      background: rgba(236, 72, 153, 0.12);
+    }
+
+    .quiz-option.selected {
+      border-color: var(--accent-pink);
+      background: var(--accent-pink);
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      font-size: .9rem;
+      font-weight: 700;
+      border-radius: 10px;
+      border: 0;
+      cursor: pointer;
+      background: var(--accent-pink);
+      color: #ffffff;
+      transition: all 0.2s;
+    }
+
+    .action-button:hover {
+      background: var(--accent-rose);
+      box-shadow: 0 0 15px rgba(244, 63, 94, 0.4);
+    }
+
+    @media (max-width: 900px) {
+      .sim-layout, .academic-ribbon { grid-template-columns: 1fr; }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="app-wrapper">
+   <main class="main-content">
+    <header class="academic-ribbon">
+     <div>
+      <span class="ribbon-label">Estudiante</span>
+      <span class="ribbon-value">Erandi Palomares Sánchez</span>
+     </div>
+     <div>
+      <span class="ribbon-label">Grupo</span>
+      <span class="ribbon-value">3S1M</span>
+     </div>
+     <div>
+      <span class="ribbon-label">Fecha</span>
+      <span class="ribbon-value">Septiembre 2026</span>
+     </div>
+     <div>
+      <span class="ribbon-label">Materia</span>
+      <span class="ribbon-value">Física General</span>
+     </div>
+    </header>
+
+    <section class="hero">
+     <div class="eyebrow">Laboratorio Visual de Mecánica Vectorial</div>
+     <h1>Descomposición de una Fuerza en Componentes Rectangulares</h1>
+     <p>Análisis interactivo de la magnitud, ángulo de inclinación (θ) y proyección trigonométrica de componentes ortogonales (Fx, Fy) para un vector de fuerza individual.</p>
+    </section>
+
+    <section class="sim-layout">
+     <!-- PANEL IZQUIERDO: PLANO CARTESIANO VISUAL -->
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading" style="justify-content: space-between;">
+       <div style="display:flex; align-items:center; gap:10px;">
+        <i data-lucide="crosshair"></i>
+        <h2>Plano Cartesiano Interactivos y Proyección Directa</h2>
+       </div>
+       <label style="display:flex; align-items:center; gap:8px; font-size:.82rem; color:var(--pink-light); cursor:pointer;">
+        <input type="checkbox" id="chk-proj" checked accent-color="var(--accent-pink)">
+        Ver Sombras Proyectadas
+       </label>
+      </div>
+
+      <div class="cartesian-plane">
+       <svg id="cartesian-svg" viewBox="0 0 500 500">
+        <defs>
+         <!-- Marcadores de Flechas con Colores Distintivos -->
+         <marker id="arrow-force" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#ec4899" />
+         </marker>
+         <marker id="arrow-fx" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8" />
+         </marker>
+         <marker id="arrow-fy" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc" />
+         </marker>
+        </defs>
+
+        <!-- Cuadrícula y Radios Guía -->
+        <g opacity=".12">
+         <line x1="50" y1="250" x2="450" y2="250" stroke="#f472b6" stroke-dasharray="2,2"/>
+         <line x1="250" y1="50" x2="250" y2="450" stroke="#f472b6" stroke-dasharray="2,2"/>
+         <circle cx="250" cy="250" r="50" fill="none" stroke="#f472b6" stroke-dasharray="3,3"></circle>
+         <circle cx="250" cy="250" r="100" fill="none" stroke="#f472b6" stroke-dasharray="3,3"></circle>
+         <circle cx="250" cy="250" r="150" fill="none" stroke="#f472b6" stroke-dasharray="3,3"></circle>
+         <circle cx="250" cy="250" r="200" fill="none" stroke="#f472b6" stroke-dasharray="3,3"></circle>
+        </g>
+
+        <!-- Ejes Principales X e Y -->
+        <line x1="15" y1="250" x2="485" y2="250" stroke="#f472b6" stroke-width="2.5"></line>
+        <line x1="250" y1="485" x2="250" y2="15" stroke="#f472b6" stroke-width="2.5"></line>
+
+        <!-- Etiquetas de los Ejes -->
+        <text class="svg-label" x="470" y="242">+X</text>
+        <text class="svg-label" x="20" y="242">-X</text>
+        <text class="svg-label" x="256" y="28">+Y</text>
+        <text class="svg-label" x="256" y="480">-Y</text>
+
+        <!-- Arco Dinámico del Ángulo theta -->
+        <path id="arc-angle" fill="rgba(236, 72, 153, 0.25)" stroke="#ec4899" stroke-width="2" stroke-dasharray="4,2"/>
+        <text id="txt-angle-val" font-size="13" font-weight="800" fill="#ec4899">θ</text>
+
+        <!-- Elementos Vectoriales Dinámicos -->
+        <g id="vector-layer"></g>
+
+        <!-- Partícula / Origen de Aplicación -->
+        <circle cx="250" cy="250" r="8" fill="#ff1493" stroke="#ffffff" stroke-width="2.5" id="origin-point"></circle>
+       </svg>
+      </div>
+
+      <div style="margin-top: 16px; display:flex; justify-content:space-between; align-items:center; background:#0e0208; padding:12px 18px; border-radius:12px; border:1px solid var(--card-border);">
+       <div style="display:flex; gap:16px;">
+        <span style="font-size:.82rem; color:#ec4899; font-weight:700;">■ Fuerza F (Vector)</span>
+        <span style="font-size:.82rem; color:#38bdf8; font-weight:700;">■ Fx (Horizontal)</span>
+        <span style="font-size:.82rem; color:#c084fc; font-weight:700;">■ Fy (Vertical)</span>
+       </div>
+       <span id="quadrant-badge" style="font-size:.78rem; font-weight:800; padding:4px 10px; border-radius:6px; background:#3b1124; color:var(--pink-light);">I Cuadrante</span>
+      </div>
+     </section>
+
+     <!-- PANEL DERECHO: CONTROLES Y RESULTADOS ANALÍTICOS -->
+     <aside class="lab-panel panel-pad" style="display:flex; flex-direction:column; justify-content:space-between;">
+      <div>
+       <div class="panel-heading">
+        <i data-lucide="sliders"></i>
+        <h2>Parámetros del Vector Fuerza</h2>
+       </div>
+
+       <!-- Controles Directos para 1 Sola Fuerza -->
+       <div style="display:grid; gap:16px; background:#0e0208; padding:18px; border-radius:14px; border:1px solid var(--card-border);">
+        <div class="field-group">
+         <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label>Magnitud (F):</label>
+          <span id="label-mag-val" style="font-weight:800; color:var(--accent-pink);">100 N</span>
+         </div>
+         <input id="slider-mag" type="range" min="10" max="200" value="100" step="1">
+         <input id="num-mag" class="num-input" type="number" min="10" max="200" value="100">
+        </div>
+
+        <div class="field-group">
+         <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label>Ángulo de Inclinación (θ):</label>
+          <span id="label-angle-val" style="font-weight:800; color:var(--accent-pink);">60°</span>
+         </div>
+         <input id="slider-angle" type="range" min="0" max="360" value="60" step="1">
+         <input id="num-angle" class="num-input" type="number" min="0" max="360" value="60">
+        </div>
+       </div>
+
+       <div class="panel-heading" style="margin-top:24px;">
+        <i data-lucide="calculator"></i>
+        <h2>Componentes Rectangulares</h2>
+       </div>
+
+       <div class="result-grid">
+        <div class="result-card-large" style="--card-color: #38bdf8;">
+         <span class="result-label">Componente Horizontal (Fx)</span>
+         <div id="val-fx" class="result-value" style="color: #38bdf8;">50.00 N</div>
+         <div id="formula-fx" class="result-formula">Fx = 100 · cos(60°)</div>
+        </div>
+
+        <div class="result-card-large" style="--card-color: #c084fc;">
+         <span class="result-label">Componente Vertical (Fy)</span>
+         <div id="val-fy" class="result-value" style="color: #c084fc;">86.60 N</div>
+         <div id="formula-fy" class="result-formula">Fy = 100 · sen(60°)</div>
+        </div>
+       </div>
+      </div>
+
+      <button id="btn-reset" class="btn-ctrl" style="margin-top:20px; width:100%; justify-content:center; padding:12px;">
+       <i data-lucide="rotate-ccw"></i> Restablecer a Valores Iniciales
+      </button>
+     </aside>
+    </section>
+
+    <!-- SECCIÓN DE DESGLOSE Y ANÁLISIS EN TABLA / GRÁFICA -->
+    <div class="stack">
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading" style="justify-content: space-between;">
+       <div style="display:flex; align-items:center; gap:10px;">
+        <i data-lucide="table"></i>
+        <h2>Resumen Analítico de la Fuerza Única</h2>
+       </div>
+       <button id="btn-export-csv" class="btn-ctrl" style="background:var(--accent-pink);">
+        <i data-lucide="download"></i> Exportar Datos CSV
+       </button>
+      </div>
+      <div style="overflow-x:auto;">
+       <table class="components-table">
+        <thead>
+         <tr>
+          <th>Vector</th>
+          <th>Magnitud (F)</th>
+          <th>Ángulo (θ)</th>
+          <th>Componente Fx = F · cos(θ)</th>
+          <th>Componente Fy = F · sin(θ)</th>
+          <th>Ubicación</th>
+         </tr>
+        </thead>
+        <tbody id="components-body"></tbody>
+       </table>
+      </div>
+     </section>
+
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading">
+       <i data-lucide="bar-chart-2"></i>
+       <h2>Comparativa Magnitud Vectorial vs Componentes (F vs Fx vs Fy)</h2>
+      </div>
+      <div style="height: 300px; position: relative;">
+       <canvas id="componentsChart"></canvas>
+      </div>
+     </section>
+
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading">
+       <i data-lucide="book-open"></i>
+       <h2>Fundamento Teórico: Trigonometría Vectorial</h2>
+      </div>
+      <div>
+       <div class="accordion-item open">
+        <button class="accordion-trigger">
+         <span>1. ¿Qué es la Descomposición de una Fuerza?</span>
+         <i data-lucide="chevron-down"></i>
+        </button>
+        <div class="accordion-content">
+         Consiste en transformar un vector de fuerza único F⃗, orientado a un ángulo determinado, en dos fuerzas mutuamente perpendiculares (ortogonales) situadas sobre los ejes X e Y. La combinación vectorial de estas dos proyecciones produce exactamente el mismo efecto físico sobre una partícula que la fuerza original.
+        </div>
+       </div>
+
+       <div class="accordion-item">
+        <button class="accordion-trigger">
+         <span>2. Ecuaciones Trigonométricas Fundamentales</span>
+         <i data-lucide="chevron-down"></i>
+        </button>
+        <div class="accordion-content">
+         Basado en el triángulo rectángulo formado por el vector y los ejes cartesianos:
+         <br><br>
+         • <strong>Componente Horizontal:</strong> Fx = F · cos(θ)<br>
+         • <strong>Componente Vertical:</strong> Fy = F · sen(θ)<br>
+         • <strong>Teorema de Pitágoras (Magnitud):</strong> F = √[Fx² + Fy²]<br>
+         • <strong>Dirección:</strong> θ = tan⁻¹(ΣFy/ΣFx)
+        </div>
+       </div>
+
+       <div class="accordion-item">
+        <button class="accordion-trigger">
+         <span>3. Importancia de los Cuadrantes y Signos</span>
+         <i data-lucide="chevron-down"></i>
+        </button>
+        <div class="accordion-content">
+         El signo algebraico de Fx y Fy indica el sentido del vector sobre los ejes cartesianos:
+         <br><br>
+         • <strong>I Cuadrante (0° - 90°):</strong> Fx > 0 (+), Fy > 0 (+)<br>
+         • <strong>II Cuadrante (90° - 180°):</strong> Fx < 0 (-), Fy > 0 (+)<br>
+         • <strong>III Cuadrante (180° - 270°):</strong> Fx < 0 (-), Fy < 0 (-)<br>
+         • <strong>IV Cuadrante (270° - 360°):</strong> Fx > 0 (+), Fy < 0 (-)
+        </div>
+       </div>
+      </div>
+     </section>
+
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading" style="justify-content: space-between;">
+       <div style="display:flex; align-items:center; gap:10px;">
+        <i data-lucide="award"></i>
+        <h2>Evaluación Diagnóstica: Componentes Rectangulares</h2>
+       </div>
+       <button id="btn-new-quiz" class="btn-ctrl">
+        <i data-lucide="refresh-cw"></i> Cuestionario Nuevo
+       </button>
+      </div>
+
+      <div id="quiz-container"></div>
+      
+      <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+       <button id="btn-submit-quiz" class="action-button"><i data-lucide="check-circle"></i> Evaluar Respuestas</button>
+       <span id="quiz-score" style="font-size:1.1rem; font-weight:800;"></span>
+      </div>
+     </section>
+    </div>
+   </main>
+  </div>
+
+  <script>
+    // Configuración Estado Único de la Fuerza
+    let force = { magnitude: 100, angle: 60 };
+    let chartInstance = null;
+
+    const questionBank = [
+      { q: "¿Cuál es la componente horizontal Fx de una fuerza de 100 N a un ángulo de 0°?", options: ["0 N", "100 N", "50 N", "-100 N"], correct: 1 },
+      { q: "¿Cuál es la componente vertical Fy de una fuerza de 100 N a 90°?", options: ["100 N", "0 N", "50 N", "-100 N"], correct: 0 },
+      { q: "Si una fuerza está en el II Cuadrante (90° a 180°), los signos de (Fx, Fy) son:", options: ["(+, +)", "(-, +)", "(-, -)", "(+, -)"], correct: 1 },
+      { q: "Si una fuerza está en el III Cuadrante (180° a 270°), los signos de (Fx, Fy) son:", options: ["(+, +)", "(-, +)", "(-, -)", "(+, -)"], correct: 2 },
+      { q: "¿Qué función trigonométrica calcula la componente adyacente Fx con respecto al eje X?", options: ["Seno", "Coseno", "Tangente", "Cotangente"], correct: 1 },
+      { q: "¿Qué función trigonométrica calcula la componente opuesta Fy con respecto al eje X?", options: ["Seno", "Coseno", "Tangente", "Secante"], correct: 0 },
+      { q: "Si Fx = 30 N y Fy = 40 N, ¿cuál es la magnitud total del vector de fuerza F?", options: ["70 N", "10 N", "50 N", "2500 N"], correct: 2 },
+      { q: "Una fuerza de 80 N actúa horizontalmente a 180°. Su componente Fx vale:", options: ["80 N", "-80 N", "0 N", "40 N"], correct: 1 },
+      { q: "Una fuerza de 50 N actúa verticalmente hacia abajo a 270°. Su componente Fy vale:", options: ["50 N", "-50 N", "0 N", "-25 N"], correct: 1 },
+      { q: "Para un ángulo de 45°, ¿qué relación guardan las magnitudes Fx y Fy?", options: ["Fx > Fy", "Fx < Fy", "Fx = Fy", "Fx = -Fy"], correct: 2 }
+    ];
+
+    let currentQuizQuestions = [];
+
+    function getQuadrant(angle) {
+      const norm = ((angle % 360) + 360) % 360;
+      if (norm === 0 || norm === 360) return "Eje +X";
+      if (norm === 90) return "Eje +Y";
+      if (norm === 180) return "Eje -X";
+      if (norm === 270) return "Eje -Y";
+      if (norm > 0 && norm < 90) return "I Cuadrante";
+      if (norm > 90 && norm < 180) return "II Cuadrante";
+      if (norm > 180 && norm < 270) return "III Cuadrante";
+      return "IV Cuadrante";
+    }
+
+    function calculate() {
+      const rad = (force.angle * Math.PI) / 180;
+      const fx = force.magnitude * Math.cos(rad);
+      const fy = force.magnitude * Math.sin(rad);
+      return { fx, fy, quad: getQuadrant(force.angle) };
+    }
+
+    function drawCartesian() {
+      const container = document.getElementById("vector-layer");
+      container.innerHTML = "";
+      const showProj = document.getElementById("chk-proj").checked;
+
+      const scale = 1.8; // Escala adaptada para dar visibilidad clara a 1 solo vector
+      const rad = (force.angle * Math.PI) / 180;
+      const calc = calculate();
+
+      const fxScaled = calc.fx * scale;
+      const fyScaled = calc.fy * scale;
+
+      const endX = 250 + fxScaled;
+      const endY = 250 - fyScaled; // Invertido en SVG (Y crece hacia abajo)
+
+      // 1. DIBUJAR COMPONENTES (PROYECCIONES PROYECTADAS Y VECTORES DE COMPONENTE)
+      if (showProj && force.magnitude > 0) {
+        // Línea Punteada Vertical desde final de Fx hasta la punta del vector
+        const projVert = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        projVert.setAttribute("x1", endX);
+        projVert.setAttribute("y1", 250);
+        projVert.setAttribute("x2", endX);
+        projVert.setAttribute("y2", endY);
+        projVert.setAttribute("stroke", "#38bdf8");
+        projVert.setAttribute("stroke-dasharray", "4,4");
+        projVert.setAttribute("stroke-width", "1.5");
+        container.appendChild(projVert);
+
+        // Línea Punteada Horizontal desde final de Fy hasta la punta del vector
+        const projHoriz = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        projHoriz.setAttribute("x1", 250);
+        projHoriz.setAttribute("y1", endY);
+        projHoriz.setAttribute("x2", endX);
+        projHoriz.setAttribute("y2", endY);
+        projHoriz.setAttribute("stroke", "#c084fc");
+        projHoriz.setAttribute("stroke-dasharray", "4,4");
+        projHoriz.setAttribute("stroke-width", "1.5");
+        container.appendChild(projHoriz);
+
+        // Vector Componente Fx (Eje X)
+        if (Math.abs(calc.fx) > 0.5) {
+          const lineFx = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          lineFx.setAttribute("x1", 250);
+          lineFx.setAttribute("y1", 250);
+          lineFx.setAttribute("x2", endX);
+          lineFx.setAttribute("y2", 250);
+          lineFx.setAttribute("stroke", "#38bdf8");
+          lineFx.setAttribute("stroke-width", "3.5");
+          lineFx.setAttribute("marker-end", "url(#arrow-fx)");
+          container.appendChild(lineFx);
+
+          // ETIQUETA VISUAL DE MAGNITUD Fx
+          const txtFx = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          txtFx.setAttribute("x", 250 + fxScaled / 2);
+          txtFx.setAttribute("y", calc.fy >= 0 ? 270 : 235);
+          txtFx.setAttribute("fill", "#38bdf8");
+          txtFx.setAttribute("font-size", "12px");
+          txtFx.setAttribute("font-weight", "800");
+          txtFx.setAttribute("text-anchor", "middle");
+          txtFx.textContent = `Fx = ${calc.fx.toFixed(1)} N`;
+          container.appendChild(txtFx);
+        }
+
+        // Vector Componente Fy (Eje Y)
+        if (Math.abs(calc.fy) > 0.5) {
+          const lineFy = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          lineFy.setAttribute("x1", 250);
+          lineFy.setAttribute("y1", 250);
+          lineFy.setAttribute("x2", 250);
+          lineFy.setAttribute("y2", endY);
+          lineFy.setAttribute("stroke", "#c084fc");
+          lineFy.setAttribute("stroke-width", "3.5");
+          lineFy.setAttribute("marker-end", "url(#arrow-fy)");
+          container.appendChild(lineFy);
+
+          // ETIQUETA VISUAL DE MAGNITUD Fy
+          const txtFy = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          txtFy.setAttribute("x", calc.fx >= 0 ? 235 : 265);
+          txtFy.setAttribute("y", 250 - fyScaled / 2);
+          txtFy.setAttribute("fill", "#c084fc");
+          txtFy.setAttribute("font-size", "12px");
+          txtFy.setAttribute("font-weight", "800");
+          txtFy.setAttribute("text-anchor", calc.fx >= 0 ? "end" : "start");
+          txtFy.textContent = `Fy = ${calc.fy.toFixed(1)} N`;
+          container.appendChild(txtFy);
+        }
+      }
+
+      // 2. VECTOR PRINCIPAL DE FUERZA (F)
+      if (force.magnitude > 0) {
+        const lineF = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        lineF.setAttribute("x1", 250);
+        lineF.setAttribute("y1", 250);
+        lineF.setAttribute("x2", endX);
+        lineF.setAttribute("y2", endY);
+        lineF.setAttribute("stroke", "#ec4899");
+        lineF.setAttribute("stroke-width", "4.5");
+        lineF.setAttribute("marker-end", "url(#arrow-force)");
+        container.appendChild(lineF);
+
+        // ETIQUETA VISUAL DE MAGNITUD F
+        const txtF = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        const offsetX = Math.cos(rad) * 18;
+        const offsetY = -Math.sin(rad) * 18;
+        txtF.setAttribute("x", endX + offsetX);
+        txtF.setAttribute("y", endY + offsetY);
+        txtF.setAttribute("fill", "#ec4899");
+        txtF.setAttribute("font-size", "13px");
+        txtF.setAttribute("font-weight", "800");
+        txtF.setAttribute("text-anchor", "middle");
+        txtF.textContent = `F = ${force.magnitude} N`;
+        container.appendChild(txtF);
+      }
+
+      // 3. DIBUJAR MARCADOR DE ÁNGULO (ARCO)
+      const arc = document.getElementById("arc-angle");
+      const txtAngle = document.getElementById("txt-angle-val");
+      const rArc = 40;
+
+      if (force.angle > 0) {
+        const startX = 250 + rArc;
+        const startY = 250;
+        const arcEndX = 250 + rArc * Math.cos(rad);
+        const arcEndY = 250 - rArc * Math.sin(rad);
+
+        const largeArc = force.angle > 180 ? 1 : 0;
+        const d = `M 250 250 L ${startX} ${startY} A ${rArc} ${rArc} 0 ${largeArc} 0 ${arcEndX} ${arcEndY} Z`;
+        arc.setAttribute("d", d);
+        arc.style.display = "block";
+
+        const midRad = (force.angle / 2 * Math.PI) / 180;
+        txtAngle.setAttribute("x", 250 + (rArc + 18) * Math.cos(midRad));
+        txtAngle.setAttribute("y", 250 - (rArc + 18) * Math.sin(midRad));
+        txtAngle.textContent = `θ = ${force.angle}°`;
+        txtAngle.style.display = "block";
+      } else {
+        arc.style.display = "none";
+        txtAngle.style.display = "none";
+      }
+    }
+
+    function updateChart(calc) {
+      const data = [force.magnitude, Math.abs(calc.fx), Math.abs(calc.fy)];
+
+      if (!chartInstance) {
+        const ctx = document.getElementById('componentsChart').getContext('2d');
+        chartInstance = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Magnitud F (Total)', '|Fx| (Horizontal)', '|Fy| (Vertical)'],
+            datasets: [{
+              label: 'Magnitud (N)',
+              data: data,
+              backgroundColor: ['#ec4899', '#38bdf8', '#c084fc'],
+              borderRadius: 8
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: { grid: { color: '#3b1124' }, ticks: { color: '#fbcfe8' }, beginAtZero: true },
+              x: { grid: { color: '#3b1124' }, ticks: { color: '#ffffff', font: { weight: 'bold' } } }
+            },
+            plugins: {
+              legend: { display: false }
+            }
+          }
+        });
+      } else {
+        chartInstance.data.datasets[0].data = data;
+        chartInstance.update();
+      }
+    }
+
+    function updateAll() {
+      const calc = calculate();
+
+      // Actualizar Valores Textuales y Fórmulas
+      document.getElementById("label-mag-val").textContent = `${force.magnitude} N`;
+      document.getElementById("label-angle-val").textContent = `${force.angle}°`;
+      
+      document.getElementById("val-fx").textContent = `${calc.fx.toFixed(2)} N`;
+      document.getElementById("formula-fx").textContent = `Fx = ${force.magnitude} · cos(${force.angle}°)`;
+
+      document.getElementById("val-fy").textContent = `${calc.fy.toFixed(2)} N`;
+      document.getElementById("formula-fy").textContent = `Fy = ${force.magnitude} · sen(${force.angle}°)`;
+
+      document.getElementById("quadrant-badge").textContent = calc.quad;
+
+      // Actualizar Tabla de Desglose
+      const tbody = document.getElementById("components-body");
+      tbody.innerHTML = `
+        <tr>
+          <td><strong style="color:var(--accent-pink)">Fuerza F</strong></td>
+          <td><strong>${force.magnitude} N</strong></td>
+          <td><strong>${force.angle}°</strong></td>
+          <td style="color:#38bdf8; font-weight:700;">${calc.fx.toFixed(2)} N</td>
+          <td style="color:#c084fc; font-weight:700;">${calc.fy.toFixed(2)} N</td>
+          <td><span style="font-size:.78rem; padding:4px 10px; border-radius:6px; background:#3b1124; color:var(--pink-light);">${calc.quad}</span></td>
+        </tr>
+      `;
+
+      drawCartesian();
+      updateChart(calc);
+    }
+
+    function bindInputs() {
+      const sliderMag = document.getElementById("slider-mag");
+      const numMag = document.getElementById("num-mag");
+      const sliderAngle = document.getElementById("slider-angle");
+      const numAngle = document.getElementById("num-angle");
+
+      const setMag = (val) => {
+        let v = Math.max(10, Math.min(200, parseFloat(val) || 10));
+        force.magnitude = v;
+        sliderMag.value = v;
+        numMag.value = v;
+        updateAll();
+      };
+
+      const setAngle = (val) => {
+        let v = (parseFloat(val) || 0) % 360;
+        if (v < 0) v += 360;
+        force.angle = v;
+        sliderAngle.value = v;
+        numAngle.value = v;
+        updateAll();
+      };
+
+      sliderMag.addEventListener("input", (e) => setMag(e.target.value));
+      numMag.addEventListener("input", (e) => setMag(e.target.value));
+      sliderAngle.addEventListener("input", (e) => setAngle(e.target.value));
+      numAngle.addEventListener("input", (e) => setAngle(e.target.value));
+
+      document.getElementById("chk-proj").addEventListener("change", updateAll);
+
+      document.getElementById("btn-reset").addEventListener("click", () => {
+        setMag(100);
+        setAngle(60);
+      });
+    }
+
+    function exportToCSV() {
+      const calc = calculate();
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Vector,Magnitud (N),Angulo (grados),Fx (N),Fy (N),Ubicacion\n";
+      csvContent += `Fuerza F,${force.magnitude},${force.angle},${calc.fx.toFixed(2)},${calc.fy.toFixed(2)},${calc.quad}\n`;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "descomposicion_fuerza_unica.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function generateQuiz() {
+      const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+      currentQuizQuestions = shuffled.slice(0, 5);
+
+      const container = document.getElementById("quiz-container");
+      container.innerHTML = "";
+
+      currentQuizQuestions.forEach((qObj, qIdx) => {
+        const qDiv = document.createElement("div");
+        qDiv.style.marginBottom = "20px";
+        
+        const title = document.createElement("h4");
+        title.style.margin = "0 0 10px 0";
+        title.style.fontSize = ".95rem";
+        title.style.color = "#ffffff";
+        title.textContent = `${qIdx + 1}. ${qObj.q}`;
+        qDiv.appendChild(title);
+
+        qObj.options.forEach((opt, optIdx) => {
+          const label = document.createElement("label");
+          label.className = "quiz-option";
+          label.innerHTML = `
+            <input type="radio" name="q_${qIdx}" value="${optIdx}" style="display:none;">
+            ${opt}
+          `;
+
+          label.addEventListener("click", () => {
+            const siblings = qDiv.querySelectorAll(".quiz-option");
+            siblings.forEach(s => s.classList.remove("selected"));
+            label.classList.add("selected");
+            label.querySelector("input").checked = true;
+          });
+
+          qDiv.appendChild(label);
+        });
+
+        container.appendChild(qDiv);
+      });
+
+      document.getElementById("quiz-score").textContent = "";
+    }
+
+    function evaluateQuiz() {
+      if (currentQuizQuestions.length === 0) return;
+
+      let score = 0;
+      currentQuizQuestions.forEach((qObj, qIdx) => {
+        const selected = document.querySelector(`input[name="q_${qIdx}"]:checked`);
+        if (selected && parseInt(selected.value) === qObj.correct) {
+          score++;
+        }
+      });
+
+      const percentage = (score / currentQuizQuestions.length) * 100;
+      const scoreEl = document.getElementById("quiz-score");
+      scoreEl.textContent = `Puntaje: ${score}/${currentQuizQuestions.length} (${percentage}%)`;
+      
+      if (percentage >= 80) {
+        scoreEl.style.color = "#10b981";
+      } else {
+        scoreEl.style.color = "#ef4444";
+      }
+    }
+
+    function accordionSetup() {
+      const triggers = document.querySelectorAll(".accordion-trigger");
+      triggers.forEach(trig => {
+        trig.addEventListener("click", () => {
+          const item = trig.closest(".accordion-item");
+          item.classList.toggle("open");
+        });
+      });
+    }
+
+    // Inicialización al cargar la página
+    window.addEventListener("DOMContentLoaded", () => {
+      bindInputs();
+      updateAll();
+      generateQuiz();
+      accordionSetup();
+      lucide.createIcons();
+
+      document.getElementById("btn-export-csv").addEventListener("click", exportToCSV);
+      document.getElementById("btn-new-quiz").addEventListener("click", generateQuiz);
+      document.getElementById("btn-submit-quiz").addEventListener("click", evaluateQuiz);
+    });
+  </script>
+ </body>
+</html>
