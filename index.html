@@ -147,34 +147,22 @@
             color: #ffffff;
         }
 
-        /* Grid */
+        /* Grid de Tarjetas Compactas */
         .simulators-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 280px)); /* Columnas estrechas para forzar la forma vertical */
+            justify-content: start; /* Alinea las tarjetas al inicio o 'center' si prefieres centrar */
+            gap: 20px;
         }
 
-        /* Tarjeta */
+        /* Tarjeta Compacta/Vertical */
         .simulator-card {
             position: relative;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 25px;
+            padding: 18px; /* Padding interno reducido */
             border-radius: 16px;
-            background: linear-gradient(145deg, #180610, #0e0208);
-            border: 1px solid var(--card-border);
-            transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
-            overflow: hidden;
-        }
-
-        .simulator-card::before {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 16px;
-            border-radius: 12px;
             background: linear-gradient(145deg, #180610, #0e0208);
             border: 1px solid var(--card-border);
             transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
@@ -233,7 +221,7 @@
             display: flex;
             gap: 6px;
             flex-wrap: wrap;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         .tag {
@@ -314,7 +302,7 @@
                 grid-template-columns: 1fr 1fr;
             }
             .simulators-grid {
-                grid-template-columns: 1fr;
+                justify-content: center;
             }
         }
 
@@ -329,6 +317,9 @@
                 font-size: 2rem;
             }
             .project-info {
+                grid-template-columns: 1fr;
+            }
+            .simulators-grid {
                 grid-template-columns: 1fr;
             }
         }
