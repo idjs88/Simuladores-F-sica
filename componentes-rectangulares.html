@@ -1204,7 +1204,7 @@
 
       document.getElementById("quiz-score").textContent = "";
     }
-function evaluateQuiz() {
+    function evaluateQuiz() {
       if (currentQuizQuestions.length === 0) return;
 
       let score = 0;
@@ -1252,17 +1252,6 @@ function evaluateQuiz() {
 
         qDiv.appendChild(feedbackDiv);
       });
-
-      const percentage = (score / currentQuizQuestions.length) * 100;
-      const scoreEl = document.getElementById("quiz-score");
-      scoreEl.textContent = `Puntaje Obtenido: ${score}/${currentQuizQuestions.length} (${percentage}%)`;
-      
-      if (percentage >= 80) {
-        scoreEl.style.color = "#10b981";
-      } else {
-        scoreEl.style.color = "#ef4444";
-      }
-    }
 
       const percentage = (score / currentQuizQuestions.length) * 100;
       const scoreEl = document.getElementById("quiz-score");
