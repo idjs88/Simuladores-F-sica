@@ -1266,7 +1266,7 @@ function evaluateQuiz() {
 
       const percentage = (score / currentQuizQuestions.length) * 100;
       const scoreEl = document.getElementById("quiz-score");
-      scoreEl.textContent = `Puntaje Obtendio: ${score}/${currentQuizQuestions.length} (${percentage}%)`;
+      scoreEl.textContent = `Puntaje Obtenido: ${score}/${currentQuizQuestions.length} (${percentage}%)`;
       
       if (percentage >= 80) {
         scoreEl.style.color = "#10b981";
