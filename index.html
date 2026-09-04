@@ -23,9 +23,7 @@
             --pink-light: #fbcfe8;
         }
 
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
         body {
             width: 100%;
@@ -40,16 +38,8 @@
             min-height: 100vh;
             padding: 24px;
             background-image:
-                radial-gradient(
-                    circle at 15% 15%,
-                    rgba(236, 72, 153, 0.18),
-                    transparent 30rem
-                ),
-                radial-gradient(
-                    circle at 85% 85%,
-                    rgba(56, 189, 248, 0.12),
-                    transparent 30rem
-                );
+                radial-gradient(circle at 15% 15%, rgba(236, 72, 153, 0.15), transparent 30rem),
+                radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.1), transparent 30rem);
         }
 
         .main-content {
@@ -58,37 +48,14 @@
             margin: 0 auto;
         }
 
-        /* Cinta Académica */
-        .academic-ribbon {
-            display: grid;
-            grid-template-columns: 1.2fr repeat(3, auto);
-            gap: 16px;
-            padding: 16px 24px;
-            border-radius: 16px;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.15);
-        }
-
-        .ribbon-label {
-            display: block;
-            font-size: .67rem;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            color: var(--accent-pink);
-        }
-
-        .ribbon-value {
-            display: block;
-            font-size: .88rem;
-            font-weight: 600;
-            color: #ffffff;
-        }
-
         /* Hero */
         .hero {
-            padding: 45px 4px 35px;
+            padding: 20px 4px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .eyebrow {
@@ -101,18 +68,71 @@
 
         .hero h1 {
             margin: 6px 0;
-            font-size: 2.6rem;
+            font-size: 2.5rem;
             font-weight: 800;
             color: #ffffff;
             text-shadow: 0 0 16px rgba(236, 72, 153, 0.4);
         }
 
         .hero p {
-            max-width: 850px;
+            max-width: 650px;
             margin: 0;
-            line-height: 1.7;
+            line-height: 1.6;
             color: var(--pink-light);
-            font-size: .95rem;
+            font-size: .92rem;
+        }
+
+        .physics-illustration {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.2) 0%, rgba(24, 6, 16, 0.8) 100%);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 0 25px rgba(236, 72, 153, 0.2);
+            color: var(--accent-pink);
+        }
+
+        .physics-illustration svg {
+            width: 64px;
+            height: 64px;
+            filter: drop-shadow(0 0 8px rgba(236, 72, 153, 0.6));
+        }
+
+        /* Cintillo Académico Corregido (5 Columnas) */
+        .academic-ribbon {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            padding: 18px 20px;
+            margin-bottom: 24px;
+            border-radius: 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.15);
+            backdrop-filter: blur(8px);
+        }
+
+        .ribbon-label {
+            display: block;
+            font-size: .65rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--accent-pink);
+            margin-bottom: 2px;
+        }
+
+        .ribbon-value {
+            display: block;
+            font-size: .82rem;
+            font-weight: 600;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* Panel Principal */
@@ -123,15 +143,21 @@
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
         }
 
-        .panel-pad {
-            padding: 24px;
-        }
+        .panel-pad { padding: 24px; }
 
         .panel-heading {
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
             margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(251, 207, 232, 0.1);
+        }
+
+        .panel-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .panel-heading svg {
@@ -147,34 +173,70 @@
             color: #ffffff;
         }
 
-        /* Estilos para separar por Unidades */
-        .unit-section {
-            margin-bottom: 32px;
+        .stat-badge {
+            font-size: .75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(236, 72, 153, 0.15);
+            color: var(--pink-light);
+            border: 1px solid rgba(236, 72, 153, 0.3);
         }
 
-        .unit-section:last-child {
-            margin-bottom: 0;
+        /* Unidades y Módulos */
+        .unit-section {
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
         }
+
+        .unit-section.unit-pending {
+            opacity: 0.6;
+        }
+
+        .unit-section:last-child { margin-bottom: 0; }
 
         .unit-title {
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
             font-size: .85rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: .1em;
             color: var(--pink-light);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             padding-bottom: 6px;
-            border-bottom: 1px solid rgba(251, 207, 232, 0.2);
+            border-bottom: 1px solid rgba(251, 207, 232, 0.15);
+        }
+
+        .unit-title-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-status {
+            font-size: .62rem;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        .status-pending {
+            background: rgba(255, 255, 255, 0.05);
+            color: #888;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .simulators-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
-            justify-content: start;
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 18px;
         }
 
         .simulator-card {
@@ -187,13 +249,12 @@
             background: linear-gradient(145deg, #180610, #0e0208);
             border: 1px solid var(--card-border);
             transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
-            overflow: hidden;
         }
 
         .simulator-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-4px);
             border-color: var(--accent-pink);
-            box-shadow: 0 10px 30px rgba(236, 72, 153, .18);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, .2);
         }
 
         .simulator-number {
@@ -211,10 +272,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
+            border-radius: 10px;
             background: rgba(236, 72, 153, .1);
             border: 1px solid var(--card-border);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .simulator-icon svg {
@@ -225,17 +286,17 @@
 
         .simulator-card h3 {
             margin: 0 0 6px;
-            font-size: 1rem;
+            font-size: .85rem;
             font-weight: 700;
             color: #ffffff;
         }
 
         .simulator-card p {
-            margin: 0 0 12px;
-            min-height: auto;
+            margin: 0 0 14px;
             font-size: .78rem;
-            line-height: 1.4;
+            line-height: 1.45;
             color: var(--pink-light);
+            opacity: 0.85;
         }
 
         .simulator-info {
@@ -246,7 +307,7 @@
         }
 
         .tag {
-            padding: 3px 7px;
+            padding: 3px 8px;
             border-radius: 6px;
             background: #3b1124;
             color: var(--pink-light);
@@ -260,7 +321,7 @@
             justify-content: center;
             gap: 8px;
             width: 100%;
-            padding: 8px 12px;
+            padding: 9px 12px;
             border-radius: 8px;
             border: 1px solid var(--card-border);
             background: #3b1124;
@@ -277,37 +338,58 @@
             box-shadow: 0 0 15px rgba(236, 72, 153, .4);
         }
 
-        /* Información Proyecto */
-        .project-info {
+        .empty-unit-card {
+            border: 1px dashed rgba(251, 207, 232, 0.15);
+            border-radius: 14px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(14, 2, 8, 0.4);
+            color: #888;
+        }
+
+        .empty-unit-card svg {
+            width: 18px;
+            height: 18px;
+            color: #666;
+        }
+
+        .empty-unit-card span {
+            font-size: .75rem;
+            font-weight: 500;
+        }
+
+        /* Resumen de Métrica Completo (3 Columnas) */
+        .project-metrics {
             margin-top: 24px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 16px;
         }
 
-        .info-card {
-            padding: 20px;
+        .metric-card {
+            padding: 18px;
             border-radius: 14px;
             background: #0e0208;
             border: 1px solid var(--card-border);
         }
 
-        .info-card span {
+        .metric-card span {
             display: block;
             font-size: .7rem;
             text-transform: uppercase;
             letter-spacing: .08em;
             font-weight: 700;
             color: var(--accent-pink);
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
-        .info-card strong {
+        .metric-card strong {
             color: #ffffff;
-            font-size: .95rem;
+            font-size: .85rem;
         }
 
-        /* Footer */
         footer {
             margin-top: 40px;
             padding: 25px;
@@ -317,32 +399,66 @@
             font-size: .8rem;
         }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-            .academic-ribbon {
-                grid-template-columns: 1fr 1fr;
-            }
-            .simulators-grid {
-                justify-content: center;
-            }
+        /* Mascotita Gatito Interactive */
+        .cat-widget {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
         }
 
-        @media (max-width: 600px) {
-            .app-wrapper {
-                padding: 15px;
-            }
-            .academic-ribbon {
-                grid-template-columns: 1fr;
-            }
-            .hero h1 {
-                font-size: 2rem;
-            }
-            .project-info {
-                grid-template-columns: 1fr;
-            }
-            .simulators-grid {
-                grid-template-columns: 1fr;
-            }
+        .cat-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--card-bg);
+            border: 2px solid var(--accent-pink);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+            transition: transform 0.2s ease;
+            user-select: none;
+        }
+
+        .cat-avatar:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .cat-bubble {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--pink-light);
+            padding: 10px 14px;
+            border-radius: 14px 14px 14px 0;
+            font-size: .75rem;
+            max-width: 220px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            animation: fadeIn 0.3s ease;
+            line-height: 1.4;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .academic-ribbon { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 640px) {
+            .app-wrapper { padding: 15px; }
+            .academic-ribbon { grid-template-columns: repeat(2, 1fr); }
+            .hero h1 { font-size: 2rem; }
+            .project-metrics { grid-template-columns: 1fr; }
+            .simulators-grid { grid-template-columns: 1fr; }
+            .hero { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -350,50 +466,69 @@
     <div class="app-wrapper">
         <main class="main-content">
 
+            <!-- Hero + Imagen Representativa -->
+            <section class="hero">
+                <div>
+                    <div class="eyebrow">Laboratorio Virtual de Física</div>
+                    <h1>Simuladores Interactivos</h1>
+                    <p>
+                        Colección de simuladores desarrollados durante el semestre para analizar, visualizar y comprender fenómenos físicos mediante modelos matemáticos interactivos.
+                    </p>
+                </div>
+                
+                <div class="physics-illustration">
+                    <i data-lucide="atom"></i>
+                </div>
+            </section>
+
+            <!-- Cintillo Académico Ajustado (5 columnas exactas) -->
             <header class="academic-ribbon">
                 <div>
                     <span class="ribbon-label">Estudiante</span>
-                    <span class="ribbon-value">Erandi Palomares Sánchez</span>
+                    <span class="ribbon-value" title="Erandi Palomares Sánchez">Erandi Palomares Sánchez</span>
                 </div>
                 <div>
-                    <span class="ribbon-label">Grupo</span>
-                    <span class="ribbon-value">3S1M</span>
-                </div>
-                <div>
-                    <span class="ribbon-label">Fecha</span>
-                    <span class="ribbon-value">Septiembre 2026</span>
+                    <span class="ribbon-label">Carrera</span>
+                    <span class="ribbon-value" title="Ing. en Sistemas Computacionales">Ing. Sistemas Computacionales</span>
                 </div>
                 <div>
                     <span class="ribbon-label">Materia</span>
                     <span class="ribbon-value">Física General</span>
                 </div>
+                <div>
+                    <span class="ribbon-label">Semestre / Grupo</span>
+                    <span class="ribbon-value">3° Sem. | 3S1M</span>
+                </div>
+                <div>
+                    <span class="ribbon-label">Periodo</span>
+                    <span class="ribbon-value">AGO-DIC 2026</span>
+                </div>
             </header>
 
-            <section class="hero">
-                <div class="eyebrow">Laboratorio Virtual de Física</div>
-                <h1>Simuladores Interactivos</h1>
-                <p>
-                    Colección de simuladores desarrollados durante el semestre para analizar, visualizar y comprender fenómenos físicos mediante modelos matemáticos interactivos.
-                </p>
-            </section>
-
+            <!-- Panel Principal -->
             <section class="lab-panel panel-pad">
                 <div class="panel-heading">
-                    <i data-lucide="flask-conical"></i>
-                    <h2>Simuladores Disponibles</h2>
+                    <div class="panel-title-group">
+                        <i data-lucide="flask-conical"></i>
+                        <h2>Simuladores Disponibles</h2>
+                    </div>
+                    <span class="stat-badge">2 Disponibles</span>
                 </div>
 
-                <!-- SECCIÓN UNIDAD 1 -->
-                <div class="unit-section">
+                <!-- UNIDAD 1 -->
+                <div class="unit-section" data-unit="1">
                     <div class="unit-title">
-                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
-                        Unidad 1: Estática
+                        <div class="unit-title-text">
+                            <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                            Unidad 1: Estática de la Partícula
+                        </div>
+                        <span class="badge-status status-active">2 Simuladores</span>
                     </div>
 
                     <div class="simulators-grid">
                         <article class="simulator-card">
                             <div>
-                                <div class="simulator-number">Simulador 01</div>
+                                <div class="simulator-number">Simulador #1</div>
                                 <div class="simulator-icon">
                                     <i data-lucide="split"></i>
                                 </div>
@@ -415,7 +550,7 @@
 
                         <article class="simulator-card">
                             <div>
-                                <div class="simulator-number">Simulador 02</div>
+                                <div class="simulator-number">Simulador #2</div>
                                 <div class="simulator-icon">
                                     <i data-lucide="compass"></i>
                                 </div>
@@ -437,101 +572,148 @@
                     </div>
                 </div>
                 
-                <div class="unit-section">
+                <!-- UNIDADES INACTIVAS (Estilizadas con menor opacidad) -->
+                <div class="unit-section unit-pending" data-unit="2">
                     <div class="unit-title">
-                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
-                        Unidad 2: Dinámica de la partícula
+                        <div class="unit-title-text">
+                            <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                            Unidad 2: Dinámica de la Partícula
+                        </div>
+                        <span class="badge-status status-pending">Próximamente</span>
                     </div>
-
-                    <div class="simulators-grid">
-                        <!-- tarjetas del segundo parcial -->
+                    <div class="empty-unit-card">
+                        <i data-lucide="clock"></i>
+                        <span>Simuladores en desarrollo para esta unidad.</span>
                     </div>
                 </div>
 
-                <div class="unit-section">
+                <div class="unit-section unit-pending" data-unit="3">
                     <div class="unit-title">
-                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
-                        Unidad 3: Óptica
+                        <div class="unit-title-text">
+                            <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                            Unidad 3: Óptica
+                        </div>
+                        <span class="badge-status status-pending">Próximamente</span>
                     </div>
-
-                    <div class="simulators-grid">
-                        <!-- tarjetas del tercer parcial -->
+                    <div class="empty-unit-card">
+                        <i data-lucide="clock"></i>
+                        <span>Simuladores en desarrollo para esta unidad.</span>
                     </div>
                 </div>
 
-                <div class="unit-section">
+                <div class="unit-section unit-pending" data-unit="4">
                     <div class="unit-title">
-                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
-                        Unidad 4: Introducción a la Termodinámica
+                        <div class="unit-title-text">
+                            <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                            Unidad 4: Introducción a la Termodinámica
+                        </div>
+                        <span class="badge-status status-pending">Próximamente</span>
                     </div>
-
-                    <div class="simulators-grid">
-                        <!-- tarjetas del cuarto parcial -->
+                    <div class="empty-unit-card">
+                        <i data-lucide="clock"></i>
+                        <span>Simuladores en desarrollo para esta unidad.</span>
                     </div>
                 </div>
 
-                <div class="unit-section">
+                <div class="unit-section unit-pending" data-unit="5">
                     <div class="unit-title">
-                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
-                        Unidad 5: Electrostática
+                        <div class="unit-title-text">
+                            <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                            Unidad 5: Electrostática
+                        </div>
+                        <span class="badge-status status-pending">Próximamente</span>
                     </div>
-
-                    <div class="simulators-grid">
-                        <!-- tarjetas del quinto parcial -->
+                    <div class="empty-unit-card">
+                        <i data-lucide="clock"></i>
+                        <span>Simuladores en desarrollo para esta unidad.</span>
                     </div>
                 </div>
 
-                <div class="unit-section">
+                <div class="unit-section unit-pending" data-unit="6">
                     <div class="unit-title">
-                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
-                        Unidad 6: Electrodinámica
+                        <div class="unit-title-text">
+                            <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                            Unidad 6: Electrodinámica
+                        </div>
+                        <span class="badge-status status-pending">Próximamente</span>
                     </div>
-
-                    <div class="simulators-grid">
-                        <!-- tarjetas del sexto parcial -->
+                    <div class="empty-unit-card">
+                        <i data-lucide="clock"></i>
+                        <span>Simuladores en desarrollo para esta unidad.</span>
                     </div>
                 </div>
 
-                <div class="unit-section">
+                <div class="unit-section unit-pending" data-unit="7">
                     <div class="unit-title">
-                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
-                        Unidad 7: Electromagnetismo
+                        <div class="unit-title-text">
+                            <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                            Unidad 7: Electromagnetismo
+                        </div>
+                        <span class="badge-status status-pending">Próximamente</span>
                     </div>
-
-                    <div class="simulators-grid">
-                        <!-- tarjetas del séptimo parcial -->
+                    <div class="empty-unit-card">
+                        <i data-lucide="clock"></i>
+                        <span>Simuladores en desarrollo para esta unidad.</span>
                     </div>
                 </div>
 
             </section>
 
-            <section class="project-info">
-                <div class="info-card">
-                    <span>Materia</span>
-                    <strong>Física General</strong>
+            <!-- Métricas (3 Tarjetas para balance visual) -->
+            <section class="project-metrics">
+                <div class="metric-card">
+                    <span>Avance General</span>
+                    <strong>1 de 7 Unidades Activas</strong>
                 </div>
-                <div class="info-card">
-                    <span>Carrera</span>
-                    <strong>Ingeniería en Sistemas Computacionales</strong>
+                <div class="metric-card">
+                    <span>Módulos Listos</span>
+                    <strong>2 Simuladores Interactivos</strong>
                 </div>
-                <div class="info-card">
+                <div class="metric-card">
                     <span>Estado del Proyecto</span>
-                    <strong>2 Simuladores</strong>
+                    <strong>En Desarrollo Continuo</strong>
                 </div>
             </section>
 
             <footer>
                 <p>Laboratorio Virtual de Física</p>
-                <p>AGOS-DIC 2026</p>
+                <p>Instituto Tecnológico de Estudios Superiores de Los Cabos</p>
             </footer>
 
         </main>
     </div>
 
+    <!-- Widget Gatito Interactivo -->
+    <aside class="cat-widget">
+        <button class="cat-avatar" onclick="meow()" title="¡Haz clic para hablar!" aria-label="Mascota interactiva">
+            <i data-lucide="cat" style="width:24px; height:24px; color:var(--accent-pink);"></i>
+        </button>
+        <div class="cat-bubble" id="catText" aria-live="polite">
+            ¡Hola! Bienvenido al laboratorio de Física. Haz clic en un simulador para comenzar 🐾
+        </div>
+    </aside>
+
     <script>
         window.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
+            if (window.lucide) {
+                lucide.createIcons();
+            }
         });
+
+        const catMessages = [
+            "¡Hola! Bienvenido al laboratorio de Física. Haz clic en un simulador para comenzar 🐾",
+            "¡Hola! Selecciona un simulador de la Unidad 1 para experimentar 🧪",
+            "¿Sabías que los vectores tienen magnitud, dirección y sentido? 📐",
+            "¡Miauu! Todo se mantiene en equilibrio si la suma de fuerzas es igual a cero ⚖️"
+        ];
+        
+        let messageIndex = 0;
+
+        function meow() {
+            const bubble = document.getElementById('catText');
+            messageIndex = (messageIndex + 1) % catMessages.length;
+            bubble.innerText = catMessages[messageIndex];
+        }
     </script>
 </body>
 </html>
