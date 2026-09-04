@@ -131,7 +131,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 18px;
+            margin-bottom: 24px;
         }
 
         .panel-heading svg {
@@ -147,21 +147,42 @@
             color: #ffffff;
         }
 
-        /* Grid de Tarjetas Compactas */
+        /* Estilos para separar por Unidades */
+        .unit-section {
+            margin-bottom: 32px;
+        }
+
+        .unit-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .unit-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: .85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--pink-light);
+            margin-bottom: 16px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(251, 207, 232, 0.2);
+        }
+
         .simulators-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 280px)); /* Columnas estrechas para forzar la forma vertical */
-            justify-content: start; /* Alinea las tarjetas al inicio o 'center' si prefieres centrar */
+            grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
+            justify-content: start;
             gap: 20px;
         }
 
-        /* Tarjeta Compacta/Vertical */
         .simulator-card {
             position: relative;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 18px; /* Padding interno reducido */
+            padding: 18px;
             border-radius: 16px;
             background: linear-gradient(145deg, #180610, #0e0208);
             border: 1px solid var(--card-border);
@@ -362,53 +383,126 @@
                     <h2>Simuladores Disponibles</h2>
                 </div>
 
-                <div class="simulators-grid">
+                <!-- SECCIÓN UNIDAD 1 -->
+                <div class="unit-section">
+                    <div class="unit-title">
+                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                        Unidad 1: Estática
+                    </div>
 
-                    <article class="simulator-card">
-                        <div>
-                            <div class="simulator-number">Simulador 01</div>
-                            <div class="simulator-icon">
-                                <i data-lucide="split"></i>
+                    <div class="simulators-grid">
+                        <article class="simulator-card">
+                            <div>
+                                <div class="simulator-number">Simulador 01</div>
+                                <div class="simulator-icon">
+                                    <i data-lucide="split"></i>
+                                </div>
+                                <h3>Componentes Rectangulares</h3>
+                                <p>
+                                    Descomposición de una fuerza en sus componentes horizontal y vertical mediante trigonometría vectorial.
+                                </p>
+                                <div class="simulator-info">
+                                    <span class="tag">Vectores</span>
+                                    <span class="tag">Trigonometría</span>
+                                    <span class="tag">Fuerzas</span>
+                                </div>
                             </div>
-                            <h3>Componentes Rectangulares</h3>
-                            <p>
-                                Descomposición de una fuerza en sus componentes horizontal y vertical mediante trigonometría vectorial.
-                            </p>
-                            <div class="simulator-info">
-                                <span class="tag">Vectores</span>
-                                <span class="tag">Trigonometría</span>
-                                <span class="tag">Fuerzas</span>
-                            </div>
-                        </div>
-                        <a href="componentes-rectangulares.html" class="open-button">
-                            Abrir simulador
-                            <i data-lucide="arrow-up-right"></i>
-                        </a>
-                    </article>
+                            <a href="componentes-rectangulares.html" class="open-button">
+                                Abrir simulador
+                                <i data-lucide="arrow-up-right"></i>
+                            </a>
+                        </article>
 
-                    <article class="simulator-card">
-                        <div>
-                            <div class="simulator-number">Simulador 02</div>
-                            <div class="simulator-icon">
-                                <i data-lucide="compass"></i>
+                        <article class="simulator-card">
+                            <div>
+                                <div class="simulator-number">Simulador 02</div>
+                                <div class="simulator-icon">
+                                    <i data-lucide="compass"></i>
+                                </div>
+                                <h3>Mesa de Fuerzas</h3>
+                                <p>
+                                    Simulación interactiva para analizar el equilibrio de un objeto expuesto a múltiples fuerzas concurrentes.
+                                </p>
+                                <div class="simulator-info">
+                                    <span class="tag">Vectores</span>
+                                    <span class="tag">Equilibrio</span>
+                                    <span class="tag">Estática</span>
+                                </div>
                             </div>
-                            <h3>Mesa de Fuerzas</h3>
-                            <p>
-                                Simulación interactiva para analizar el equilibrio de un objeto expuesto a múltiples fuerzas concurrentes.
-                            </p>
-                            <div class="simulator-info">
-                                <span class="tag">Vectores</span>
-                                <span class="tag">Equilibrio</span>
-                                <span class="tag">Estática</span>
-                            </div>
-                        </div>
-                        <a href="mesa-de-fuerzas.html" class="open-button">
-                            Abrir simulador
-                            <i data-lucide="arrow-up-right"></i>
-                        </a>
-                    </article>
-
+                            <a href="mesa-de-fuerzas.html" class="open-button">
+                                Abrir simulador
+                                <i data-lucide="arrow-up-right"></i>
+                            </a>
+                        </article>
+                    </div>
                 </div>
+                
+                <div class="unit-section">
+                    <div class="unit-title">
+                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                        Unidad 2: Dinámica de la partícula
+                    </div>
+
+                    <div class="simulators-grid">
+                        <!-- tarjetas del segundo parcial -->
+                    </div>
+                </div>
+
+                <div class="unit-section">
+                    <div class="unit-title">
+                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                        Unidad 3: Óptica
+                    </div>
+
+                    <div class="simulators-grid">
+                        <!-- tarjetas del tercer parcial -->
+                    </div>
+                </div>
+
+                <div class="unit-section">
+                    <div class="unit-title">
+                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                        Unidad 4: Introducción a la Termodinámica
+                    </div>
+
+                    <div class="simulators-grid">
+                        <!-- tarjetas del cuarto parcial -->
+                    </div>
+                </div>
+
+                <div class="unit-section">
+                    <div class="unit-title">
+                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                        Unidad 5: Electrostática
+                    </div>
+
+                    <div class="simulators-grid">
+                        <!-- tarjetas del quinto parcial -->
+                    </div>
+                </div>
+
+                <div class="unit-section">
+                    <div class="unit-title">
+                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                        Unidad 6: Electrodinámica
+                    </div>
+
+                    <div class="simulators-grid">
+                        <!-- tarjetas del sexto parcial -->
+                    </div>
+                </div>
+
+                <div class="unit-section">
+                    <div class="unit-title">
+                        <i data-lucide="layers" style="width:16px; height:16px;"></i>
+                        Unidad 7: Electromagnetismo
+                    </div>
+
+                    <div class="simulators-grid">
+                        <!-- tarjetas del séptimo parcial -->
+                    </div>
+                </div>
+
             </section>
 
             <section class="project-info">
