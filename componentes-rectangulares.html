@@ -373,28 +373,8 @@
  <body>
   <div class="app-wrapper">
    <main class="main-content">
-    <header class="academic-ribbon">
-     <div>
-      <span class="ribbon-label">Estudiante</span>
-      <span class="ribbon-value">Erandi Palomares Sánchez</span>
-     </div>
-     <div>
-      <span class="ribbon-label">Grupo</span>
-      <span class="ribbon-value">3S1M</span>
-     </div>
-     <div>
-      <span class="ribbon-label">Fecha</span>
-      <span class="ribbon-value">Septiembre 2026</span>
-     </div>
-     <div>
-      <span class="ribbon-label">Materia</span>
-      <span class="ribbon-value">Física General</span>
-     </div>
-    </header>
-
     <section class="hero">
-     <div class="eyebrow">Laboratorio Visual de Mecánica Vectorial</div>
-     <h1>Descomposición de una Fuerza en Componentes Rectangulares</h1>
+     <h1>Componentes Rectangulares</h1>
      <p>Análisis interactivo de la magnitud, ángulo de inclinación (θ) y proyección trigonométrica de componentes ortogonales (Fx, Fy) para un vector de fuerza individual.</p>
     </section>
 
@@ -677,7 +657,7 @@
       container.innerHTML = "";
       const showProj = document.getElementById("chk-proj").checked;
 
-      const scale = 1.8; // Escala adaptada para dar visibilidad clara a 1 solo vector
+      const scale = 1.8;
       const rad = (force.angle * Math.PI) / 180;
       const calc = calculate();
 
@@ -685,7 +665,7 @@
       const fyScaled = calc.fy * scale;
 
       const endX = 250 + fxScaled;
-      const endY = 250 - fyScaled; // Invertido en SVG (Y crece hacia abajo)
+      const endY = 250 - fyScaled;
 
       // 1. DIBUJAR COMPONENTES (PROYECCIONES PROYECTADAS Y VECTORES DE COMPONENTE)
       if (showProj && force.magnitude > 0) {
@@ -1003,8 +983,7 @@
         });
       });
     }
-
-    // Inicialización al cargar la página
+   
     window.addEventListener("DOMContentLoaded", () => {
       bindInputs();
       updateAll();
