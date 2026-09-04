@@ -1204,17 +1204,65 @@
 
       document.getElementById("quiz-score").textContent = "";
     }
-
-    function evaluateQuiz() {
+function evaluateQuiz() {
       if (currentQuizQuestions.length === 0) return;
 
       let score = 0;
       currentQuizQuestions.forEach((qObj, qIdx) => {
+        // 1. Obtener la pregunta correspondiente en el DOM
+        const container = document.getElementById("quiz-container");
+        const qDiv = container.children[qIdx];
+        
+        // 2. Limpiar retroalimentaciones previas si el usuario vuelve a calificar
+        const oldFeedback = qDiv.querySelector(".quiz-feedback");
+        if (oldFeedback) oldFeedback.remove();
+
         const selected = document.querySelector(`input[name="q_${qIdx}"]:checked`);
-        if (selected && parseInt(selected.value) === qObj.correct) {
+        const userSelectedIdx = selected ? parseInt(selected.value) : -1;
+        const isCorrect = userSelectedIdx === qObj.correct;
+
+        if (isCorrect) {
           score++;
         }
+
+        // 3. Crear contenedor de la explicación/resultado
+        const feedbackDiv = document.createElement("div");
+        feedbackDiv.className = "quiz-feedback";
+        feedbackDiv.style.marginTop = "10px";
+        feedbackDiv.style.padding = "8px 12px";
+        feedbackDiv.style.borderRadius = "6px";
+        feedbackDiv.style.fontSize = "0.8rem";
+
+        if (isCorrect) {
+          feedbackDiv.style.background = "rgba(16, 185, 129, 0.15)";
+          feedbackDiv.style.border = "1px solid #10b981";
+          feedbackDiv.style.color = "#10b981";
+          feedbackDiv.innerHTML = `<strong>¡Correcto!</strong> ${qObj.explanation || ""}`;
+        } else {
+          feedbackDiv.style.background = "rgba(239, 68, 68, 0.15)";
+          feedbackDiv.style.border = "1px solid #ef4444";
+          feedbackDiv.style.color = "#ef4444";
+          
+          const correctText = qObj.options[qObj.correct];
+          feedbackDiv.innerHTML = `
+            <strong>Incorrecto.</strong> La respuesta correcta era: <em>"${correctText}"</em>.
+            <br>${qObj.explanation || ""}
+          `;
+        }
+
+        qDiv.appendChild(feedbackDiv);
       });
+
+      const percentage = (score / currentQuizQuestions.length) * 100;
+      const scoreEl = document.getElementById("quiz-score");
+      scoreEl.textContent = `Puntaje Obtenido: ${score}/${currentQuizQuestions.length} (${percentage}%)`;
+      
+      if (percentage >= 80) {
+        scoreEl.style.color = "#10b981";
+      } else {
+        scoreEl.style.color = "#ef4444";
+      }
+    }
 
       const percentage = (score / currentQuizQuestions.length) * 100;
       const scoreEl = document.getElementById("quiz-score");
