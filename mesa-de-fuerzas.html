@@ -80,7 +80,6 @@
       font-size: .75rem;
     }
 
-    /* Pestañas de navegación para evitar scroll infinito */
     .nav-tabs {
       display: flex;
       gap: 8px;
@@ -178,7 +177,6 @@
       display: grid;
       grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
       gap: 12px;
-      height: 100%;
     }
 
     .force-table {
@@ -218,13 +216,13 @@
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      background: var(--danger);
-      box-shadow: 0 0 10px var(--danger);
+      background: #ef4444;
+      box-shadow: 0 0 10px #ef4444;
     }
 
     .status-card.equilibrium .status-orb {
-      background: var(--success);
-      box-shadow: 0 0 10px var(--success);
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
     }
 
     .action-button, .btn-ctrl {
@@ -387,7 +385,6 @@
       background: rgba(14, 2, 8, 0.6);
     }
 
-    /* Estilos de Quiz mejorados con indicación de correcta/incorrecta y explicación */
     .quiz-option {
       display: block;
       padding: 10px 14px;
@@ -434,7 +431,6 @@
      </a>
     </section>
 
-    <!-- Pestañas de navegación para evitar scroll infinito -->
     <nav class="nav-tabs">
      <button class="tab-btn active" onclick="switchTab('simulador', event)"><i data-lucide="crosshair"></i> Simulador</button>
      <button class="tab-btn" onclick="switchTab('teoria', event)"><i data-lucide="book-open"></i> Teoría</button>
@@ -458,6 +454,11 @@
 
        <div class="force-table">
         <svg id="force-svg" viewBox="0 0 500 500">
+         <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+           <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-pink)"/>
+          </marker>
+         </defs>
          <g opacity=".25">
           <circle cx="250" cy="250" r="180" fill="none" stroke="#f472b6"></circle>
           <circle cx="250" cy="250" r="120" fill="none" stroke="#f472b6"></circle>
@@ -540,7 +541,7 @@
         <div class="force-card">
          <div style="display:flex; justify-content:space-between; align-items:center;">
           <span class="force-name" style="font-weight:700; font-size:.85rem; color:#ffffff;">Fuerza</span>
-          <button class="remove-force" style="background:transparent; color:var(--danger); border:0; cursor:pointer;" title="Eliminar fuerza">
+          <button class="remove-force" style="background:transparent; color:#ef4444; border:0; cursor:pointer;" title="Eliminar fuerza">
            <i data-lucide="trash-2" style="width:16px; height:16px;"></i>
           </button>
          </div>
@@ -609,7 +610,7 @@
      </div>
     </div>
 
-    <!-- PESTAÑA 2: TEORÍA Y PROCEDIMIENTO -->
+    <!-- PESTAÑA 2: TEORÍA -->
     <div id="tab-teoria" class="tab-pane">
      <section class="lab-panel panel-pad">
       <div class="panel-heading">
@@ -646,7 +647,7 @@
         R = √[(∑Fₓ)² + (∑Fᵧ)²], &nbsp;&nbsp; θR = tan⁻¹(∑Fᵧ / ∑Fₓ)
        </div>
        <p>
-        La <strong>Fuerza Equilibrante ($E$)</strong> posee idéntica magnitud que la resultante pero se opone diametralmente (θE = θR ± 180°), neutralizando el sistema físico en la mesa de fuerzas.
+        La <strong>Fuerza Equilibrante (E)</strong> posee idéntica magnitud que la resultante pero se opone diametralmente (θE = θR ± 180°), neutralizando el sistema físico en la mesa de fuerzas.
        </p>
       </div>
      </section>
@@ -691,7 +692,6 @@
     let ringVel = { x: 0, y: 0 };
     let chartInstance = null;
 
-    // Banco de 20 preguntas alineadas al Tema 1.4 con explicación y calificación explícita
     const questionBank = [
       { 
         q: "¿Qué postula la Primera Ley de Newton respecto al estado de reposo o movimiento rectilíneo uniforme?", 
@@ -761,13 +761,12 @@
       { q: "Si las componentes rectangulares suman ΣFₓ = -4 N y ΣFᵧ = -4 N, ¿en qué cuadrante se encuentra la resultante?", options: ["Primer Cuadrante", "Segundo Cuadrante", "Tercer Cuadrante", "Cuarto Cuadrante"], correct: 2, explanation: "Respuesta correcta: Ambas componentes negativas sitúan al vector en el tercer cuadrante (180° < θ < 270°)." },
       { q: "¿Qué unidad dimensional se emplea para cuantificar las fuerzas en el Sistema Internacional (SI)?", options: ["Joule", "Watt", "Newton", "Pascal"], correct: 2, explanation: "Respuesta correcta: El Newton (N) equivale a kg·m/s² como unidad de fuerza." },
       { q: "La función matemática idónea para hallar el ángulo director a partir de las componentes es:", options: ["Seno", "Arcotangente (tan⁻¹)", "Raíz cuadrada", "Exponencial"], correct: 1, explanation: "Respuesta correcta: El ángulo se obtiene mediante la relación trigonométrica inversa tan⁻¹(ΣFᵧ / ΣFₓ)." },
-      { q: "Si se duplica la magnitud de todas las fuerzas aplicadas en un sistema en equilibrio sin alterar sus ángulos:", q: "Si se duplica la magnitud de todas las fuerzas aplicadas en un sistema en equilibrio sin alterar sus ángulos, el sistema:", options: ["Se desequilibra por completo", "Permanece estrictamente en equilibrio", "Gira en sentido horario", "Reduce su resultante a la mitad"], correct: 1, explanation: "Respuesta correcta: Al escalar todas las fuerzas proporcionalmente, la suma neta sigue siendo cero, conservando el equilibrio." },
-      { q: "¿Qué representa físicamente el anillo central en el montaje virtual de la mesa de fuerzas?", options: ["El punto de aplicación concurrente de las fuerzas", "El centro de masa de un cuerpo rígido en rotación", "La polea de fricción variable", "El medidor de presión atmosférica"], correct: 0, explanation: "Respuesta correcta: El anillo central representa el punto material o partícula donde concurren concurrentemente todas las líneas de acción." }
+      { q: "Si se duplica la magnitud de todas las fuerzas aplicadas en un sistema en equilibrio sin alterar sus ángulos, el sistema:", options: ["Se desequilibra por completo", "Permanece estrictamente en equilibrio", "Gira en sentido horario", "Reduce su resultante a la mitad"], correct: 1, explanation: "Respuesta correcta: Al escalar todas las fuerzas proporcionalmente, la suma neta sigue siendo cero, conservando el equilibrio." },
+      { q: "¿Qué representa físicamente el anillo central en el montaje virtual de la mesa de fuerzas?", options: ["El punto de aplicación concurrente de las fuerzas", "El centro de masa de un cuerpo rígido en rotación", "La polea de fricción variable", "El medidor de presión atmosférica"], correct: 0, explanation: "Respuesta correcta: El anillo central representa el punto material o partícula donde concurren todas las líneas de acción." }
     ];
 
     let currentQuizQuestions = [];
 
-    // Sistema de Pestañas
     function switchTab(tabId, event) {
       document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1000,7 +999,6 @@
         document.getElementById("status-note").textContent = "Existe fuerza resultante neta. Se requiere una equilibrante E para cumplir Tema 1.4.";
       }
 
-      // Procedimiento paso a paso explicativo con los valores actuales
       document.getElementById("proc-step-1").textContent = `1. ΣFx = Σ[F·cos(θ)] = ${calc.sumX.toFixed(2)} N`;
       document.getElementById("proc-step-2").textContent = `2. ΣFy = Σ[F·sen(θ)] = ${calc.sumY.toFixed(2)} N`;
       document.getElementById("proc-step-3").textContent = `3. R = √[(${calc.sumX.toFixed(2)})² + (${calc.sumY.toFixed(2)})²] = ${calc.resultant.toFixed(2)} N`;
@@ -1044,7 +1042,6 @@
       document.body.removeChild(link);
     }
 
-    // Generar cuestionario con 5 preguntas aleatorias del banco de 20
     function generateQuiz() {
       const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
       currentQuizQuestions = shuffled.slice(0, 5);
@@ -1090,7 +1087,6 @@
       document.getElementById("quiz-score").textContent = "";
     }
 
-    // Evaluar cuestionario indicando correcta o incorrecta y pequeña explicación
     function evaluateQuiz() {
       if (currentQuizQuestions.length === 0) return;
 
