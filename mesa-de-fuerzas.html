@@ -980,46 +980,46 @@
       }
     }
 
-    function update() {
-      const calc = getCalculations();
-      document.getElementById("sum-x").textContent = `${calc.sumX.toFixed(2)} N`;
-      document.getElementById("sum-y").textContent = `${calc.sumY.toFixed(2)} N`;
-      document.getElementById("resultant").textContent = `${calc.resultant.toFixed(2)} N`;
-      document.getElementById("resultant-angle").textContent = `${calc.angleR.toFixed(1)}°`;
-      document.getElementById("equilibrant-val").textContent = `${calc.resultant.toFixed(2)} N @ ${calc.angleE.toFixed(1)}°`;
+function update() {
+  const calc = getCalculations();
+  document.getElementById("sum-x").textContent = `${calc.sumX.toFixed(2)} N`;
+  document.getElementById("sum-y").textContent = `${calc.sumY.toFixed(2)} N`;
+  document.getElementById("resultant").textContent = `${calc.resultant.toFixed(2)} N`;
+  document.getElementById("resultant-angle").textContent = `${calc.angleR.toFixed(1)}°`;
+  document.getElementById("equilibrant-val").textContent = `${calc.resultant.toFixed(2)} N @ ${calc.angleE.toFixed(1)}°`;
 
-      const statusCard = document.getElementById("status-card");
-      if (calc.resultant <= 0.1) {
-        statusCard.classList.add("equilibrium");
-        document.getElementById("status-message").textContent = "Sistema en Equilibrio Estático (ΣF = 0)";
-        document.getElementById("status-note").textContent = "Se cumple la Primera Ley de Newton. El anillo permanece en reposo centrado.";
-      } else {
-        statusCard.classList.remove("equilibrium");
-        document.getElementById("status-message").textContent = "Sistema Fuera de Equilibrio";
-        document.getElementById("status-note").textContent = "Existe fuerza resultante neta. Se requiere una equilibrante E para cumplir Tema 1.4.";
-      }
+  const statusCard = document.getElementById("status-card");
+  if (calc.resultant <= 0.1) {
+    statusCard.classList.add("equilibrium");
+    document.getElementById("status-message").textContent = "Sistema en Equilibrio Estático (ΣF = 0)";
+    document.getElementById("status-note").textContent = "Se cumple la Primera Ley de Newton. El anillo permanece en reposo centrado.";
+  } else {
+    statusCard.classList.remove("equilibrium");
+    document.getElementById("status-message").textContent = "Sistema Fuera de Equilibrio";
+    document.getElementById("status-note").textContent = "Existe una fuerza resultante neta. Se requiere aplicar una fuerza equilibrante (E) de igual magnitud y sentido opuesto para lograr el equilibrio.";
+  }
 
-      document.getElementById("proc-step-1").textContent = `1. ΣFx = Σ[F·cos(θ)] = ${calc.sumX.toFixed(2)} N`;
-      document.getElementById("proc-step-2").textContent = `2. ΣFy = Σ[F·sen(θ)] = ${calc.sumY.toFixed(2)} N`;
-      document.getElementById("proc-step-3").textContent = `3. R = √[(${calc.sumX.toFixed(2)})² + (${calc.sumY.toFixed(2)})²] = ${calc.resultant.toFixed(2)} N`;
+  document.getElementById("proc-step-1").textContent = `1. ΣFx = Σ[F·cos(θ)] = ${calc.sumX.toFixed(2)} N`;
+  document.getElementById("proc-step-2").textContent = `2. ΣFy = Σ[F·sen(θ)] = ${calc.sumY.toFixed(2)} N`;
+  document.getElementById("proc-step-3").textContent = `3. R = √[(${calc.sumX.toFixed(2)})² + (${calc.sumY.toFixed(2)})²] = ${calc.resultant.toFixed(2)} N`;
 
-      const tbody = document.getElementById("components-body");
-      tbody.innerHTML = "";
-      calc.rows.forEach((r, i) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td><strong style="color:${palette[i % palette.length]}">F${i+1}</strong></td>
-          <td>${r.magnitude}N</td>
-          <td>${r.angle}°</td>
-          <td>${r.fx.toFixed(2)}N</td>
-          <td>${r.fy.toFixed(2)}N</td>
-        `;
-        tbody.appendChild(tr);
-      });
+  const tbody = document.getElementById("components-body");
+  tbody.innerHTML = "";
+  calc.rows.forEach((r, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><strong style="color:${palette[i % palette.length]}">F${i+1}</strong></td>
+      <td>${r.magnitude}N</td>
+      <td>${r.angle}°</td>
+      <td>${r.fx.toFixed(2)}N</td>
+      <td>${r.fy.toFixed(2)}N</td>
+    `;
+    tbody.appendChild(tr);
+  });
 
-      drawSVG(calc);
-      updateChart(calc);
-    }
+  drawSVG(calc);
+  updateChart(calc);
+}
 
     function exportToCSV() {
       const calc = getCalculations();
