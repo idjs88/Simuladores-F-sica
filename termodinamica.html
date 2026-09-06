@@ -1,0 +1,1077 @@
+<!doctype html>
+<html lang="es">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leyes de la Termodinámica</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #FFF8F3;
+      --surface: #FFFFFF;
+      --surface-pink: #FCE7EF;
+
+      --primary: #D95D82;
+      --primary-light: #E98AA8;
+      --primary-soft: #F8DCE5;
+
+      --text: #3D2A2E;
+      --text-muted: #8B7075;
+
+      --border: #EBCFD7;
+      --chocolate: #4A3035;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      width: 100%;
+      height: 100vh;
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      font-size: 0.85rem;
+      overflow: hidden;
+    }
+
+    h1, h2, h3, .font-heading {
+      font-family: "Playfair Display", serif;
+    }
+
+    button, input, select { font: inherit; }
+
+    .app-wrapper {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 12px 16px;
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(217, 93, 130, 0.08), transparent 30rem),
+        radial-gradient(circle at 85% 85%, rgba(233, 138, 168, 0.12), transparent 30rem);
+    }
+
+    .main-content {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .hero { 
+      padding: 4px 0; 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--chocolate);
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: .8rem;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--primary);
+      background: var(--surface-pink);
+      border-radius: 6px 6px 0 0;
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: var(--surface-pink);
+      border-radius: 6px 6px 0 0;
+    }
+
+    .tab-pane {
+      display: none;
+      flex: 1;
+      height: calc(100% - 100px);
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .tab-pane.active {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tab-pane::-webkit-scrollbar { width: 6px; }
+    .tab-pane::-webkit-scrollbar-track { background: var(--bg); border-radius: 4px; }
+    .tab-pane::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .tab-pane::-webkit-scrollbar-thumb:hover { background: var(--primary-light); }
+
+    .lab-panel {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      box-shadow: 0 4px 16px rgba(74, 48, 53, 0.05);
+    }
+
+    .panel-pad { padding: 14px; }
+
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .panel-heading svg {
+      width: 18px;
+      height: 18px;
+      color: var(--primary);
+    }
+
+    .panel-heading h2 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--chocolate);
+    }
+
+    .sim-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+      gap: 12px;
+      height: 100%;
+    }
+
+    .cartesian-plane {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 380px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: radial-gradient(circle, #FFFFFF 0%, #FFF8F3 70%, #FCE7EF 100%);
+      box-shadow: inset 0 0 25px rgba(217, 93, 130, 0.05), 0 4px 12px rgba(74, 48, 53, 0.04);
+      overflow: hidden;
+    }
+
+    canvas.sim-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .btn-ctrl {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 12px;
+      font-size: .78rem;
+      font-weight: 600;
+      background: var(--surface);
+      color: var(--chocolate);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-ctrl:hover {
+      background: var(--surface-pink);
+      border-color: var(--primary-light);
+      color: var(--chocolate);
+    }
+
+    .btn-law-select {
+      padding: 5px 10px;
+      font-size: .75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--chocolate);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-law-select.active {
+      background: var(--primary);
+      color: #FFFFFF;
+      border-color: var(--primary);
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .field-group label {
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    input[type=range] {
+      width: 100%;
+      height: 6px;
+      border-radius: 6px;
+      background: var(--border);
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .result-item {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+    }
+
+    .result-label {
+      font-size: .68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .result-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--chocolate);
+    }
+
+    .quiz-option {
+      display: block;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: .8rem;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--primary-light);
+      background: var(--surface-pink);
+    }
+
+    .quiz-option.selected {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    .action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: .8rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 0;
+      cursor: pointer;
+      background: var(--primary);
+      color: #FFFFFF;
+      transition: all 0.2s;
+    }
+
+    .action-button:hover {
+      background: var(--chocolate);
+      box-shadow: 0 4px 12px rgba(74, 48, 53, 0.2);
+    }
+
+    @media (max-width: 900px) {
+      body { overflow: auto; height: auto; }
+      .app-wrapper { height: auto; min-height: 100vh; }
+      .tab-pane { height: auto; overflow-y: visible; }
+      .sim-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="app-wrapper">
+   <main class="main-content">
+    <section class="hero">
+     <div>
+      <h1>Simulador de Leyes de la Termodinámica</h1>
+      <p>Análisis interactivo de transferencia de energía, trabajo, entropía y equilibrio térmico</p>
+     </div>
+     <a href="index.html" class="btn-ctrl" title="Volver al Inicio">
+      <i data-lucide="arrow-left"></i> Regresar al Inicio
+     </a>
+    </section>
+
+    <nav class="nav-tabs">
+     <button class="tab-btn active" onclick="switchTab('simulador', event)"><i data-lucide="gamepad-2"></i> Simulador</button>
+     <button class="tab-btn" onclick="switchTab('teoria', event)"><i data-lucide="book-open"></i> Teoría</button>
+     <button class="tab-btn" onclick="switchTab('evaluacion', event)"><i data-lucide="award"></i> Evaluación</button>
+    </nav>
+
+    <!-- PESTAÑA 1: SIMULADOR -->
+    <div id="tab-simulador" class="tab-pane active">
+     <section class="sim-layout">
+      <!-- LIENZO DE ANIMACIÓN -->
+      <section class="lab-panel panel-pad" style="display:flex; flex-direction:column;">
+       <div class="panel-heading" style="justify-content: space-between;">
+        <div style="display:flex; align-items:center; gap:8px;">
+         <i data-lucide="flame"></i>
+         <h2 id="sim-title">Primera Ley: Sistema Cilindro-Pistón</h2>
+        </div>
+        <div style="display:flex; gap:6px;">
+         <button id="btn-play" class="btn-ctrl"><i data-lucide="play"></i> Iniciar</button>
+         <button id="btn-pause" class="btn-ctrl"><i data-lucide="pause"></i> Pausa</button>
+         <button id="btn-stop" class="btn-ctrl"><i data-lucide="rotate-ccw"></i> Reiniciar</button>
+        </div>
+       </div>
+
+       <!-- Selector de Ley Termodinámica -->
+       <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap: wrap;">
+        <button class="btn-law-select" onclick="selectLaw(0, this)">Ley Cero</button>
+        <button class="btn-law-select active" onclick="selectLaw(1, this)">1ª Ley (ΔU = Q - W)</button>
+        <button class="btn-law-select" onclick="selectLaw(2, this)">2ª Ley (Entropía/Carnot)</button>
+        <button class="btn-law-select" onclick="selectLaw(3, this)">3ª Ley (Cero Absoluto)</button>
+       </div>
+
+       <div class="cartesian-plane">
+        <canvas id="thermo-canvas" class="sim-canvas"></canvas>
+       </div>
+
+       <div style="margin-top: 8px; display:flex; justify-content:space-between; align-items:center; background:var(--bg); padding:6px 12px; border-radius:8px; border:1px solid var(--border);">
+        <div style="display:flex; gap:12px;" id="sim-legend">
+         <span style="font-size:.75rem; color:var(--primary); font-weight:700;">■ Calor (Q)</span>
+         <span style="font-size:.75rem; color:var(--chocolate); font-weight:700;">■ Trabajo (W)</span>
+         <span style="font-size:.75rem; color:var(--primary-light); font-weight:700;">■ Energía Interna (ΔU)</span>
+        </div>
+        <span id="time-badge" style="font-size:.75rem; font-weight:700; padding:2px 8px; border-radius:4px; background:var(--surface-pink); color:var(--chocolate);">t = 0.00 s</span>
+       </div>
+      </section>
+
+      <!-- PANEL LATERAL DE CONTROLES -->
+      <aside class="lab-panel panel-pad" style="display:flex; flex-direction:column; gap:10px;">
+       <div class="panel-heading">
+        <i data-lucide="sliders"></i>
+        <h2>Controles del Sistema</h2>
+       </div>
+
+       <!-- Controles dinámicos según ley seleccionada -->
+       <div id="controls-container" style="display:grid; gap:8px; background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
+        <!-- Inyectado dinámicamente por JS -->
+       </div>
+
+       <div class="panel-heading" style="margin-top:4px;">
+        <i data-lucide="calculator"></i>
+        <h2>Variables en Tiempo Real</h2>
+       </div>
+
+       <div class="result-grid" id="results-container">
+        <!-- Inyectado dinámicamente por JS -->
+       </div>
+
+       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+        <div class="panel-heading" style="margin:0;">
+         <i data-lucide="bar-chart-2"></i>
+         <h2 id="chart-title">Diagrama P-V</h2>
+        </div>
+        <button id="btn-export-csv" class="btn-ctrl" style="background:var(--primary); color:#FFFFFF; border-color:var(--primary);">
+         <i data-lucide="download"></i> CSV
+        </button>
+       </div>
+
+       <div style="height: 120px; position: relative;">
+        <canvas id="thermoChart"></canvas>
+       </div>
+      </aside>
+     </section>
+    </div>
+
+    <!-- PESTAÑA 2: TEORÍA -->
+    <div id="tab-teoria" class="tab-pane">
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading">
+       <i data-lucide="book-open"></i>
+       <h2>Fundamentos de la Termodinámica</h2>
+      </div>
+      <div style="color:var(--text); font-size:.88rem; line-height:1.6;">
+       <p style="margin-top:0;">
+        La Termodinámica es la rama de la física que estudia las transformaciones de la energía, la transferencia de calor y la capacidad de los sistemas para realizar trabajo mecánico.
+       </p>
+       
+       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">1. Ley Cero de la Termodinámica</h3>
+       <p style="color:var(--text-muted);">Establece que si dos sistemas A y B están independientemente en equilibrio térmico con un tercer sistema C, entonces A y B están en equilibrio térmico entre sí (T<sub>A</sub> = T<sub>B</sub> = T<sub>C</sub>). Constituye la base científica para la medición de la temperatura mediante termómetros.</p>
+
+       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">2. Primera Ley: Conservación de la Energía</h3>
+       <p style="color:var(--text-muted);">La energía no se crea ni se destruye, solo se transforma. El cambio en la energía interna de un sistema cerrado (ΔU) es igual al calor neto suministrado al sistema (Q) menos el trabajo realizado por el sistema (W):</p>
+       <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border); margin:10px 0; font-family:monospace; color:var(--primary); display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+        <div>
+         <strong>Primera Ley:</strong><br>
+         ΔU = Q - W
+        </div>
+        <div>
+         <strong>Trabajo Isobárico:</strong><br>
+         W = P · ΔV
+        </div>
+       </div>
+
+       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">3. Segunda Ley: Entropía y Máquinas Térmicas</h3>
+       <p style="color:var(--text-muted);">El calor fluye de manera espontánea únicamente de un cuerpo más caliente a uno más frío. Ninguna máquina térmica puede convertir el 100% del calor en trabajo (η &lt; 1). La entropía total del universo (S) siempre aumenta en procesos irreversibles (ΔS ≥ 0).</p>
+       <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border); margin:10px 0; font-family:monospace; color:var(--chocolate);">
+        <strong>Eficiencia Máxima de Carnot:</strong> η = 1 - (T<sub>C</sub> / T<sub>H</sub>)
+       </div>
+
+       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">4. Tercera Ley: Cero Absoluto</h3>
+       <p style="color:var(--text-muted);">A medida que la temperatura de un sistema tiende al cero absoluto (0 K o -273.15 °C), la entropía de una sustancia cristalina pura e imperfecta se aproxima a una constante finita (cero). Toda agitación molecular cesa teóricamente.</p>
+      </div>
+     </section>
+    </div>
+
+    <!-- PESTAÑA 3: EVALUACIÓN -->
+    <div id="tab-evaluacion" class="tab-pane">
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading" style="justify-content: space-between;">
+       <div style="display:flex; align-items:center; gap:8px;">
+        <i data-lucide="award"></i>
+        <h2>Evaluación</h2>
+       </div>
+       <button id="btn-new-quiz" class="btn-ctrl">
+        <i data-lucide="refresh-cw"></i> Generar Nuevo Cuestionario
+       </button>
+      </div>
+
+      <div id="quiz-container"></div>
+      
+      <div style="margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
+       <button id="btn-submit-quiz" class="action-button"><i data-lucide="check-circle"></i> Calificar Cuestionario</button>
+       <span id="quiz-score" style="font-size:1.05rem; font-weight:700; color:var(--primary);"></span>
+      </div>
+     </section>
+    </div>
+   </main>
+  </div>
+
+  <script>
+    // Estado Global de la Simulación
+    let currentLaw = 1; // 0: Ley Cero, 1: 1ra Ley, 2: 2da Ley, 3: 3ra Ley
+    let isRunning = false;
+    let currentTime = 0;
+    let animFrameId = null;
+    let chartInstance = null;
+
+    // Parámetros por Ley
+    let params = {
+      // Ley Cero
+      tA: 90, tB: 20, tC: 50,
+      // 1ra Ley
+      heatQ: 500, pressureP: 100, deltaV: 3.0,
+      // 2da Ley
+      tHot: 600, tCold: 300,
+      // 3ra Ley
+      tempK: 150
+    };
+
+    const questionBank = [
+      {
+        q: "Si se suministran 800 J de calor a un gas y este realiza 300 J de trabajo expandiéndose, ¿cuánto cambia su energía interna (ΔU)?",
+        options: ["1100 J", "500 J", "-500 J", "300 J"],
+        correct: 1,
+        explanation: "Aplicando la 1ª Ley: ΔU = Q - W = 800 J - 300 J = 500 J."
+      },
+      {
+        q: "¿Qué establece formalmente la Ley Cero de la Termodinámica?",
+        options: [
+          "La energía no se crea ni se destruye",
+          "Si A está en equilibrio térmico con B, y B con C, entonces A está en equilibrio térmico con C",
+          "La entropía del universo siempre disminuye",
+          "Es imposible alcanzar el cero absoluto"
+        ],
+        correct: 1,
+        explanation: "La Ley Cero define el concepto de equilibrio térmico de manera transitiva."
+      },
+      {
+        q: "¿Cuál es la eficiencia máxima teórica (Carnot) de una máquina que opera entre 600 K y 300 K?",
+        options: ["25%", "50%", "75%", "100%"],
+        correct: 1,
+        explanation: "Eficiencia η = 1 - (Tc/Th) = 1 - (300/600) = 0.50 (50%)."
+      },
+      {
+        q: "A medida que la temperatura de un cristal perfecto se aproxima al cero absoluto (0 K), ¿qué ocurre con su entropía?",
+        options: ["Tiende a infinito", "Tiende a cero", "Fluctúa aleatoriamente", "Se vuelve negativa"],
+        correct: 1,
+        explanation: "Según la 3ª Ley de la Termodinámica, la entropía alcanza un valor nulo en el cero absoluto."
+      },
+      {
+        q: "En un proceso isocórico (volumen constante), ¿cuánto trabajo (W) realiza el gas?",
+        options: ["W = Q", "W = ΔU", "W = 0", "W = P · V"],
+        correct: 2,
+        explanation: "Al no existir cambio de volumen (ΔV = 0), el trabajo realizado por o sobre el gas es cero."
+      }
+    ];
+
+    let currentQuizQuestions = [];
+
+    function switchTab(tabId, event) {
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      if (event && event.currentTarget) event.currentTarget.classList.add('active');
+    }
+
+    function selectLaw(lawIndex, btn) {
+      currentLaw = lawIndex;
+      document.querySelectorAll('.btn-law-select').forEach(b => b.classList.remove('active'));
+      if(btn) btn.classList.add('active');
+
+      const titles = [
+        "Ley Cero: Equilibrio Térmico",
+        "Primera Ley: Sistema Cilindro-Pistón",
+        "Segunda Ley: Eficiencia y Entropía (Carnot)",
+        "Tercera Ley: Movimiento Molecular y Cero Absoluto"
+      ];
+      document.getElementById("sim-title").textContent = titles[lawIndex];
+
+      currentTime = 0;
+      isRunning = false;
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+      document.getElementById("time-badge").textContent = "t = 0.00 s";
+
+      renderControls();
+      renderResults();
+      initChart();
+      drawSimulation();
+    }
+
+    function renderControls() {
+      const container = document.getElementById("controls-container");
+      container.innerHTML = "";
+
+      if (currentLaw === 0) { // Ley Cero
+        container.innerHTML = `
+          <div class="field-group">
+            <div style="display:flex; justify-content:space-between;">
+              <label>Temperatura Cuerpo A (T<sub>A</sub>):</label>
+              <span id="lbl-ta" style="font-weight:700; color:var(--primary);">${params.tA} °C</span>
+            </div>
+            <input id="slider-ta" type="range" min="0" max="100" value="${params.tA}">
+          </div>
+          <div class="field-group">
+            <div style="display:flex; justify-content:space-between;">
+              <label>Temperatura Cuerpo B (T<sub>B</sub>):</label>
+              <span id="lbl-tb" style="font-weight:700; color:var(--chocolate);">${params.tB} °C</span>
+            </div>
+            <input id="slider-tb" type="range" min="0" max="100" value="${params.tB}">
+          </div>
+          <div class="field-group">
+            <div style="display:flex; justify-content:space-between;">
+              <label>Temperatura Enlace C (T<sub>C</sub>):</label>
+              <span id="lbl-tc" style="font-weight:700; color:var(--primary-light);">${params.tC} °C</span>
+            </div>
+            <input id="slider-tc" type="range" min="0" max="100" value="${params.tC}">
+          </div>`;
+      } else if (currentLaw === 1) { // 1ra Ley
+        container.innerHTML = `
+          <div class="field-group">
+            <div style="display:flex; justify-content:space-between;">
+              <label>Calor Suministrado (Q):</label>
+              <span id="lbl-q" style="font-weight:700; color:var(--primary);">${params.heatQ} J</span>
+            </div>
+            <input id="slider-q" type="range" min="-500" max="1500" value="${params.heatQ}" step="50">
+          </div>
+          <div class="field-group">
+            <div style="display:flex; justify-content:space-between;">
+              <label>Presión del Gas (P):</label>
+              <span id="lbl-p" style="font-weight:700; color:var(--chocolate);">${params.pressureP} kPa</span>
+            </div>
+            <input id="slider-p" type="range" min="50" max="300" value="${params.pressureP}" step="10">
+          </div>
+          <div class="field-group">
+            <div style="display:flex; justify-content:space-between;">
+              <label>Expansión de Vol. (ΔV):</label>
+              <span id="lbl-dv" style="font-weight:700; color:var(--primary-light);">${params.deltaV} L</span>
+            </div>
+            <input id="slider-dv" type="range" min="0.5" max="5.0" value="${params.deltaV}" step="0.1">
+          </div>`;
+      } else if (currentLaw === 2) { // 2da Ley
+        container.innerHTML = `
+          <div class="field-group">
+            <div style="display:flex; justify-content:space-between;">
+              <label>Foco Caliente (T<sub>H</sub>):</label>
+              <span id="lbl-th" style="font-weight:700; color:var(--primary);">${params.tHot} K</span>
+            </div>
+            <input id="slider-th" type="range" min="400" max="1000" value="${params.tHot}" step="20">
+          </div>
+          <div class="field-group">
+            <div style="display:flex; justify-content:space-between;">
+              <label>Foco Frío (T<sub>C</sub>):</label>
+              <span id="lbl-tc2" style="font-weight:700; color:var(--chocolate);">${params.tCold} K</span>
+            </div>
+            <input id="slider-tc2" type="range" min="100" max="380" value="${params.tCold}" step="10">
+          </div>`;
+      } else if (currentLaw === 3) { // 3ra Ley
+        container.innerHTML = `
+          <div class="field-group">
+            <div style="display:flex; justify-content:space-between;">
+              <label>Temperatura del Sistema (T):</label>
+              <span id="lbl-tk" style="font-weight:700; color:var(--primary);">${params.tempK} K</span>
+            </div>
+            <input id="slider-tk" type="range" min="0" max="300" value="${params.tempK}" step="1">
+          </div>`;
+      }
+
+      bindControlEvents();
+    }
+
+    function bindControlEvents() {
+      const inputs = document.querySelectorAll("#controls-container input");
+      inputs.forEach(input => {
+        input.addEventListener("input", (e) => {
+          const id = e.target.id;
+          const val = parseFloat(e.target.value);
+          if (id === "slider-ta") { params.tA = val; document.getElementById("lbl-ta").textContent = `${val} °C`; }
+          if (id === "slider-tb") { params.tB = val; document.getElementById("lbl-tb").textContent = `${val} °C`; }
+          if (id === "slider-tc") { params.tC = val; document.getElementById("lbl-tc").textContent = `${val} °C`; }
+          if (id === "slider-q") { params.heatQ = val; document.getElementById("lbl-q").textContent = `${val} J`; }
+          if (id === "slider-p") { params.pressureP = val; document.getElementById("lbl-p").textContent = `${val} kPa`; }
+          if (id === "slider-dv") { params.deltaV = val; document.getElementById("lbl-dv").textContent = `${val} L`; }
+          if (id === "slider-th") { params.tHot = val; document.getElementById("lbl-th").textContent = `${val} K`; }
+          if (id === "slider-tc2") { params.tCold = val; document.getElementById("lbl-tc2").textContent = `${val} K`; }
+          if (id === "slider-tk") { params.tempK = val; document.getElementById("lbl-tk").textContent = `${val} K`; }
+
+          renderResults();
+          updateChart();
+          drawSimulation();
+        });
+      });
+    }
+
+    function renderResults() {
+      const container = document.getElementById("results-container");
+      if (currentLaw === 0) {
+        const tEq = ((params.tA + params.tB + params.tC) / 3).toFixed(1);
+        container.innerHTML = `
+          <div class="result-item">
+            <span class="result-label">Temp. Promedio</span>
+            <span class="result-value" style="color:var(--primary);">${tEq} °C</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Estado</span>
+            <span class="result-value" style="color:var(--chocolate);">${isRunning ? 'Equilibrando' : 'Estático'}</span>
+          </div>`;
+      } else if (currentLaw === 1) {
+        const W = (params.pressureP * params.deltaV).toFixed(1);
+        const dU = (params.heatQ - W).toFixed(1);
+        container.innerHTML = `
+          <div class="result-item">
+            <span class="result-label">Trabajo (W = P·ΔV)</span>
+            <span class="result-value" style="color:var(--chocolate);">${W} J</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Energía Interna (ΔU)</span>
+            <span class="result-value" style="color:var(--primary);">${dU} J</span>
+          </div>`;
+      } else if (currentLaw === 2) {
+        const eff = ((1 - params.tCold / params.tHot) * 100).toFixed(1);
+        const wMax = (params.tHot - params.tCold);
+        container.innerHTML = `
+          <div class="result-item">
+            <span class="result-label">Eficiencia Carnot (η)</span>
+            <span class="result-value" style="color:var(--primary);">${eff} %</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Diferencial Térmico</span>
+            <span class="result-value" style="color:var(--chocolate);">${wMax} K</span>
+          </div>`;
+      } else if (currentLaw === 3) {
+        const entropy = (Math.log(params.tempK + 1) * 2.5).toFixed(2);
+        const celcius = (params.tempK - 273.15).toFixed(1);
+        container.innerHTML = `
+          <div class="result-item">
+            <span class="result-label">Entropía Relativa (S)</span>
+            <span class="result-value" style="color:var(--primary);">${entropy} J/K</span>
+          </div>
+          <div class="result-item">
+            <span class="result-label">Temp. Celsius</span>
+            <span class="result-value" style="color:var(--chocolate);">${celcius} °C</span>
+          </div>`;
+      }
+    }
+
+    function drawSimulation() {
+      const canvas = document.getElementById("thermo-canvas");
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width = canvas.parentElement.clientWidth;
+      const h = canvas.height = canvas.parentElement.clientHeight;
+
+      ctx.clearRect(0, 0, w, h);
+
+      if (currentLaw === 0) { // LEY CERO
+        const size = 70;
+        const cy = h / 2;
+        const ax = w * 0.25, bx = w * 0.75, cx = w * 0.5;
+
+        if (isRunning) {
+          const avg = (params.tA + params.tB + params.tC) / 3;
+          params.tA += (avg - params.tA) * 0.02;
+          params.tB += (avg - params.tB) * 0.02;
+          params.tC += (avg - params.tC) * 0.02;
+        }
+
+        // Conectores térmicos
+        ctx.strokeStyle = "#EBCFD7";
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(ax, cy); ctx.lineTo(cx, cy - 40);
+        ctx.moveTo(bx, cy); ctx.lineTo(cx, cy - 40);
+        ctx.stroke();
+
+        drawBlock(ctx, ax, cy, size, params.tA, "Cuerpo A");
+        drawBlock(ctx, bx, cy, size, params.tB, "Cuerpo B");
+        drawBlock(ctx, cx, cy - 50, size, params.tC, "Medio C");
+
+      } else if (currentLaw === 1) { // 1RA LEY
+        const cx = w / 2, cy = h * 0.7;
+        const cylW = 140, cylH = 180;
+        const W = params.pressureP * params.deltaV;
+        const expansionFactor = (W / 3000) * 40;
+        const pistonY = cy - 40 - expansionFactor - (isRunning ? Math.sin(currentTime * 4) * 8 : 0);
+
+        // Contenido Gas / Fuego
+        ctx.fillStyle = `rgba(217, 93, 130, ${Math.min(0.85, Math.max(0.2, params.heatQ / 1500))})`;
+        ctx.fillRect(cx - cylW/2 + 5, pistonY, cylW - 10, (cy + cylH/2) - pistonY - 5);
+
+        // Cilindro
+        ctx.strokeStyle = "#4A3035";
+        ctx.lineWidth = 4;
+        ctx.strokeRect(cx - cylW/2, cy - cylH/2, cylW, cylH);
+
+        // Pistón
+        ctx.fillStyle = "#E98AA8";
+        ctx.fillRect(cx - cylW/2 + 2, pistonY - 15, cylW - 4, 15);
+        ctx.fillStyle = "#4A3035";
+        ctx.fillRect(cx - 5, pistonY - 60, 10, 45);
+
+        // Moléculas de Gas
+        ctx.fillStyle = "#FFFFFF";
+        for(let i = 0; i < 20; i++) {
+          const rx = cx - cylW/2 + 15 + ((i * 17 + currentTime * 30) % (cylW - 30));
+          const ry = pistonY + 10 + ((i * 23 + currentTime * 20) % ((cy + cylH/2) - pistonY - 20));
+          ctx.beginPath();
+          ctx.arc(rx, ry, 3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+      } else if (currentLaw === 2) { // 2DA LEY
+        const cx = w / 2;
+        // Foco Caliente
+        ctx.fillStyle = "#D95D82";
+        ctx.fillRect(cx - 80, 40, 160, 40);
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "bold 12px 'DM Sans', sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(`Foco Caliente: ${params.tHot} K`, cx, 65);
+
+        // Motor / Ciclo
+        ctx.strokeStyle = "#4A3035";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(cx, h / 2, 45, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = "#3D2A2E";
+        ctx.fillText("Motor Carnot", cx, h / 2 + 4);
+
+        // Foco Frío
+        ctx.fillStyle = "#E98AA8";
+        ctx.fillRect(cx - 80, h - 80, 160, 40);
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillText(`Foco Frío: ${params.tCold} K`, cx, h - 55);
+
+        // Flechas de flujo
+        ctx.strokeStyle = "#D95D82";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(cx, 80); ctx.lineTo(cx, h/2 - 45); ctx.stroke();
+        ctx.strokeStyle = "#4A3035";
+        ctx.beginPath(); ctx.moveTo(cx, h/2 + 45); ctx.lineTo(cx, h - 80); ctx.stroke();
+
+      } else if (currentLaw === 3) { // 3RA LEY
+        const cx = w / 2, cy = h / 2;
+        const radius = 100;
+
+        ctx.strokeStyle = "#EBCFD7";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.stroke();
+
+        const speed = (params.tempK / 300) * 8;
+        ctx.fillStyle = "#D95D82";
+        for (let i = 0; i < 25; i++) {
+          const angle = i * (Math.PI * 2 / 25);
+          const jitter = isRunning ? (Math.sin(currentTime * 10 + i) * speed) : (speed * 0.5);
+          const mx = cx + Math.cos(angle) * (30 + (i * 2.5) % (radius - 15)) + jitter;
+          const my = cy + Math.sin(angle) * (30 + (i * 2.5) % (radius - 15)) + jitter;
+
+          ctx.beginPath();
+          ctx.arc(mx, my, 4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    function drawBlock(ctx, x, y, size, temp, label) {
+      const ratio = Math.min(1, Math.max(0, temp / 100));
+      // Transición entre rosa claro y magenta cálido
+      const r = Math.floor(217 + (38 * ratio));
+      const g = Math.floor(138 - (45 * ratio));
+      const b = Math.floor(168 - (38 * ratio));
+      
+      ctx.fillStyle = `rgb(${r}, ${g}, ${b})`;
+      ctx.fillRect(x - size/2, y - size/2, size, size);
+      ctx.strokeStyle = "#FFFFFF";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x - size/2, y - size/2, size, size);
+
+      ctx.fillStyle = "#4A3035";
+      ctx.font = "bold 11px 'DM Sans', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(label, x, y - size/2 - 8);
+      ctx.fillText(`${temp.toFixed(1)} °C`, x, y + 4);
+    }
+
+    function initChart() {
+      const ctx = document.getElementById('thermoChart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+
+      let labels = [], data = [], labelText = "";
+
+      if (currentLaw === 1) {
+        labelText = "Presión vs Volumen (Isotermas)";
+        for(let v = 1; v <= 10; v++) {
+          labels.push(`${v}L`);
+          data.push((params.pressureP * (2 / v)).toFixed(1));
+        }
+      } else {
+        labelText = "Evolución Temporal";
+        for(let t = 0; t <= 10; t++) {
+          labels.push(`${t}s`);
+          data.push((Math.sin(t) * 10 + 50).toFixed(1));
+        }
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: labelText,
+            data: data,
+            borderColor: '#D95D82',
+            backgroundColor: 'rgba(217, 93, 130, 0.12)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { grid: { color: '#EBCFD7' }, ticks: { color: '#8B7075', font: { size: 9 } } },
+            x: { grid: { color: '#EBCFD7' }, ticks: { color: '#8B7075', font: { size: 9 } } }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    function updateChart() {
+      if (!chartInstance) return;
+      if (currentLaw === 1) {
+        const newData = [];
+        for(let v = 1; v <= 10; v++) {
+          newData.push((params.pressureP * (params.deltaV / v)).toFixed(1));
+        }
+        chartInstance.data.datasets[0].data = newData;
+        chartInstance.update();
+      }
+    }
+
+    function updatePhysicsAnimation() {
+      if (!isRunning) return;
+
+      currentTime += 0.03;
+      document.getElementById("time-badge").textContent = `t = ${currentTime.toFixed(2)} s`;
+
+      drawSimulation();
+      renderResults();
+
+      if (isRunning) {
+        animFrameId = requestAnimationFrame(updatePhysicsAnimation);
+      }
+    }
+
+    function exportToCSV() {
+      let csv = "data:text/csv;charset=utf-8,Ley,Parametro_1,Parametro_2,Resultado\n";
+      csv += `${currentLaw},${params.heatQ || params.tA},${params.pressureP || params.tB},${params.deltaV || params.tC}\n`;
+      
+      const encodedUri = encodeURI(csv);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "reporte_termodinamica.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function generateQuiz() {
+      const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+      currentQuizQuestions = shuffled.slice(0, 5);
+      const container = document.getElementById("quiz-container");
+      container.innerHTML = "";
+
+      currentQuizQuestions.forEach((qObj, qIdx) => {
+        const qDiv = document.createElement("div");
+        qDiv.style.background = "var(--bg)";
+        qDiv.style.padding = "12px";
+        qDiv.style.borderRadius = "8px";
+        qDiv.style.border = "1px solid var(--border)";
+        qDiv.style.marginBottom = "10px";
+
+        const title = document.createElement("h4");
+        title.style.margin = "0 0 8px 0";
+        title.style.color = "var(--chocolate)";
+        title.style.fontSize = "0.9rem";
+        title.textContent = `${qIdx + 1}. ${qObj.q}`;
+        qDiv.appendChild(title);
+
+        qObj.options.forEach((opt, optIdx) => {
+          const label = document.createElement("label");
+          label.className = "quiz-option";
+          label.innerHTML = `<input type="radio" name="q_${qIdx}" value="${optIdx}" style="display:none;">${opt}`;
+          label.addEventListener("click", () => {
+            qDiv.querySelectorAll(".quiz-option").forEach(s => s.classList.remove("selected"));
+            label.classList.add("selected");
+            label.querySelector("input").checked = true;
+          });
+          qDiv.appendChild(label);
+        });
+        container.appendChild(qDiv);
+      });
+      document.getElementById("quiz-score").textContent = "";
+    }
+
+    function evaluateQuiz() {
+      let score = 0;
+      currentQuizQuestions.forEach((qObj, qIdx) => {
+        const container = document.getElementById("quiz-container");
+        const qDiv = container.children[qIdx];
+        const selected = document.querySelector(`input[name="q_${qIdx}"]:checked`);
+        const userIdx = selected ? parseInt(selected.value) : -1;
+        const isCorrect = userIdx === qObj.correct;
+        if (isCorrect) score++;
+
+        let fb = qDiv.querySelector(".quiz-feedback");
+        if (!fb) {
+          fb = document.createElement("div");
+          fb.className = "quiz-feedback";
+          fb.style.marginTop = "8px";
+          fb.style.padding = "8px";
+          fb.style.borderRadius = "6px";
+          fb.style.fontSize = "0.78rem";
+          qDiv.appendChild(fb);
+        }
+        fb.style.background = isCorrect ? "rgba(16, 185, 129, 0.12)" : "rgba(217, 93, 130, 0.12)";
+        fb.style.color = isCorrect ? "#065f46" : "var(--chocolate)";
+        fb.style.border = isCorrect ? "1px solid #a7f3d0" : "1px solid var(--border)";
+        fb.innerHTML = `<strong>${isCorrect ? "Correcto" : "Incorrecto"}:</strong> ${qObj.explanation}`;
+      });
+      const scoreEl = document.getElementById("quiz-score");
+      scoreEl.textContent = `Calificación: ${score}/${currentQuizQuestions.length}`;
+    }
+
+    // Event Listeners
+    document.getElementById("btn-play").addEventListener("click", () => {
+      if (!isRunning) {
+        isRunning = true;
+        updatePhysicsAnimation();
+      }
+    });
+
+    document.getElementById("btn-pause").addEventListener("click", () => {
+      isRunning = false;
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+    });
+
+    document.getElementById("btn-stop").addEventListener("click", () => {
+      isRunning = false;
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+      currentTime = 0;
+      document.getElementById("time-badge").textContent = "t = 0.00 s";
+      drawSimulation();
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      selectLaw(1, document.querySelectorAll('.btn-law-select')[1]);
+      generateQuiz();
+      lucide.createIcons();
+      document.getElementById("btn-export-csv").addEventListener("click", exportToCSV);
+      document.getElementById("btn-new-quiz").addEventListener("click", generateQuiz);
+      document.getElementById("btn-submit-quiz").addEventListener("click", evaluateQuiz);
+    });
+
+    window.addEventListener("resize", drawSimulation);
+  </script>
+ </body>
+</html>
