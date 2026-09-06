@@ -3,23 +3,41 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Componentes Rectangulares de un Vector</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <title>Componentes Rectangulares</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+    rel="stylesheet"
+  >
+  
   <style>
     :root {
-      --bg-main: #0b0307;
-      --card-bg: #180610;
-      --card-border: #3b1124;
-      --ink: #fce7f3;
-      --muted: #f472b6;
-      --accent-pink: #ec4899;
-      --accent-rose: #f43f5e;
-      --accent-cyan: #38bdf8;
-      --accent-purple: #c084fc;
-      --pink-light: #fbcfe8;
+      /* Fondo base y tarjetas */
+      --bg: #FFF8F3;
+      --card-bg: #FFFFFF;
+      --card-bg-soft: #FDF1F5;
+      
+      /* Colores primarios y acentos */
+      --primary: #D95D82;
+      --primary-hover: #C2486E;
+      --primary-light: #E98AA8;
+      --primary-soft: #F8DCE5;
+      
+      /* Componentes vectoriales (Plano Cartesiano) */
+      --color-fx: #2563EB;
+      --color-fy: #7C3AED;
+      --color-f: #D95D82;
+
+      /* Texto y bordes */
+      --text: #3D2A2E;
+      --text-muted: #8B7075;
+      --border: #EBCFD7;
+      --chocolate: #4A3035;
     }
 
     * { box-sizing: border-box; }
@@ -28,14 +46,24 @@
       width: 100%;
       height: 100vh;
       margin: 0;
-      font-family: "Poppins", sans-serif;
-      background-color: var(--bg-main);
-      color: var(--ink);
+      font-family: "DM Sans", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
       font-size: 0.85rem;
       overflow: hidden;
     }
 
     button, input, select { font: inherit; }
+
+    .title-font{
+      font-family: "Playfair Display", serif;
+    }
+
+    .page{
+      width: min(1100px, 92%);
+      margin: auto;
+      padding: 50px 0;
+    }
 
     .app-wrapper {
       width: 100%;
@@ -44,8 +72,8 @@
       flex-direction: column;
       padding: 12px 16px;
       background-image:
-        radial-gradient(circle at 15% 15%, rgba(236, 72, 153, 0.18), transparent 30rem),
-        radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.12), transparent 30rem);
+        radial-gradient(circle at 15% 15%, rgba(217, 93, 130, 0.12), transparent 30rem),
+        radial-gradient(circle at 85% 85%, rgba(233, 138, 168, 0.15), transparent 30rem);
     }
 
     .main-content {
@@ -70,20 +98,27 @@
       margin: 0;
       font-size: 1.4rem;
       font-weight: 800;
-      color: #ffffff;
-      text-shadow: 0 0 16px rgba(236, 72, 153, 0.4);
+      color: var(--chocolate);
+      text-shadow: 0 0 12px rgba(217, 93, 130, 0.2);
     }
 
     .hero p {
       margin: 0;
-      color: var(--pink-light);
+      color: var(--text-muted);
       font-size: .75rem;
+    }
+
+    .subtitle {
+      margin-top: 15px;
+      color: var(--text-muted);
+      font-size: 1rem;
+      letter-spacing: 0.05em;
     }
 
     .nav-tabs {
       display: flex;
       gap: 8px;
-      border-bottom: 2px solid var(--card-border);
+      border-bottom: 2px solid var(--border);
       flex-shrink: 0;
     }
 
@@ -91,7 +126,7 @@
       padding: 8px 16px;
       font-weight: 700;
       font-size: 0.82rem;
-      color: var(--pink-light);
+      color: var(--text-muted);
       background: transparent;
       border: none;
       border-bottom: 3px solid transparent;
@@ -103,15 +138,15 @@
     }
 
     .tab-btn:hover {
-      color: #ffffff;
-      background: rgba(236, 72, 153, 0.1);
+      color: var(--chocolate);
+      background: var(--primary-soft);
       border-radius: 6px 6px 0 0;
     }
 
     .tab-btn.active {
-      color: #ffffff;
-      border-bottom-color: var(--accent-pink);
-      background: rgba(236, 72, 153, 0.15);
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: var(--primary-soft);
       border-radius: 6px 6px 0 0;
     }
 
@@ -133,22 +168,22 @@
       width: 6px;
     }
     .tab-pane::-webkit-scrollbar-track {
-      background: var(--card-bg);
+      background: var(--card-bg-soft);
       border-radius: 4px;
     }
     .tab-pane::-webkit-scrollbar-thumb {
-      background: var(--card-border);
+      background: var(--border);
       border-radius: 4px;
     }
     .tab-pane::-webkit-scrollbar-thumb:hover {
-      background: var(--accent-pink);
+      background: var(--primary);
     }
 
     .lab-panel {
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--border);
       border-radius: 12px;
       background: var(--card-bg);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      box-shadow: 0 4px 16px rgba(74, 48, 53, 0.06);
     }
 
     .panel-pad { padding: 14px; }
@@ -163,14 +198,14 @@
     .panel-heading svg {
       width: 18px;
       height: 18px;
-      color: var(--accent-pink);
+      color: var(--primary);
     }
 
     .panel-heading h2 {
       margin: 0;
       font-size: 0.95rem;
       font-weight: 700;
-      color: #ffffff;
+      color: var(--chocolate);
     }
 
     .sim-layout {
@@ -186,9 +221,9 @@
       height: 100%;
       min-height: 380px;
       border-radius: 12px;
-      border: 2px solid #3b1124;
-      background: radial-gradient(circle, #0e0208 0%, #180610 70%, #250818 100%);
-      box-shadow: inset 0 0 35px rgba(0,0,0,0.95), 0 0 20px rgba(236, 72, 153, 0.2);
+      border: 2px solid var(--border);
+      background: var(--card-bg-soft);
+      box-shadow: inset 0 0 20px rgba(217, 93, 130, 0.05);
       overflow: hidden;
       cursor: grab;
     }
@@ -203,7 +238,7 @@
     }
 
     .svg-label {
-      fill: var(--pink-light);
+      fill: var(--text-muted);
       font-size: 10px;
       font-weight: 700;
     }
@@ -216,9 +251,9 @@
       padding: 6px 12px;
       font-size: .78rem;
       font-weight: 600;
-      background: #3b1124;
-      color: #ffffff;
-      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      color: var(--chocolate);
+      border: 1px solid var(--border);
       border-radius: 6px;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -226,13 +261,15 @@
     }
 
     .btn-ctrl:hover {
-      background: var(--accent-pink);
+      background: var(--primary);
       color: #ffffff;
-      box-shadow: 0 0 10px rgba(236, 72, 153, 0.4);
+      border-color: var(--primary);
+      box-shadow: 0 2px 8px rgba(217, 93, 130, 0.3);
     }
 
     .btn-ctrl.active-play {
       background: #10b981;
+      color: #ffffff;
       border-color: #059669;
     }
 
@@ -245,28 +282,28 @@
     .field-group label {
       font-size: .72rem;
       font-weight: 600;
-      color: var(--pink-light);
+      color: var(--text-muted);
     }
 
     .num-input {
       width: 100%;
       padding: 4px 8px;
       border-radius: 6px;
-      border: 1px solid var(--card-border);
-      background: #0e0208;
-      color: #ffffff;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--chocolate);
       font-size: .8rem;
       font-weight: 600;
     }
 
-    .num-input:focus { outline: 2px solid var(--accent-pink); }
+    .num-input:focus { outline: 2px solid var(--primary); }
 
     input[type=range] {
       width: 100%;
       height: 5px;
       border-radius: 6px;
-      background: #3b1124;
-      accent-color: var(--accent-pink);
+      background: var(--border);
+      accent-color: var(--primary);
       cursor: pointer;
     }
 
@@ -278,9 +315,9 @@
 
     .result-card-large {
       padding: 8px 10px;
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--border);
       border-radius: 8px;
-      background: rgba(14, 2, 8, 0.8);
+      background: var(--card-bg);
       position: relative;
       overflow: hidden;
     }
@@ -290,7 +327,7 @@
       position: absolute;
       top: 0; left: 0; bottom: 0;
       width: 3px;
-      background: var(--card-color, var(--accent-pink));
+      background: var(--primary);
     }
 
     .result-label {
@@ -298,20 +335,20 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: .05em;
-      color: var(--pink-light);
+      color: var(--text-muted);
       display: block;
     }
 
     .result-value {
       font-size: 1.05rem;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--chocolate);
     }
 
     .result-formula {
       font-family: monospace;
       font-size: .68rem;
-      color: var(--muted);
+      color: var(--text-muted);
     }
 
     .components-table {
@@ -323,21 +360,21 @@
     .components-table th, .components-table td {
       padding: 6px 10px;
       text-align: left;
-      border-bottom: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--border);
     }
 
     .components-table th {
-      color: var(--accent-pink);
+      color: var(--primary);
       font-size: .68rem;
       text-transform: uppercase;
       letter-spacing: .05em;
-      background: rgba(14, 2, 8, 0.6);
+      background: var(--card-bg-soft);
     }
 
     .accordion-item {
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--border);
       border-radius: 8px;
-      background: #0e0208;
+      background: var(--card-bg);
       margin-bottom: 6px;
     }
 
@@ -349,7 +386,7 @@
       align-items: center;
       background: transparent;
       border: 0;
-      color: #ffffff;
+      color: var(--chocolate);
       font-weight: 600;
       font-size: .8rem;
       cursor: pointer;
@@ -358,7 +395,7 @@
     .accordion-content {
       display: none;
       padding: 0 12px 10px;
-      color: var(--pink-light);
+      color: var(--text-muted);
       font-size: .78rem;
       line-height: 1.4;
     }
@@ -367,11 +404,11 @@
 
     .quiz-option {
       display: block;
-      padding: 8px 10px;
-      border: 1px solid var(--card-border);
-      border-radius: 6px;
-      background: #0e0208;
-      color: var(--pink-light);
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      color: var(--text);
       margin-bottom: 6px;
       cursor: pointer;
       transition: all 0.2s;
@@ -379,13 +416,13 @@
     }
 
     .quiz-option:hover {
-      border-color: var(--accent-pink);
-      background: rgba(236, 72, 153, 0.12);
+      border-color: var(--primary);
+      background: var(--primary-soft);
     }
 
     .quiz-option.selected {
-      border-color: var(--accent-pink);
-      background: var(--accent-pink);
+      border-color: var(--primary);
+      background: var(--primary);
       color: #ffffff;
       font-weight: 600;
     }
@@ -401,19 +438,19 @@
       border-radius: 6px;
       border: 0;
       cursor: pointer;
-      background: var(--accent-pink);
+      background: var(--primary);
       color: #ffffff;
       transition: all 0.2s;
     }
 
     .action-button:hover {
-      background: var(--accent-rose);
-      box-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
+      background: var(--primary-hover);
+      box-shadow: 0 2px 8px rgba(217, 93, 130, 0.4);
     }
 
     .step-box {
-      background: #0e0208;
-      border-left: 3px solid var(--accent-pink);
+      background: var(--card-bg-soft);
+      border-left: 3px solid var(--primary);
       padding: 8px 10px;
       margin-bottom: 6px;
       border-radius: 0 6px 6px 0;
@@ -421,13 +458,13 @@
 
     .step-title {
       font-weight: 700;
-      color: var(--accent-cyan);
+      color: var(--primary);
       font-size: 0.75rem;
     }
 
     .step-calc {
       font-family: monospace;
-      color: #ffffff;
+      color: var(--chocolate);
       font-size: 0.78rem;
     }
 
@@ -445,28 +482,28 @@
     <!-- ENCABEZADO PRINCIPAL -->
     <section class="hero">
      <div>
-      <h1>Simulador Componentes Rectangulares</h1>
-      <p>Descomposición trigonométrica de un vector fuerza individual F⃗ en sus componentes ortogonales Fx y Fy</p>
+      <h1 class="title-font">Simulador Componentes Rectangulares</h1>
+      <p class="subtitle">Descomposición trigonométrica de un vector fuerza individual F⃗ en sus componentes ortogonales Fx y Fy</p>
      </div>
      <a href="index.html" class="btn-ctrl" title="Volver a la Página Principal">
-      <i data-lucide="home"></i> Inicio
+      <i data-lucide="arrow-left"></i> Regresar al Inicio
      </a>
     </section>
 
     <!-- NAVEGACIÓN POR PESTAÑAS -->
     <nav class="nav-tabs">
      <button class="tab-btn active" onclick="switchTab(event, 'simulador')">
-      <i data-lucide="cpu"></i> Simulador
+      <i data-lucide="gamepad-2"></i> Simulador
      </button>
      <button class="tab-btn" onclick="switchTab(event, 'teoria')">
-      <i data-lucide="book-open"></i> Teoría y Fundamentos
+      <i data-lucide="book-open"></i> Teoría
      </button>
      <button class="tab-btn" onclick="switchTab(event, 'evaluacion')">
       <i data-lucide="award"></i> Evaluación
      </button>
     </nav>
 
-    <!-- PESTAÑA 1: SIMULADOR INTERACTIVO -->
+    <!-- PESTAÑA 1: SIMULADOR -->
     <div id="pane-simulador" class="tab-pane active">
      <section class="sim-layout">
       <!-- PANEL IZQUIERDO: PLANO CARTESIANO -->
@@ -488,46 +525,46 @@
         <svg id="cartesian-svg" viewBox="0 0 500 500">
          <defs>
           <marker id="arrow-force" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
-           <path d="M 0 0 L 10 5 L 0 10 z" fill="#ec4899" />
+           <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-f)" />
           </marker>
           <marker id="arrow-fx" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
-           <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8" />
+           <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-fx)" />
           </marker>
           <marker id="arrow-fy" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
-           <path d="M 0 0 L 10 5 L 0 10 z" fill="#c084fc" />
+           <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-fy)" />
           </marker>
          </defs>
 
          <g id="pan-zoom-layer">
           <!-- REJILLA CON DIBUJO DE UNIDADES EN NEWTONS -->
-          <g id="grid-ticks" opacity=".25"></g>
+          <g id="grid-ticks" opacity=".6"></g>
 
           <!-- EJES PRINCIPALES -->
-          <line x1="15" y1="250" x2="485" y2="250" stroke="#f472b6" stroke-width="2"></line>
-          <line x1="250" y1="485" x2="250" y2="15" stroke="#f472b6" stroke-width="2"></line>
+          <line x1="15" y1="250" x2="485" y2="250" stroke="var(--border)" stroke-width="2"></line>
+          <line x1="250" y1="485" x2="250" y2="15" stroke="var(--border)" stroke-width="2"></line>
 
           <text class="svg-label" x="470" y="242">+X</text>
           <text class="svg-label" x="15" y="242">-X</text>
           <text class="svg-label" x="256" y="25">+Y</text>
           <text class="svg-label" x="256" y="480">-Y</text>
 
-          <path id="arc-angle" fill="rgba(236, 72, 153, 0.25)" stroke="#ec4899" stroke-width="1.5" stroke-dasharray="3,2"/>
-          <text id="txt-angle-val" font-size="11" font-weight="800" fill="#ec4899">θ</text>
+          <path id="arc-angle" fill="rgba(217, 93, 130, 0.15)" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <text id="txt-angle-val" font-size="11" font-weight="800" fill="var(--primary)">θ</text>
 
           <g id="vector-layer"></g>
 
-          <circle cx="250" cy="250" r="5" fill="#ff1493" stroke="#ffffff" stroke-width="2" id="origin-point"></circle>
+          <circle cx="250" cy="250" r="5" fill="var(--primary)" stroke="#ffffff" stroke-width="2" id="origin-point"></circle>
          </g>
         </svg>
        </div>
 
-       <div style="margin-top: 8px; display:flex; justify-content:space-between; align-items:center; background:#0e0208; padding:6px 12px; border-radius:8px; border:1px solid var(--card-border);">
+       <div style="margin-top: 8px; display:flex; justify-content:space-between; align-items:center; background:var(--card-bg-soft); padding:6px 12px; border-radius:8px; border:1px solid var(--border);">
         <div style="display:flex; gap:12px;">
-         <span style="font-size:.75rem; color:#ec4899; font-weight:700;">■ Vector F</span>
-         <span style="font-size:.75rem; color:#38bdf8; font-weight:700;">■ Fx (Eje X)</span>
-         <span style="font-size:.75rem; color:#c084fc; font-weight:700;">■ Fy (Eje Y)</span>
+         <span style="font-size:.75rem; color:var(--color-f); font-weight:700;">■ Vector F</span>
+         <span style="font-size:.75rem; color:var(--color-fx); font-weight:700;">■ Fx (Eje X)</span>
+         <span style="font-size:.75rem; color:var(--color-fy); font-weight:700;">■ Fy (Eje Y)</span>
         </div>
-        <span id="quadrant-badge" style="font-size:.72rem; font-weight:800; padding:2px 8px; border-radius:4px; background:#3b1124; color:var(--pink-light);">I Cuadrante</span>
+        <span id="quadrant-badge" style="font-size:.72rem; font-weight:800; padding:2px 8px; border-radius:4px; background:var(--primary-soft); color:var(--primary);">I Cuadrante</span>
        </div>
       </section>
 
@@ -539,11 +576,11 @@
          <h2>Controles del Vector Fuerza</h2>
         </div>
 
-        <div style="display:grid; gap:8px; background:#0e0208; padding:10px; border-radius:8px; border:1px solid var(--card-border);">
+        <div style="display:grid; gap:8px; background:var(--card-bg-soft); padding:10px; border-radius:8px; border:1px solid var(--border);">
          <div class="field-group">
           <div style="display:flex; justify-content:space-between; align-items:center;">
            <label>Magnitud (F):</label>
-           <span id="label-mag-val" style="font-weight:800; color:var(--accent-pink);">100 N</span>
+           <span id="label-mag-val" style="font-weight:800; color:var(--primary);">100 N</span>
           </div>
           <input id="slider-mag" type="range" min="10" max="500" value="100" step="1">
           <input id="num-mag" class="num-input" type="number" min="10" max="500" value="100">
@@ -552,7 +589,7 @@
          <div class="field-group">
           <div style="display:flex; justify-content:space-between; align-items:center;">
            <label>Ángulo de Inclinación (θ):</label>
-           <span id="label-angle-val" style="font-weight:800; color:var(--accent-pink);">60°</span>
+           <span id="label-angle-val" style="font-weight:800; color:var(--primary);">60°</span>
           </div>
           <input id="slider-angle" type="range" min="0" max="360" value="60" step="1">
           <input id="num-angle" class="num-input" type="number" min="0" max="360" value="60">
@@ -576,7 +613,7 @@
           <i data-lucide="bar-chart-2"></i>
           <h2>Magnitudes Absolutas</h2>
          </div>
-         <button id="btn-export-csv" class="btn-ctrl" style="background:var(--accent-pink);">
+         <button id="btn-export-csv" class="btn-ctrl" style="background:var(--primary); color:#ffffff; border-color:var(--primary);">
           <i data-lucide="download"></i> Exportar CSV
          </button>
         </div>
@@ -597,7 +634,7 @@
      <section class="lab-panel panel-pad">
       <div class="panel-heading">
        <i data-lucide="book-open"></i>
-       <h2>Tema 1.3: Componentes Rectangulares - Fundamentos Teóricos</h2>
+       <h2>Tema 1.3 Componentes Rectangulares - Fundamentos Teóricos</h2>
       </div>
 
       <div style="display:grid; gap:12px;">
@@ -620,20 +657,20 @@
         </button>
         <div class="accordion-content">
          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-          <div style="background:#180610; padding:8px; border-radius:6px; border:1px solid var(--card-border);">
-           <strong style="color:var(--accent-cyan);">Componente Horizontal:</strong>
-           <p class="step-calc" style="margin:4px 0;">Fx = F · cos(θ)</p>
+          <div style="background:var(--card-bg-soft); padding:8px; border-radius:6px; border:1px solid var(--border);">
+           <strong style="color:var(--color-fx);">Componente Horizontal:</strong>
+           <p class="step-calc" style="margin:4px 0;">Fₓ = F · cos(θ)</p>
            <p style="font-size:0.73rem;">Utiliza el coseno porque la componente X corresponde al cateto adyacente del triángulo rectángulo formado por el vector.</p>
           </div>
-          <div style="background:#180610; padding:8px; border-radius:6px; border:1px solid var(--card-border);">
-           <strong style="color:var(--accent-purple);">Componente Vertical:</strong>
-           <p class="step-calc" style="margin:4px 0;">Fy = F · sin(θ)</p>
+          <div style="background:var(--card-bg-soft); padding:8px; border-radius:6px; border:1px solid var(--border);">
+           <strong style="color:var(--color-fy);">Componente Vertical:</strong>
+           <p class="step-calc" style="margin:4px 0;">Fᵧ = F · sin(θ)</p>
            <p style="font-size:0.73rem;">Utiliza el seno porque la componente Y corresponde al cateto opuesto del triángulo rectángulo formado.</p>
           </div>
          </div>
-         <div style="margin-top:8px; background:#180610; padding:8px; border-radius:6px; border:1px solid var(--card-border);">
-          <strong style="color:var(--accent-pink);">Magnitud Resultante (Teorema de Pitágoras) y Ángulo:</strong>
-          <p class="step-calc" style="margin:4px 0;">|F| = √(Fx² + Fy²) &nbsp;&nbsp;|&nbsp;&nbsp; θ = tan⁻¹(|Fy| / |Fx|)</p>
+         <div style="margin-top:8px; background:var(--card-bg-soft); padding:8px; border-radius:6px; border:1px solid var(--border);">
+          <strong style="color:var(--primary);">Magnitud Resultante (Teorema de Pitágoras) y Ángulo:</strong>
+          <p class="step-calc" style="margin:4px 0;">|F| = √(Fₓ² + Fᵧ²) &nbsp;&nbsp;|&nbsp;&nbsp; θ = tan⁻¹(|Fᵧ| / |Fₓ|)</p>
           <p style="font-size:0.73rem;">Permite recomponer la fuerza total a partir de sus componentes rectangulares o calcular el ángulo en cualquier cuadrante.</p>
          </div>
         </div>
@@ -650,8 +687,8 @@
            <tr>
             <th>Cuadrante</th>
             <th>Rango de Ángulo (θ)</th>
-            <th>Signo Fx (Horizontal)</th>
-            <th>Signo Fy (Vertical)</th>
+            <th>Signo Fₓ (Horizontal)</th>
+            <th>Signo Fᵧ (Vertical)</th>
            </tr>
           </thead>
           <tbody>
@@ -683,7 +720,7 @@
       <div id="quiz-container" style="display:grid; gap:10px;"></div>
 
       <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
-       <button id="btn-submit-quiz" class="action-button"><i data-lucide="check-circle"></i> Evaluar Respuestas</button>
+       <button id="btn-submit-quiz" class="action-button"><i data-lucide="check-circle"></i> Calificar Cuestionario</button>
        <span id="quiz-score" style="font-size:1rem; font-weight:800;"></span>
       </div>
      </section>
@@ -709,31 +746,30 @@
 
     // BANCO COMPLETO DE 20 PREGUNTAS
     const fullQuestionBank = [
-      { q: "1. ¿Cuál es la componente horizontal Fx de una fuerza de 100 N a un ángulo de 0°?", options: ["0 N", "100 N", "50 N", "-100 N"], correct: 1 },
-      { q: "2. ¿Cuál es la componente vertical Fy de una fuerza de 100 N a 90°?", options: ["100 N", "0 N", "50 N", "-100 N"], correct: 0 },
-      { q: "3. Si una fuerza se ubica en el II Cuadrante (90° a 180°), los signos de (Fx, Fy) son:", options: ["(+, +)", "(-, +)", "(-, -)", "(+, -)"], correct: 1 },
-      { q: "4. Si una fuerza está en el III Cuadrante (180° a 270°), los signos de (Fx, Fy) son:", options: ["(+, +)", "(-, +)", "(-, -)", "(+, -)"], correct: 2 },
-      { q: "5. ¿Qué función trigonométrica calcula la componente adyacente Fx respecto al eje X?", options: ["Seno", "Coseno", "Tangente", "Cotangente"], correct: 1 },
-      { q: "6. ¿Qué función trigonométrica se usa para la componente opuesta Fy respecto al eje X?", options: ["Seno", "Coseno", "Tangente", "Secante"], correct: 0 },
-      { q: "7. Si Fx = 30 N y Fy = 40 N, ¿cuál es la magnitud total del vector fuerza F?", options: ["70 N", "10 N", "50 N", "2500 N"], correct: 2 },
-      { q: "8. Una fuerza de 80 N actúa horizontalmente hacia la izquierda (180°). Su componente Fx vale:", options: ["80 N", "-80 N", "0 N", "40 N"], correct: 1 },
-      { q: "9. Una fuerza de 50 N actúa verticalmente hacia abajo (270°). Su componente Fy vale:", options: ["50 N", "-50 N", "0 N", "-25 N"], correct: 1 },
-      { q: "10. Para un ángulo de 45°, ¿qué relación existe entre las magnitudes de Fx y Fy?", options: ["|Fx| > |Fy|", "|Fx| < |Fy|", "|Fx| = |Fy|", "|Fx| = 0"], correct: 2 },
+      { q: "1. ¿Cuál es la componente horizontal Fₓ de una fuerza de 100 N a un ángulo de 0°?", options: ["0 N", "100 N", "50 N", "-100 N"], correct: 1 },
+      { q: "2. ¿Cuál es la componente vertical Fᵧ de una fuerza de 100 N a 90°?", options: ["100 N", "0 N", "50 N", "-100 N"], correct: 0 },
+      { q: "3. Si una fuerza se ubica en el II Cuadrante (90° a 180°), los signos de (Fₓ, Fᵧ) son:", options: ["(+, +)", "(-, +)", "(-, -)", "(+, -)"], correct: 1 },
+      { q: "4. Si una fuerza está en el III Cuadrante (180° a 270°), los signos de (Fₓ, Fᵧ) son:", options: ["(+, +)", "(-, +)", "(-, -)", "(+, -)"], correct: 2 },
+      { q: "5. ¿Qué función trigonométrica calcula la componente adyacente Fₓ respecto al eje X?", options: ["Seno", "Coseno", "Tangente", "Cotangente"], correct: 1 },
+      { q: "6. ¿Qué función trigonométrica se usa para la componente opuesta Fᵧ respecto al eje X?", options: ["Seno", "Coseno", "Tangente", "Secante"], correct: 0 },
+      { q: "7. Si Fₓ = 30 N y Fᵧ = 40 N, ¿cuál es la magnitud total del vector fuerza F?", options: ["70 N", "10 N", "50 N", "2500 N"], correct: 2 },
+      { q: "8. Una fuerza de 80 N actúa horizontalmente hacia la izquierda (180°). Su componente Fₓ vale:", options: ["80 N", "-80 N", "0 N", "40 N"], correct: 1 },
+      { q: "9. Una fuerza de 50 N actúa verticalmente hacia abajo (270°). Su componente Fᵧ vale:", options: ["50 N", "-50 N", "0 N", "-25 N"], correct: 1 },
+      { q: "10. Para un ángulo de 45°, ¿qué relación existe entre las magnitudes de Fₓ y Fᵧ?", options: ["|Fₓ| > |Fᵧ|", "|Fₓ| < |Fᵧ|", "|Fₓ| = |Fᵧ|", "|Fₓ| = 0"], correct: 2 },
       { q: "11. ¿Cuál es la unidad del Sistema Internacional empleada para medir la fuerza?", options: ["Joule [J]", "Pascal [Pa]", "Newton [N]", "Watt [W]"], correct: 2 },
-      { q: "12. Si la magnitud F aumenta manteniendo θ constante, ¿qué sucede con las componentes Fx y Fy?", options: ["Disminuyen ambas", "Aumentan proporcionalmente ambas", "Solo aumenta Fx", "Permanecen constantes"], correct: 1 },
-      { q: "13. ¿Cuál es la dirección de un vector en el IV Cuadrante cuyo Fx = 10 N y Fy = -10 N?", options: ["45°", "135°", "225°", "315°"], correct: 3 },
+      { q: "12. Si la magnitud F aumenta manteniendo θ constante, ¿qué sucede con las componentes Fₓ y Fᵧ?", options: ["Disminuyen ambas", "Aumentan proporcionalmente ambas", "Solo aumenta Fₓ", "Permanecen constantes"], correct: 1 },
+      { q: "13. ¿Cuál es la dirección de un vector en el IV Cuadrante cuyo Fₓ = 10 N y Fᵧ = -10 N?", options: ["45°", "135°", "225°", "315°"], correct: 3 },
       { q: "14. La proyección ortogonal de un vector vertical sobre el eje X es siempre igual a:", options: ["Su magnitud F", "0 N", "F / 2", "F · sin(θ)"], correct: 1 },
-      { q: "15. ¿En qué cuadrante se encuentra un vector con Fx = 40 N y Fy = -30 N?", options: ["I Cuadrante", "II Cuadrante", "III Cuadrante", "IV Cuadrante"], correct: 3 },
-      { q: "16. ¿Qué expresión aplica el Teorema de Pitágoras para recomponer el vector F?", options: ["F = Fx + Fy", "F = √(Fx² + Fy²)", "F = Fx² · Fy²", "F = (Fx + Fy)/2"], correct: 1 },
-      { q: "17. Si el ángulo es θ = 60° y F = 200 N, ¿cuánto vale la componente horizontal Fx?", options: ["100 N", "173.2 N", "200 N", "50 N"], correct: 0 },
-      { q: "18. Si F = 100 N y θ = 30°, ¿cuánto vale la componente vertical Fy?", options: ["86.6 N", "50 N", "100 N", "0 N"], correct: 1 },
+      { q: "15. ¿En qué cuadrante se encuentra un vector con Fₓ = 40 N y Fᵧ = -30 N?", options: ["I Cuadrante", "II Cuadrante", "III Cuadrante", "IV Cuadrante"], correct: 3 },
+      { q: "16. ¿Qué expresión aplica el Teorema de Pitágoras para recomponer el vector F?", options: ["F = Fₓ + Fᵧ", "F = √(Fₓ² + Fᵧ²)", "F = Fₓ² · Fᵧ²", "F = (Fₓ + Fᵧ)/2"], correct: 1 },
+      { q: "17. Si el ángulo es θ = 60° y F = 200 N, ¿cuánto vale la componente horizontal Fₓ?", options: ["100 N", "173.2 N", "200 N", "50 N"], correct: 0 },
+      { q: "18. Si F = 100 N y θ = 30°, ¿cuánto vale la componente vertical Fᵧ?", options: ["86.6 N", "50 N", "100 N", "0 N"], correct: 1 },
       { q: "19. ¿Qué ángulo representa una fuerza dirigida completamente hacia el eje -Y?", options: ["90°", "180°", "270°", "360°"], correct: 2 },
-      { q: "20. La relación de la tangente para calcular la dirección del vector es:", options: ["tan(θ) = Fx / Fy", "tan(θ) = Fy / Fx", "tan(θ) = F / Fx", "tan(θ) = Fx / F"], correct: 1 }
+      { q: "20. La relación de la tangente para calcular la dirección del vector es:", options: ["tan(θ) = Fₓ / Fᵧ", "tan(θ) = Fᵧ / Fₓ", "tan(θ) = F / Fₓ", "tan(θ) = Fₓ / F"], correct: 1 }
     ];
 
     let currentQuizQuestions = [];
 
-    // FIX: Añadimos 'event' como parámetro para evitar errores en navegadores
     function switchTab(event, tabId) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
@@ -742,7 +778,6 @@
       document.getElementById(`pane-${tabId}`).classList.add('active');
     }
 
-    // FIX: Manejo específico para 360 grados exactos para que no cambie a 0
     function getQuadrant(angle) {
       if (angle === 360) return "Eje +X (360°)";
       
@@ -765,13 +800,11 @@
     }
 
     function applyPanZoom() {
-      // FIX: Límite dinámico (clamping) para que el plano no desaparezca de la vista.
       const limit = 250 * (zoomLevel - 1);
       panX = Math.max(-limit, Math.min(limit, panX));
       panY = Math.max(-limit, Math.min(limit, panY));
 
       const layer = document.getElementById("pan-zoom-layer");
-      // Se añade el origin en el centro exacto para un zoom simétrico
       layer.style.transformOrigin = "250px 250px"; 
       layer.setAttribute("transform", `translate(${panX}, ${panY}) scale(${zoomLevel})`);
     }
@@ -785,7 +818,6 @@
         if (e.deltaY < 0) {
           zoomLevel = Math.min(zoomLevel * zoomFactor, 5);
         } else {
-          // FIX: No permitir que el zoom inverso baje del 100% de tamaño
           zoomLevel = Math.max(zoomLevel / zoomFactor, 1); 
         }
         applyPanZoom();
@@ -807,37 +839,33 @@
       window.addEventListener("mouseup", () => {
         isDragging = false;
       });
-      // Prevenir arrastre si sale de la ventana
       window.addEventListener("mouseleave", () => {
         isDragging = false;
       });
     }
 
-    // DIBUJAR MARCAS DE UNIDADES EN EL PLANO CARTESIANO (100 N, 200 N, etc.)
     function drawGridTicks() {
       const ticksGroup = document.getElementById("grid-ticks");
       ticksGroup.innerHTML = "";
-      const scale = 0.38; // 1 N = 0.38 px
+      const scale = 0.38;
       const intervals = [100, 200, 300, 400, 500];
 
       intervals.forEach(val => {
         const dist = val * scale;
         
-        // Círculos concéntricos de referencia
         const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         circle.setAttribute("cx", 250);
         circle.setAttribute("cy", 250);
         circle.setAttribute("r", dist);
         circle.setAttribute("fill", "none");
-        circle.setAttribute("stroke", "#f472b6");
+        circle.setAttribute("stroke", "var(--border)");
         circle.setAttribute("stroke-dasharray", "2,2");
         ticksGroup.appendChild(circle);
 
-        // Etiquetas numéricas de magnitud con unidades en [N]
         const tRight = document.createElementNS("http://www.w3.org/2000/svg", "text");
         tRight.setAttribute("x", 250 + dist);
         tRight.setAttribute("y", 262);
-        tRight.setAttribute("fill", "#fbcfe8");
+        tRight.setAttribute("fill", "var(--text-muted)");
         tRight.setAttribute("font-size", "9px");
         tRight.textContent = `${val}N`;
         ticksGroup.appendChild(tRight);
@@ -845,7 +873,7 @@
         const tTop = document.createElementNS("http://www.w3.org/2000/svg", "text");
         tTop.setAttribute("x", 254);
         tTop.setAttribute("y", 250 - dist);
-        tTop.setAttribute("fill", "#fbcfe8");
+        tTop.setAttribute("fill", "var(--text-muted)");
         tTop.setAttribute("font-size", "9px");
         tTop.textContent = `${val}N`;
         ticksGroup.appendChild(tTop);
@@ -866,13 +894,12 @@
       const endY = 250 - fyScaled;
 
       if (force.magnitude > 0) {
-        // Líneas de proyección ortogonal
         const projVert = document.createElementNS("http://www.w3.org/2000/svg", "line");
         projVert.setAttribute("x1", endX);
         projVert.setAttribute("y1", 250);
         projVert.setAttribute("x2", endX);
         projVert.setAttribute("y2", endY);
-        projVert.setAttribute("stroke", "#38bdf8");
+        projVert.setAttribute("stroke", "var(--color-fx)");
         projVert.setAttribute("stroke-dasharray", "3,3");
         projVert.setAttribute("stroke-width", "1.2");
         container.appendChild(projVert);
@@ -882,19 +909,18 @@
         projHoriz.setAttribute("y1", endY);
         projHoriz.setAttribute("x2", endX);
         projHoriz.setAttribute("y2", endY);
-        projHoriz.setAttribute("stroke", "#c084fc");
+        projHoriz.setAttribute("stroke", "var(--color-fy)");
         projHoriz.setAttribute("stroke-dasharray", "3,3");
         projHoriz.setAttribute("stroke-width", "1.2");
         container.appendChild(projHoriz);
 
-        // Vector Fx
         if (Math.abs(calc.fx) > 0.5) {
           const lineFx = document.createElementNS("http://www.w3.org/2000/svg", "line");
           lineFx.setAttribute("x1", 250);
           lineFx.setAttribute("y1", 250);
           lineFx.setAttribute("x2", endX);
           lineFx.setAttribute("y2", 250);
-          lineFx.setAttribute("stroke", "#38bdf8");
+          lineFx.setAttribute("stroke", "var(--color-fx)");
           lineFx.setAttribute("stroke-width", "2.5");
           lineFx.setAttribute("marker-end", "url(#arrow-fx)");
           container.appendChild(lineFx);
@@ -902,7 +928,7 @@
           const txtFx = document.createElementNS("http://www.w3.org/2000/svg", "text");
           txtFx.setAttribute("x", 250 + fxScaled / 2);
           txtFx.setAttribute("y", calc.fy >= 0 ? 266 : 238);
-          txtFx.setAttribute("fill", "#38bdf8");
+          txtFx.setAttribute("fill", "var(--color-fx)");
           txtFx.setAttribute("font-size", "10px");
           txtFx.setAttribute("font-weight", "800");
           txtFx.setAttribute("text-anchor", "middle");
@@ -910,14 +936,13 @@
           container.appendChild(txtFx);
         }
 
-        // Vector Fy
         if (Math.abs(calc.fy) > 0.5) {
           const lineFy = document.createElementNS("http://www.w3.org/2000/svg", "line");
           lineFy.setAttribute("x1", 250);
           lineFy.setAttribute("y1", 250);
           lineFy.setAttribute("x2", 250);
           lineFy.setAttribute("y2", endY);
-          lineFy.setAttribute("stroke", "#c084fc");
+          lineFy.setAttribute("stroke", "var(--color-fy)");
           lineFy.setAttribute("stroke-width", "2.5");
           lineFy.setAttribute("marker-end", "url(#arrow-fy)");
           container.appendChild(lineFy);
@@ -925,7 +950,7 @@
           const txtFy = document.createElementNS("http://www.w3.org/2000/svg", "text");
           txtFy.setAttribute("x", calc.fx >= 0 ? 238 : 262);
           txtFy.setAttribute("y", 250 - fyScaled / 2);
-          txtFy.setAttribute("fill", "#c084fc");
+          txtFy.setAttribute("fill", "var(--color-fy)");
           txtFy.setAttribute("font-size", "10px");
           txtFy.setAttribute("font-weight", "800");
           txtFy.setAttribute("text-anchor", calc.fx >= 0 ? "end" : "start");
@@ -933,13 +958,12 @@
           container.appendChild(txtFy);
         }
 
-        // Vector Fuerza F
         const lineF = document.createElementNS("http://www.w3.org/2000/svg", "line");
         lineF.setAttribute("x1", 250);
         lineF.setAttribute("y1", 250);
         lineF.setAttribute("x2", endX);
         lineF.setAttribute("y2", endY);
-        lineF.setAttribute("stroke", "#ec4899");
+        lineF.setAttribute("stroke", "var(--color-f)");
         lineF.setAttribute("stroke-width", "3.5");
         lineF.setAttribute("marker-end", "url(#arrow-force)");
         container.appendChild(lineF);
@@ -949,7 +973,7 @@
         const offsetY = -Math.sin(calc.rad) * 14;
         txtF.setAttribute("x", endX + offsetX);
         txtF.setAttribute("y", endY + offsetY);
-        txtF.setAttribute("fill", "#ec4899");
+        txtF.setAttribute("fill", "var(--color-f)");
         txtF.setAttribute("font-size", "11px");
         txtF.setAttribute("font-weight", "800");
         txtF.setAttribute("text-anchor", "middle");
@@ -957,13 +981,11 @@
         container.appendChild(txtF);
       }
 
-      // Arco del Ángulo
       const arc = document.getElementById("arc-angle");
       const txtAngle = document.getElementById("txt-angle-val");
       const rArc = 35;
 
       if (force.angle > 0) {
-        // FIX: Hacemos que si el ángulo es 360, no sea idéntico al 0 en SVG para que logre dibujarse el círculo
         const drawAngle = force.angle === 360 ? 359.99 : force.angle;
         const drawRad = (drawAngle * Math.PI) / 180;
 
@@ -1000,7 +1022,7 @@
             datasets: [{
               label: 'Magnitud (N)',
               data: data,
-              backgroundColor: ['#ec4899', '#38bdf8', '#c084fc'],
+              backgroundColor: ['#D95D82', '#2563EB', '#7C3AED'],
               borderRadius: 4
             }]
           },
@@ -1008,8 +1030,8 @@
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              y: { grid: { color: '#3b1124' }, ticks: { color: '#fbcfe8', font: { size: 9 } }, beginAtZero: true },
-              x: { grid: { color: '#3b1124' }, ticks: { color: '#ffffff', font: { weight: 'bold', size: 10 } } }
+              y: { grid: { color: '#EBCFD7' }, ticks: { color: '#8B7075', font: { size: 9 } }, beginAtZero: true },
+              x: { grid: { color: '#EBCFD7' }, ticks: { color: '#3D2A2E', font: { weight: 'bold', size: 10 } } }
             },
             plugins: { legend: { display: false } }
           }
@@ -1020,7 +1042,6 @@
       }
     }
 
-    // PROCEDIMIENTO DETALLADO PASO A PASO CON VALORES ACTUALES
     function updateStepByStep(calc) {
       const container = document.getElementById("step-by-step-container");
       const cosVal = Math.cos(calc.rad).toFixed(4);
@@ -1034,12 +1055,12 @@
         <div class="step-box">
           <div class="step-title">Paso 2: Cálculo de Componente Horizontal (Fx)</div>
           <div class="step-calc">Fx = F · cos(θ) = ${force.magnitude} · cos(${force.angle}°)</div>
-          <div class="step-calc">Fx = ${force.magnitude} · (${cosVal}) = <span style="color:#38bdf8; font-weight:800;">${calc.fx.toFixed(2)} N</span></div>
+          <div class="step-calc">Fx = ${force.magnitude} · (${cosVal}) = <span style="color:var(--color-fx); font-weight:800;">${calc.fx.toFixed(2)} N</span></div>
         </div>
         <div class="step-box">
           <div class="step-title">Paso 3: Cálculo de Componente Vertical (Fy)</div>
           <div class="step-calc">Fy = F · sin(θ) = ${force.magnitude} · sin(${force.angle}°)</div>
-          <div class="step-calc">Fy = ${force.magnitude} · (${sinVal}) = <span style="color:#c084fc; font-weight:800;">${calc.fy.toFixed(2)} N</span></div>
+          <div class="step-calc">Fy = ${force.magnitude} · (${sinVal}) = <span style="color:var(--color-fy); font-weight:800;">${calc.fy.toFixed(2)} N</span></div>
         </div>
         <div class="step-box">
           <div class="step-title">Paso 4: Verificación con Teorema de Pitágoras</div>
@@ -1102,7 +1123,6 @@
         updateAll();
       });
 
-      // CONTROLES DE ANIMACIÓN (PLAY, PAUSE, STOP)
       document.getElementById("btn-play").addEventListener("click", startAnimation);
       document.getElementById("btn-pause").addEventListener("click", pauseAnimation);
       document.getElementById("btn-stop").addEventListener("click", stopAnimation);
@@ -1117,7 +1137,6 @@
         if (!isPlaying) return;
         force.angle = force.angle + animSpeed;
         
-        // FIX: Evitamos que regrese drásticamente a 0 si la animación supera 360
         if (force.angle > 360) {
           force.angle = force.angle % 360;
         }
@@ -1159,7 +1178,6 @@
       document.body.removeChild(link);
     }
 
-    // GENERAR CUESTIONARIO CON 5 PREGUNTAS ALEATORIAS DEL BANCO DE 20
     function generateQuiz() {
       const shuffled = [...fullQuestionBank].sort(() => 0.5 - Math.random());
       currentQuizQuestions = shuffled.slice(0, 5);
@@ -1169,15 +1187,15 @@
 
       currentQuizQuestions.forEach((qObj, qIdx) => {
         const qDiv = document.createElement("div");
-        qDiv.style.background = "#0e0208";
+        qDiv.style.background = "var(--card-bg-soft)";
         qDiv.style.padding = "10px";
         qDiv.style.borderRadius = "8px";
-        qDiv.style.border = "1px solid var(--card-border)";
+        qDiv.style.border = "1px solid var(--border)";
         
         const title = document.createElement("h4");
         title.style.margin = "0 0 8px 0";
         title.style.fontSize = ".82rem";
-        title.style.color = "#ffffff";
+        title.style.color = "var(--chocolate)";
         title.textContent = `${qIdx + 1}. ${qObj.q.replace(/^\d+\.\s*/, '')}`;
         qDiv.appendChild(title);
 
@@ -1204,16 +1222,15 @@
 
       document.getElementById("quiz-score").textContent = "";
     }
+
     function evaluateQuiz() {
       if (currentQuizQuestions.length === 0) return;
 
       let score = 0;
       currentQuizQuestions.forEach((qObj, qIdx) => {
-        // 1. Obtener la pregunta correspondiente en el DOM
         const container = document.getElementById("quiz-container");
         const qDiv = container.children[qIdx];
         
-        // 2. Limpiar retroalimentaciones previas si el usuario vuelve a calificar
         const oldFeedback = qDiv.querySelector(".quiz-feedback");
         if (oldFeedback) oldFeedback.remove();
 
@@ -1225,7 +1242,6 @@
           score++;
         }
 
-        // 3. Crear contenedor de la explicación/resultado
         const feedbackDiv = document.createElement("div");
         feedbackDiv.className = "quiz-feedback";
         feedbackDiv.style.marginTop = "10px";
@@ -1236,12 +1252,12 @@
         if (isCorrect) {
           feedbackDiv.style.background = "rgba(16, 185, 129, 0.15)";
           feedbackDiv.style.border = "1px solid #10b981";
-          feedbackDiv.style.color = "#10b981";
+          feedbackDiv.style.color = "#047857";
           feedbackDiv.innerHTML = `<strong>¡Correcto!</strong> ${qObj.explanation || ""}`;
         } else {
           feedbackDiv.style.background = "rgba(239, 68, 68, 0.15)";
           feedbackDiv.style.border = "1px solid #ef4444";
-          feedbackDiv.style.color = "#ef4444";
+          feedbackDiv.style.color = "#b91c1c";
           
           const correctText = qObj.options[qObj.correct];
           feedbackDiv.innerHTML = `
@@ -1258,9 +1274,9 @@
       scoreEl.textContent = `Puntaje Obtenido: ${score}/${currentQuizQuestions.length} (${percentage}%)`;
       
       if (percentage >= 80) {
-        scoreEl.style.color = "#10b981";
+        scoreEl.style.color = "#047857";
       } else {
-        scoreEl.style.color = "#ef4444";
+        scoreEl.style.color = "#b91c1c";
       }
     }
 
