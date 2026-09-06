@@ -272,7 +272,7 @@
       padding: 6px 12px;
       font-size: .78rem;
       font-weight: 600;
-      background: var(--surface-pink);
+      background: var(--surface);
       color: var(--chocolate);
       border: 1px solid var(--border);
       border-radius: 6px;
@@ -282,9 +282,9 @@
     }
 
     .btn-ctrl:hover {
-      background: var(--primary);
-      color: #ffffff;
-      box-shadow: 0 2px 8px rgba(217, 93, 130, 0.3);
+      background: var(--surface-pink);
+      border-color: var(--primary-light);
+      color: var(--chocolate);
     }
 
     .force-grid { display: grid; gap: 12px; }
@@ -454,14 +454,13 @@
   <div class="app-wrapper">
    <main class="main-content">
     <section class="hero">
-     <a href="index.html" class="btn-ctrl" title="Volver a la Página Principal">
-      <i data-lucide="arrow-left"></i> Regresar al Inicio
-     </a>
      <div>
       <h1 class="title-font">Simulador Mesa de Fuerzas</h1>
       <p class="subtitle">Laboratorio virtual para la experimentación estática, descomposición rectangular, análisis dinámico y comprobación analítica de sistemas concurrentes coplanares</p>
      </div>
-
+     <a href="index.html" class="btn-ctrl" title="Volver a la Página Principal">
+      <i data-lucide="arrow-left"></i> Regresar al Inicio
+     </a>
     </section>
 
     <nav class="nav-tabs">
