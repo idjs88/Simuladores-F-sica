@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Movimiento Rectilíneo Uniforme (MRU)</title>
+  <title>Simulador Movimiento Rectilíneo Uniforme (MRU)</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
@@ -68,6 +68,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
+      overflow: hidden;
     }
 
     .hero { 
@@ -129,7 +130,7 @@
     .tab-pane {
       display: none;
       flex: 1;
-      height: calc(100% - 100px);
+      height: calc(100% - 90px);
       overflow-y: auto;
       padding-right: 4px;
     }
@@ -176,16 +177,16 @@
 
     .sim-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(340px, 0.8fr);
+      grid-template-columns: 1fr 340px;
       gap: 12px;
-      height: 100%;
+      align-items: start;
+      min-height: 0;
     }
 
     .cartesian-plane {
       position: relative;
       width: 100%;
-      height: 100%;
-      min-height: 380px;
+      height: 200px;
       border-radius: 12px;
       border: 2px solid var(--border);
       background: radial-gradient(circle, #FFFFFF 0%, #FFF8F3 70%, #FCE7EF 100%);
@@ -318,11 +319,43 @@
       box-shadow: 0 2px 8px rgba(74, 48, 53, 0.2);
     }
 
-    @media (max-width: 900px) {
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .chart-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .chart-card h3 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--chocolate);
+      margin: 0 0 6px 0;
+      text-align: center;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 160px;
+      width: 100%;
+    }
+
+    @media (max-width: 1024px) {
+      .sim-layout { grid-template-columns: 1fr; }
+      .charts-grid { grid-template-columns: 1fr; }
       body { overflow: auto; height: auto; }
       .app-wrapper { height: auto; min-height: 100vh; }
       .tab-pane { height: auto; overflow-y: visible; }
-      .sim-layout { grid-template-columns: 1fr; }
     }
   </style>
  </head>
@@ -348,56 +381,113 @@
     <!-- PESTAÑA 1: SIMULADOR -->
     <div id="tab-simulador" class="tab-pane active">
      <section class="sim-layout">
-      <!-- LIENZO DE ANIMACIÓN -->
-      <section class="lab-panel panel-pad" style="display:flex; flex-direction:column;">
-       <div class="panel-heading" style="justify-content: space-between;">
-        <div style="display:flex; align-items:center; gap:8px;">
-         <i data-lucide="move-right"></i>
-         <h2>Pista de Movimiento</h2>
+      <!-- PANEL IZQUIERDO: PISTA Y GRÁFICAS (EN COLUMNA INDEPENDIENTE) -->
+      <div style="display:flex; flex-direction:column; gap:12px; min-width:0;">
+       <section class="lab-panel panel-pad" style="display:flex; flex-direction:column;">
+        <div class="panel-heading" style="justify-content: space-between;">
+         <div style="display:flex; align-items:center; gap:8px;">
+          <i data-lucide="move-right"></i>
+          <h2>Pista de Movimiento</h2>
+         </div>
+         <div style="display:flex; gap:6px;">
+          <button id="btn-play" class="btn-ctrl"><i data-lucide="play"></i> Iniciar</button>
+          <button id="btn-pause" class="btn-ctrl"><i data-lucide="pause"></i> Pausa</button>
+          <button id="btn-stop" class="btn-ctrl"><i data-lucide="rotate-ccw"></i> Reiniciar</button>
+         </div>
         </div>
-        <div style="display:flex; gap:6px;">
-         <button id="btn-play" class="btn-ctrl"><i data-lucide="play"></i> Iniciar</button>
-         <button id="btn-pause" class="btn-ctrl"><i data-lucide="pause"></i> Pausa</button>
-         <button id="btn-stop" class="btn-ctrl"><i data-lucide="rotate-ccw"></i> Reiniciar</button>
+
+        <div class="cartesian-plane">
+         <svg id="cartesian-svg" viewBox="0 0 600 200">
+          <defs>
+           <marker id="arrow-v" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#4A3035"/>
+           </marker>
+          </defs>
+
+          <!-- Regla / Eje X -->
+          <g id="grid-axis">
+           <line x1="40" y1="140" x2="560" y2="140" stroke="#EBCFD7" stroke-width="2"/>
+          </g>
+
+          <!-- Marcas de distancia -->
+          <g id="ticks-group" opacity="0.95"></g>
+
+          <!-- Vector Velocidad -->
+          <line id="vec-v" x1="0" y1="0" x2="0" y2="0" stroke="#4A3035" stroke-width="3" marker-end="url(#arrow-v)"/>
+
+          <!-- Móvil / Carrito Estilizado -->
+          <g id="mobile-group">
+           <!-- Sombra -->
+           <ellipse id="car-shadow" cx="0" cy="139" rx="28" ry="4" fill="rgba(74, 48, 53, 0.15)"/>
+           
+           <!-- Cuerpo del Carrito -->
+           <path id="car-body" d="M -24,124 Q -26,110 -12,108 L 4,108 Q 14,108 20,118 L 26,118 Q 28,118 28,124 L 28,132 Q 28,135 24,135 L -20,135 Q -24,135 -24,124 Z" fill="#D95D82" stroke="#4A3035" stroke-width="1.5"/>
+           
+           <!-- Cabina / Ventana -->
+           <path id="car-window" d="M -10,111 L 2,111 Q 10,111 14,118 L -10,118 Z" fill="#FCE7EF" stroke="#4A3035" stroke-width="1"/>
+           
+           <!-- Faros -->
+           <circle id="car-headlight" cx="26" cy="124" r="2.5" fill="#FFF8F3" stroke="#4A3035" stroke-width="0.8"/>
+           <rect id="car-taillight" x="-24" y="121" width="2" height="5" rx="1" fill="#4A3035"/>
+
+           <!-- Ruedas Delantera y Trasera -->
+           <g id="wheel-front">
+            <circle cx="14" cy="135" r="6" fill="#4A3035"/>
+            <circle cx="14" cy="135" r="2.5" fill="#FFF8F3"/>
+           </g>
+           <g id="wheel-back">
+            <circle cx="-14" cy="135" r="6" fill="#4A3035"/>
+            <circle cx="-14" cy="135" r="2.5" fill="#FFF8F3"/>
+           </g>
+          </g>
+         </svg>
         </div>
-       </div>
 
-       <div class="cartesian-plane">
-        <svg id="cartesian-svg" viewBox="0 0 600 400">
-         <defs>
-          <marker id="arrow-v" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-           <path d="M 0 0 L 10 5 L 0 10 z" fill="#4A3035"/>
-          </marker>
-         </defs>
-
-         <!-- Regla / Eje X -->
-         <g id="grid-axis">
-          <line x1="40" y1="240" x2="560" y2="240" stroke="#EBCFD7" stroke-width="2"/>
-         </g>
-
-         <!-- Marcas de distancia sobre la pista -->
-         <g id="ticks-group" opacity="0.95"></g>
-
-         <!-- Vector Velocidad constante -->
-         <line id="vec-v" x1="0" y1="0" x2="0" y2="0" stroke="#4A3035" stroke-width="3" marker-end="url(#arrow-v)"/>
-
-         <!-- Objeto Móvil -->
-         <g id="mobile-group">
-          <rect id="mobile-body" x="0" y="215" width="40" height="24" rx="6" fill="#D95D82" stroke="#FFFFFF" stroke-width="2"/>
-          <circle id="wheel-1" cx="0" cy="240" r="5" fill="#4A3035"/>
-          <circle id="wheel-2" cx="0" cy="240" r="5" fill="#4A3035"/>
-         </g>
-        </svg>
-       </div>
-
-       <div style="margin-top: 8px; display:flex; justify-content:space-between; align-items:center; background:var(--bg); padding:6px 12px; border-radius:8px; border:1px solid var(--border);">
-        <div style="display:flex; gap:12px;">
-         <span style="font-size:.75rem; color:var(--primary); font-weight:700;">■ Posición (x)</span>
-         <span style="font-size:.75rem; color:var(--chocolate); font-weight:700;">➔ Vector Velocidad (v)</span>
+        <div style="margin-top: 8px; display:flex; justify-content:space-between; align-items:center; background:var(--bg); padding:6px 12px; border-radius:8px; border:1px solid var(--border);">
+         <div style="display:flex; gap:12px;">
+          <span style="font-size:.75rem; color:var(--primary); font-weight:700;">■ Posición (x)</span>
+          <span style="font-size:.75rem; color:var(--chocolate); font-weight:700;">➔ Vector Velocidad (v)</span>
+         </div>
+         <span id="time-badge" style="font-size:.75rem; font-weight:700; padding:2px 8px; border-radius:4px; background:var(--surface-pink); color:var(--chocolate);">t = 0.00 s</span>
         </div>
-        <span id="time-badge" style="font-size:.75rem; font-weight:700; padding:2px 8px; border-radius:4px; background:var(--surface-pink); color:var(--chocolate);">t = 0.00 s</span>
-       </div>
-      </section>
+       </section>
+
+       <!-- SECCIÓN DE LAS TRES GRÁFICAS -->
+       <section class="lab-panel panel-pad">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+         <div class="panel-heading" style="margin:0;">
+          <i data-lucide="line-chart"></i>
+          <h2>Gráficas Cinemáticas en Tiempo Real</h2>
+         </div>
+         <button id="btn-export-csv" class="btn-ctrl" style="background:var(--primary); color:#FFFFFF; border-color:var(--primary);">
+          <i data-lucide="download"></i> Exportar CSV
+         </button>
+        </div>
+
+        <div class="charts-grid">
+         <div class="chart-card">
+          <h3>Posición vs Tiempo x(t)</h3>
+          <div class="chart-container">
+           <canvas id="chartX"></canvas>
+          </div>
+         </div>
+
+         <div class="chart-card">
+          <h3>Velocidad vs Tiempo v(t)</h3>
+          <div class="chart-container">
+           <canvas id="chartV"></canvas>
+          </div>
+         </div>
+
+         <div class="chart-card">
+          <h3>Aceleración vs Tiempo a(t)</h3>
+          <div class="chart-container">
+           <canvas id="chartA"></canvas>
+          </div>
+         </div>
+        </div>
+       </section>
+      </div>
 
       <!-- PANEL LATERAL DE CONTROLES -->
       <aside class="lab-panel panel-pad" style="display:flex; flex-direction:column; gap:10px;">
@@ -409,7 +499,7 @@
        <div style="display:grid; gap:8px; background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
         <div class="field-group">
          <div style="display:flex; justify-content:space-between;">
-          <label>Posición Inicial (x_0):</label>
+          <label>Posición Inicial (x₀):</label>
           <span id="lbl-x0" style="font-weight:700; color:var(--primary);">0 m</span>
          </div>
          <input id="slider-x0" type="range" min="0" max="100" value="0" step="5">
@@ -455,20 +545,6 @@
          <span id="res-a" class="result-value" style="color:var(--text-muted);">0.00 m/s²</span>
         </div>
        </div>
-
-       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
-        <div class="panel-heading" style="margin:0;">
-         <i data-lucide="bar-chart-2"></i>
-         <h2>Gráfica x(t)</h2>
-        </div>
-        <button id="btn-export-csv" class="btn-ctrl" style="background:var(--primary); color:#FFFFFF; border-color:var(--primary);">
-         <i data-lucide="download"></i> CSV
-        </button>
-       </div>
-
-       <div style="height: 120px; position: relative;">
-        <canvas id="mruChart"></canvas>
-       </div>
       </aside>
      </section>
     </div>
@@ -492,22 +568,27 @@
         <li><strong style="color:var(--text);">Dirección Unidimensional:</strong> El movimiento transcurre sobre un único eje coordenado (X).</li>
        </ul>
 
-       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">2. Ecuación de la Posición</h3>
-       <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border); margin:10px 0; font-family:monospace; color:var(--primary); display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">2. Ecuaciones Cinemáticas</h3>
+       <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border); margin:10px 0; font-family:monospace; color:var(--primary); display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
         <div>
-         <strong>Ecuación Horaria:</strong><br>
+         <strong>Posición x(t):</strong><br>
          x(t) = x₀ + v · t
         </div>
         <div>
-         <strong>Desplazamiento:</strong><br>
-         Δx = x(t) - x₀ = v · t
+         <strong>Velocidad v(t):</strong><br>
+         v(t) = v = cte.
+        </div>
+        <div>
+         <strong>Aceleración a(t):</strong><br>
+         a(t) = 0 m/s²
         </div>
        </div>
 
        <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">3. Interpretación Gráfica</h3>
        <p style="color:var(--text-muted);">
-        • <strong style="color:var(--text);">Gráfica Posición vs. Tiempo (x-t):</strong> Es una línea recta. Su pendiente equivale al valor de la velocidad (v).<br>
-        • <strong style="color:var(--text);">Gráfica Velocidad vs. Tiempo (v-t):</strong> Es una línea horizontal constante. El área bajo la curva corresponde al desplazamiento (∆x).
+        • <strong style="color:var(--text);">Gráfica Posición vs. Tiempo (x-t):</strong> Es una línea recta inclinada. Su pendiente equivale al valor de la velocidad ($v$).<br>
+        • <strong style="color:var(--text);">Gráfica Velocidad vs. Tiempo (v-t):</strong> Es una línea horizontal constante. El área bajo la recta corresponde al desplazamiento ($\Delta x$).<br>
+        • <strong style="color:var(--text);">Gráfica Aceleración vs. Tiempo (a-t):</strong> Es una línea horizontal sobre el eje horizontal ($a = 0$).
        </p>
       </div>
      </section>
@@ -545,7 +626,10 @@
     let isRunning = false;
     let currentTime = 0;
     let animFrameId = null;
-    let chartInstance = null;
+
+    let chartXInstance = null;
+    let chartVInstance = null;
+    let chartAInstance = null;
 
     const questionBank = [
       {
@@ -598,9 +682,7 @@
 
     function drawSVG(calc) {
       const ticksGroup = document.getElementById("ticks-group");
-      const mobileBody = document.getElementById("mobile-body");
-      const wheel1 = document.getElementById("wheel-1");
-      const wheel2 = document.getElementById("wheel-2");
+      const mobileGroup = document.getElementById("mobile-group");
       const vecV = document.getElementById("vec-v");
 
       const minX = -50;
@@ -613,14 +695,14 @@
         const pxMark = originPx + xMark * scaleX;
         if (pxMark >= 40 && pxMark <= 560) {
           const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-          line.setAttribute("x1", pxMark); line.setAttribute("y1", 235);
-          line.setAttribute("x2", pxMark); line.setAttribute("y2", 245);
+          line.setAttribute("x1", pxMark); line.setAttribute("y1", 135);
+          line.setAttribute("x2", pxMark); line.setAttribute("y2", 145);
           line.setAttribute("stroke", "#EBCFD7");
           line.setAttribute("stroke-width", "1.5");
 
           const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
           text.setAttribute("x", pxMark);
-          text.setAttribute("y", 260);
+          text.setAttribute("y", 160);
           text.setAttribute("fill", "#8B7075");
           text.setAttribute("font-size", "9");
           text.setAttribute("font-weight", "500");
@@ -633,15 +715,16 @@
       }
 
       const objPx = originPx + calc.curX * scaleX;
-      mobileBody.setAttribute("x", objPx - 20);
-      wheel1.setAttribute("cx", objPx - 10);
-      wheel2.setAttribute("cx", objPx + 10);
+      
+      // Orientar y posicionar el coche según la dirección de la velocidad
+      const flipScale = v < 0 ? -1 : 1;
+      mobileGroup.setAttribute("transform", `translate(${objPx}, 0) scale(${flipScale}, 1)`);
 
       const vecLength = v * 1.5;
       vecV.setAttribute("x1", objPx);
-      vecV.setAttribute("y1", 200);
+      vecV.setAttribute("y1", 90);
       vecV.setAttribute("x2", objPx + vecLength);
-      vecV.setAttribute("y2", 200);
+      vecV.setAttribute("y2", 90);
     }
 
     function updatePhysicsAnimation() {
@@ -666,48 +749,78 @@
       }
     }
 
-    function updateChart() {
+    function createChartConfig(label, color, bgColor, yMin, yMax) {
+      return {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: label,
+            data: [],
+            borderColor: color,
+            backgroundColor: bgColor,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.1,
+            pointRadius: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              grid: { color: '#EBCFD7' },
+              ticks: { color: '#8B7075', font: { size: 8 } },
+              suggestedMin: yMin,
+              suggestedMax: yMax
+            },
+            x: {
+              grid: { color: '#EBCFD7' },
+              ticks: { color: '#8B7075', font: { size: 8 } }
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      };
+    }
+
+    function updateCharts() {
       const labels = [];
       const dataX = [];
+      const dataV = [];
+      const dataA = [];
       const steps = 20;
 
       for (let i = 0; i <= steps; i++) {
         const t = (tMax / steps) * i;
         labels.push(t.toFixed(1));
         dataX.push((x0 + v * t).toFixed(2));
+        dataV.push(v.toFixed(2));
+        dataA.push((0).toFixed(2));
       }
 
-      if (!chartInstance) {
-        const ctx = document.getElementById('mruChart').getContext('2d');
-        chartInstance = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: [{
-              label: 'Posición x(t) [m]',
-              data: dataX,
-              borderColor: '#D95D82',
-              backgroundColor: 'rgba(217, 93, 130, 0.12)',
-              borderWidth: 2,
-              fill: true,
-              tension: 0.1
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: { grid: { color: '#EBCFD7' }, ticks: { color: '#8B7075', font: { size: 9 } } },
-              x: { grid: { color: '#EBCFD7' }, ticks: { color: '#8B7075', font: { size: 9 } } }
-            },
-            plugins: { legend: { display: false } }
-          }
-        });
-      } else {
-        chartInstance.data.labels = labels;
-        chartInstance.data.datasets[0].data = dataX;
-        chartInstance.update();
+      if (!chartXInstance) {
+        const ctxX = document.getElementById('chartX').getContext('2d');
+        const ctxV = document.getElementById('chartV').getContext('2d');
+        const ctxA = document.getElementById('chartA').getContext('2d');
+
+        chartXInstance = new Chart(ctxX, createChartConfig('x(t) [m]', '#D95D82', 'rgba(217, 93, 130, 0.12)'));
+        chartVInstance = new Chart(ctxV, createChartConfig('v(t) [m/s]', '#4A3035', 'rgba(74, 48, 53, 0.12)', -60, 60));
+        chartAInstance = new Chart(ctxA, createChartConfig('a(t) [m/s²]', '#8B7075', 'rgba(139, 112, 117, 0.12)', -5, 5));
       }
+
+      chartXInstance.data.labels = labels;
+      chartXInstance.data.datasets[0].data = dataX;
+      chartXInstance.update();
+
+      chartVInstance.data.labels = labels;
+      chartVInstance.data.datasets[0].data = dataV;
+      chartVInstance.update();
+
+      chartAInstance.data.labels = labels;
+      chartAInstance.data.datasets[0].data = dataA;
+      chartAInstance.update();
     }
 
     function update() {
@@ -726,7 +839,7 @@
       document.getElementById("res-dx").textContent = `${calc.deltaX.toFixed(2)} m`;
 
       drawSVG(calc);
-      updateChart();
+      updateCharts();
     }
 
     function exportToCSV() {
@@ -812,7 +925,7 @@
       scoreEl.textContent = `Calificación: ${score}/${currentQuizQuestions.length}`;
     }
 
-    // Event Listeners
+    // Listeners
     document.getElementById("btn-play").addEventListener("click", () => {
       if (!isRunning) {
         if (currentTime >= tMax) currentTime = 0;
