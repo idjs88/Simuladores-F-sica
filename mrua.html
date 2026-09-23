@@ -1,0 +1,988 @@
+<!doctype html>
+<html lang="es">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movimiento Rectilíneo Uniformemente Acelerado</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #FFF8F3;
+      --surface: #FFFFFF;
+      --surface-pink: #FCE7EF;
+
+      --primary: #D95D82;
+      --primary-light: #E98AA8;
+      --primary-soft: #F8DCE5;
+
+      --text: #3D2A2E;
+      --text-muted: #8B7075;
+
+      --border: #EBCFD7;
+      --chocolate: #4A3035;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      width: 100%;
+      height: 100vh;
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      font-size: 0.85rem;
+      overflow: hidden;
+    }
+
+    h1, .font-heading {
+      font-family: "Playfair Display", serif;
+    }
+
+    button, input, select { font: inherit; }
+
+    .app-wrapper {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 12px 16px;
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(217, 93, 130, 0.08), transparent 30rem),
+        radial-gradient(circle at 85% 85%, rgba(233, 138, 168, 0.12), transparent 30rem);
+    }
+
+    .main-content {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    .hero { 
+      padding: 4px 0; 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--chocolate);
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: .8rem;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--chocolate);
+      background: var(--surface-pink);
+      border-radius: 6px 6px 0 0;
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: var(--surface-pink);
+      border-radius: 6px 6px 0 0;
+    }
+
+    .tab-pane {
+      display: none;
+      flex: 1;
+      height: calc(100% - 90px);
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .tab-pane.active {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tab-pane::-webkit-scrollbar { width: 6px; }
+    .tab-pane::-webkit-scrollbar-track { background: var(--bg); border-radius: 4px; }
+    .tab-pane::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .tab-pane::-webkit-scrollbar-thumb:hover { background: var(--primary-light); }
+
+    .lab-panel {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--surface);
+      box-shadow: 0 4px 16px rgba(74, 48, 53, 0.05);
+    }
+
+    .panel-pad { padding: 14px; }
+
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .panel-heading svg {
+      width: 18px;
+      height: 18px;
+      color: var(--primary);
+    }
+
+    .panel-heading h2 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--chocolate);
+    }
+
+    .sim-layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 12px;
+      align-items: start;
+      min-height: 0;
+    }
+
+    .cartesian-plane {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: radial-gradient(circle, #FFFFFF 0%, #FFF8F3 70%, #FCE7EF 100%);
+      box-shadow: inset 0 0 25px rgba(217, 93, 130, 0.05), 0 4px 12px rgba(74, 48, 53, 0.04);
+      overflow: hidden;
+    }
+
+    #cartesian-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .btn-ctrl {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 6px 12px;
+      font-size: .78rem;
+      font-weight: 600;
+      background: var(--surface);
+      color: var(--chocolate);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-ctrl:hover {
+      background: var(--surface-pink);
+      border-color: var(--primary-light);
+      color: var(--chocolate);
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .field-group label {
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    input[type=range] {
+      width: 100%;
+      height: 6px;
+      border-radius: 6px;
+      background: var(--border);
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .result-item {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+    }
+
+    .result-label {
+      font-size: .68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: var(--text-muted);
+      display: block;
+    }
+
+    .result-value {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--chocolate);
+    }
+
+    .quiz-option {
+      display: block;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      margin-bottom: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: .8rem;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--primary-light);
+      background: var(--surface-pink);
+    }
+
+    .quiz-option.selected {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    .action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      font-size: .78rem;
+      font-weight: 700;
+      border-radius: 6px;
+      border: 0;
+      cursor: pointer;
+      background: var(--primary);
+      color: #ffffff;
+      transition: all 0.2s;
+    }
+
+    .action-button:hover {
+      background: var(--chocolate);
+      box-shadow: 0 2px 8px rgba(74, 48, 53, 0.2);
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .chart-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .chart-card h3 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--chocolate);
+      margin: 0 0 6px 0;
+      text-align: center;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 160px;
+      width: 100%;
+    }
+
+    @media (max-width: 1024px) {
+      .sim-layout { grid-template-columns: 1fr; }
+      .charts-grid { grid-template-columns: 1fr; }
+      body { overflow: auto; height: auto; }
+      .app-wrapper { height: auto; min-height: 100vh; }
+      .tab-pane { height: auto; overflow-y: visible; }
+    }
+  </style>
+ </head>
+ <body>
+  <div class="app-wrapper">
+   <main class="main-content">
+    <section class="hero">
+     <div>
+      <h1>Simulador Movimiento Rectilíneo Uniformemente Acelerado (MRUA)</h1>
+      <p>Análisis unidimensional con aceleración constante (a ≠ 0) y cambio de velocidad dinámico</p>
+     </div>
+     <a href="index.html" class="btn-ctrl" title="Volver al Inicio">
+      <i data-lucide="arrow-left"></i> Regresar al Inicio
+     </a>
+    </section>
+
+    <nav class="nav-tabs">
+     <button class="tab-btn active" onclick="switchTab('simulador', event)"><i data-lucide="gamepad-2"></i> Simulador</button>
+     <button class="tab-btn" onclick="switchTab('teoria', event)"><i data-lucide="book-open"></i> Teoría</button>
+     <button class="tab-btn" onclick="switchTab('evaluacion', event)"><i data-lucide="award"></i> Evaluación</button>
+    </nav>
+
+    <!-- PESTAÑA 1: SIMULADOR -->
+    <div id="tab-simulador" class="tab-pane active">
+     <section class="sim-layout">
+      <!-- PANEL IZQUIERDO: PISTA Y GRÁFICAS -->
+      <div style="display:flex; flex-direction:column; gap:12px; min-width:0;">
+       <section class="lab-panel panel-pad" style="display:flex; flex-direction:column;">
+        <div class="panel-heading" style="justify-content: space-between;">
+         <div style="display:flex; align-items:center; gap:8px;">
+          <i data-lucide="move-right"></i>
+          <h2>Pista de Movimiento</h2>
+         </div>
+         <div style="display:flex; gap:6px;">
+          <button id="btn-play" class="btn-ctrl"><i data-lucide="play"></i> Iniciar</button>
+          <button id="btn-pause" class="btn-ctrl"><i data-lucide="pause"></i> Pausa</button>
+          <button id="btn-stop" class="btn-ctrl"><i data-lucide="rotate-ccw"></i> Reiniciar</button>
+         </div>
+        </div>
+
+        <div class="cartesian-plane">
+         <svg id="cartesian-svg" viewBox="0 0 600 200">
+          <defs>
+           <marker id="arrow-v" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#4A3035"/>
+           </marker>
+          </defs>
+
+          <!-- Regla / Eje X -->
+          <g id="grid-axis">
+           <line x1="40" y1="140" x2="560" y2="140" stroke="#EBCFD7" stroke-width="2"/>
+          </g>
+
+          <!-- Marcas de distancia -->
+          <g id="ticks-group" opacity="0.95"></g>
+
+          <!-- Vector Velocidad Variable -->
+          <line id="vec-v" x1="0" y1="0" x2="0" y2="0" stroke="#4A3035" stroke-width="3" marker-end="url(#arrow-v)"/>
+
+          <!-- Móvil / Carrito Estilizado -->
+          <g id="mobile-group">
+           <!-- Sombra -->
+           <ellipse id="car-shadow" cx="0" cy="139" rx="28" ry="4" fill="rgba(74, 48, 53, 0.15)"/>
+           
+           <!-- Cuerpo del Carrito -->
+           <path id="car-body" d="M -24,124 Q -26,110 -12,108 L 4,108 Q 14,108 20,118 L 26,118 Q 28,118 28,124 L 28,132 Q 28,135 24,135 L -20,135 Q -24,135 -24,124 Z" fill="#D95D82" stroke="#4A3035" stroke-width="1.5"/>
+           
+           <!-- Cabina / Ventana -->
+           <path id="car-window" d="M -10,111 L 2,111 Q 10,111 14,118 L -10,118 Z" fill="#FCE7EF" stroke="#4A3035" stroke-width="1"/>
+           
+           <!-- Faros -->
+           <circle id="car-headlight" cx="26" cy="124" r="2.5" fill="#FFF8F3" stroke="#4A3035" stroke-width="0.8"/>
+           <rect id="car-taillight" x="-24" y="121" width="2" height="5" rx="1" fill="#4A3035"/>
+
+           <!-- Ruedas -->
+           <g id="wheel-front">
+            <circle cx="14" cy="135" r="6" fill="#4A3035"/>
+            <circle cx="14" cy="135" r="2.5" fill="#FFF8F3"/>
+           </g>
+           <g id="wheel-back">
+            <circle cx="-14" cy="135" r="6" fill="#4A3035"/>
+            <circle cx="-14" cy="135" r="2.5" fill="#FFF8F3"/>
+           </g>
+          </g>
+         </svg>
+        </div>
+
+        <div style="margin-top: 8px; display:flex; justify-content:space-between; align-items:center; background:var(--bg); padding:6px 12px; border-radius:8px; border:1px solid var(--border);">
+         <div style="display:flex; gap:12px;">
+          <span style="font-size:.75rem; color:var(--primary); font-weight:700;">■ Posición (x)</span>
+          <span style="font-size:.75rem; color:var(--chocolate); font-weight:700;">➔ Vector Velocidad v(t)</span>
+         </div>
+         <span id="time-badge" style="font-size:.75rem; font-weight:700; padding:2px 8px; border-radius:4px; background:var(--surface-pink); color:var(--chocolate);">t = 0.00 s</span>
+        </div>
+       </section>
+
+       <!-- SECCIÓN DE LAS TRES GRÁFICAS -->
+       <section class="lab-panel panel-pad">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+         <div class="panel-heading" style="margin:0;">
+          <i data-lucide="line-chart"></i>
+          <h2>Gráficas Cinemáticas MRUA</h2>
+         </div>
+         <button id="btn-export-csv" class="btn-ctrl" style="background:var(--primary); color:#FFFFFF; border-color:var(--primary);">
+          <i data-lucide="download"></i> Exportar CSV
+         </button>
+        </div>
+
+        <div class="charts-grid">
+         <div class="chart-card">
+          <h3>Posición vs Tiempo x(t)</h3>
+          <div class="chart-container">
+           <canvas id="chartX"></canvas>
+          </div>
+         </div>
+
+         <div class="chart-card">
+          <h3>Velocidad vs Tiempo v(t)</h3>
+          <div class="chart-container">
+           <canvas id="chartV"></canvas>
+          </div>
+         </div>
+
+         <div class="chart-card">
+          <h3>Aceleración vs Tiempo a(t)</h3>
+          <div class="chart-container">
+           <canvas id="chartA"></canvas>
+          </div>
+         </div>
+        </div>
+       </section>
+      </div>
+
+      <!-- PANEL LATERAL DE CONTROLES -->
+      <aside class="lab-panel panel-pad" style="display:flex; flex-direction:column; gap:10px;">
+       <div class="panel-heading">
+        <i data-lucide="sliders"></i>
+        <h2>Parámetros Iniciales</h2>
+       </div>
+
+       <div style="display:grid; gap:8px; background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
+        <div class="field-group">
+         <div style="display:flex; justify-content:space-between;">
+          <label>Posición Inicial (x₀):</label>
+          <span id="lbl-x0" style="font-weight:700; color:var(--primary);">0 m</span>
+         </div>
+         <input id="slider-x0" type="range" min="0" max="100" value="0" step="5">
+        </div>
+
+        <div class="field-group">
+         <div style="display:flex; justify-content:space-between;">
+          <label>Velocidad Inicial (v₀):</label>
+          <span id="lbl-v0" style="font-weight:700; color:var(--chocolate);">5 m/s</span>
+         </div>
+         <input id="slider-v0" type="range" min="-30" max="30" value="5" step="1">
+        </div>
+
+        <div class="field-group">
+         <div style="display:flex; justify-content:space-between;">
+          <label>Aceleración (a):</label>
+          <span id="lbl-a" style="font-weight:700; color:var(--primary);">2.0 m/s²</span>
+         </div>
+         <input id="slider-a" type="range" min="-10" max="10" value="2" step="0.5">
+        </div>
+
+        <div class="field-group">
+         <div style="display:flex; justify-content:space-between;">
+          <label>Tiempo Límite (t_{máx}):</label>
+          <span id="lbl-tmax" style="font-weight:700; color:var(--primary-light);">10 s</span>
+         </div>
+         <input id="slider-tmax" type="range" min="2" max="30" value="10" step="1">
+        </div>
+       </div>
+
+       <div class="panel-heading" style="margin-top:4px;">
+        <i data-lucide="calculator"></i>
+        <h2>Variables en Tiempo Real</h2>
+       </div>
+
+       <div class="result-grid">
+        <div class="result-item">
+         <span class="result-label">Posición Actual (x)</span>
+         <span id="res-x" class="result-value" style="color:var(--primary);">0.00 m</span>
+        </div>
+        <div class="result-item">
+         <span class="result-label">Desplazamiento (∆x)</span>
+         <span id="res-dx" class="result-value" style="color:var(--chocolate);">0.00 m</span>
+        </div>
+        <div class="result-item">
+         <span class="result-label">Velocidad Actual (v)</span>
+         <span id="res-v" class="result-value">5.00 m/s</span>
+        </div>
+        <div class="result-item">
+         <span class="result-label">Aceleración (a)</span>
+         <span id="res-a" class="result-value" style="color:var(--text-muted);">2.00 m/s²</span>
+        </div>
+       </div>
+      </aside>
+     </section>
+    </div>
+
+    <!-- PESTAÑA 2: TEORÍA -->
+    <div id="tab-teoria" class="tab-pane">
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading">
+       <i data-lucide="book-open"></i>
+       <h2>Movimiento Rectilíneo Uniformemente Acelerado (MRUA)</h2>
+      </div>
+      <div style="color:var(--text); font-size:.88rem; line-height:1.6;">
+       <p style="margin-top:0;">
+        El <strong>Movimiento Rectilíneo Uniformemente Acelerado (MRUA)</strong> describe a un objeto que se desplaza en trayectoria recta experimentando cambios iguales de velocidad en intervalos de tiempo iguales gracias a una <strong>aceleración constante</strong> ($a \neq 0$).
+       </p>
+       
+       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">1. Propiedades Fundamentales</h3>
+       <ul style="margin:6px 0; padding-left:20px; color:var(--text-muted);">
+        <li><strong style="color:var(--text);">Aceleración Constante:</strong> La aceleración se mantiene fija a lo largo del tiempo ($a = \text{constante}$).</li>
+        <li><strong style="color:var(--text);">Velocidad Variable:</strong> La velocidad cambia linealmente de forma proporcional a la aceleración ($v(t) = v_0 + a \cdot t$).</li>
+        <li><strong style="color:var(--text);">Posición Parabólica:</strong> La posición evoluciona cuadráticamente con el tiempo.</li>
+       </ul>
+
+       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">2. Ecuaciones Cinemáticas Principales</h3>
+       <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border); margin:10px 0; font-family:monospace; color:var(--primary); display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
+        <div>
+         <strong>Posición x(t):</strong><br>
+         x(t) = x₀ + v₀·t + ½·a·t²
+        </div>
+        <div>
+         <strong>Velocidad v(t):</strong><br>
+         v(t) = v₀ + a·t
+        </div>
+        <div>
+         <strong>Aceleración a(t):</strong><br>
+         a(t) = a = cte.
+        </div>
+       </div>
+
+       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">3. Interpretación Gráfica</h3>
+       <p style="color:var(--text-muted);">
+        • <strong style="color:var(--text);">Gráfica Posición vs. Tiempo (x-t):</strong> Es una curva parabólica (cóncava hacia arriba si $a > 0$, cóncava hacia abajo si $a < 0$).<br>
+        • <strong style="color:var(--text);">Gráfica Velocidad vs. Tiempo (v-t):</strong> Es una recta inclinada. Su pendiente representa la aceleración ($a$).<br>
+        • <strong style="color:var(--text);">Gráfica Aceleración vs. Tiempo (a-t):</strong> Es una línea horizontal fija paralela al eje del tiempo.
+       </p>
+      </div>
+     </section>
+    </div>
+
+    <!-- PESTAÑA 3: EVALUACIÓN -->
+    <div id="tab-evaluacion" class="tab-pane">
+     <section class="lab-panel panel-pad">
+      <div class="panel-heading" style="justify-content: space-between;">
+       <div style="display:flex; align-items:center; gap:8px;">
+        <i data-lucide="award"></i>
+        <h2>Evaluación MRUA</h2>
+       </div>
+       <button id="btn-new-quiz" class="btn-ctrl">
+        <i data-lucide="refresh-cw"></i> Generar Nuevo Cuestionario
+       </button>
+      </div>
+
+      <div id="quiz-container"></div>
+      
+      <div style="margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
+       <button id="btn-submit-quiz" class="action-button"><i data-lucide="check-circle"></i> Calificar Cuestionario</button>
+       <span id="quiz-score" style="font-size:1.05rem; font-weight:700; color:var(--primary);"></span>
+      </div>
+     </section>
+    </div>
+   </main>
+  </div>
+
+  <script>
+    let x0 = 0;
+    let v0 = 5;
+    let accel = 2;
+    let tMax = 10;
+
+    let isRunning = false;
+    let currentTime = 0;
+    let animFrameId = null;
+
+    let chartXInstance = null;
+    let chartVInstance = null;
+    let chartAInstance = null;
+
+    const questionBank = [
+      {
+        q: "En el MRUA, ¿cómo se comporta la gráfica de Posición vs. Tiempo (x-t)?",
+        options: ["Una línea recta horizontal", "Una parábola", "Una curva exponencial decreciente", "Una línea recta inclinada"],
+        correct: 1,
+        explanation: "Debido al término ½·a·t², la ecuación de posición x(t) representa una función cuadrática (parábola)."
+      },
+      {
+        q: "¿Qué representa la pendiente de la recta en una gráfica Velocidad vs. Tiempo (v-t) en el MRUA?",
+        options: ["El desplazamiento", "La aceleración del móvil", "La posición final", "El tiempo total"],
+        correct: 1,
+        explanation: "La razón de cambio Δv/Δt corresponde a la aceleración del móvil."
+      },
+      {
+        q: "Un objeto parte del reposo (v0 = 0) con a = 4 m/s². ¿Cuál es su velocidad a los 3 segundos?",
+        options: ["12 m/s", "6 m/s", "18 m/s", "36 m/s"],
+        correct: 0,
+        explanation: "Usando v = v0 + a·t: v = 0 + (4 · 3) = 12 m/s."
+      },
+      {
+        q: "Si la aceleración es negativa en un movimiento con velocidad inicial positiva, el objeto está:",
+        options: ["Acelerando hacia adelante", "Desacelerando (frenando)", "En reposo absoluto", "Aumentando su velocidad al doble"],
+        correct: 1,
+        explanation: "Cuando la aceleración tiene signo opuesto a la velocidad, el módulo de la velocidad disminuye (frenado)."
+      },
+      {
+        q: "En una gráfica a-t de MRUA, ¿qué figura se forma con el eje horizontal?",
+        options: ["Una parábola cóncava", "Un rectángulo bajo una línea horizontal constante", "Un triángulo rectángulo", "Una diagonal a 45 grados"],
+        correct: 1,
+        explanation: "Al ser la aceleración constante, a(t) se grafica como una línea horizontal paralela al eje t."
+      }
+    ];
+
+    let currentQuizQuestions = [];
+
+    function switchTab(tabId, event) {
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      if (event && event.currentTarget) event.currentTarget.classList.add('active');
+    }
+
+    function getCalculations() {
+      const tClamped = Math.min(currentTime, tMax);
+      // Ecuaciones horarias de MRUA
+      const curX = x0 + (v0 * tClamped) + (0.5 * accel * Math.pow(tClamped, 2));
+      const curV = v0 + (accel * tClamped);
+      const deltaX = curX - x0;
+      return { tClamped, curX, curV, deltaX };
+    }
+
+    function drawSVG(calc) {
+      const ticksGroup = document.getElementById("ticks-group");
+      const mobileGroup = document.getElementById("mobile-group");
+      const vecV = document.getElementById("vec-v");
+
+      const minX = -100;
+      const maxX = 400;
+      const scaleX = 520 / (maxX - minX);
+      const originPx = 40 + (0 - minX) * scaleX;
+
+      ticksGroup.innerHTML = "";
+      for (let xMark = -80; xMark <= 380; xMark += 40) {
+        const pxMark = originPx + xMark * scaleX;
+        if (pxMark >= 40 && pxMark <= 560) {
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", pxMark); line.setAttribute("y1", 135);
+          line.setAttribute("x2", pxMark); line.setAttribute("y2", 145);
+          line.setAttribute("stroke", "#EBCFD7");
+          line.setAttribute("stroke-width", "1.5");
+
+          const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          text.setAttribute("x", pxMark);
+          text.setAttribute("y", 160);
+          text.setAttribute("fill", "#8B7075");
+          text.setAttribute("font-size", "9");
+          text.setAttribute("font-weight", "500");
+          text.setAttribute("text-anchor", "middle");
+          text.textContent = `${xMark}m`;
+
+          ticksGroup.appendChild(line);
+          ticksGroup.appendChild(text);
+        }
+      }
+
+      const objPx = originPx + calc.curX * scaleX;
+      
+      // Orientación del coche según la velocidad instantánea
+      const flipScale = calc.curV < 0 ? -1 : 1;
+      mobileGroup.setAttribute("transform", `translate(${objPx}, 0) scale(${flipScale}, 1)`);
+
+      // Vector velocidad dinámico proporcional a v(t)
+      const vecLength = calc.curV * 1.2;
+      vecV.setAttribute("x1", objPx);
+      vecV.setAttribute("y1", 90);
+      vecV.setAttribute("x2", objPx + vecLength);
+      vecV.setAttribute("y2", 90);
+    }
+
+    function updatePhysicsAnimation() {
+      if (!isRunning) return;
+
+      currentTime += 0.03;
+      const calc = getCalculations();
+
+      if (currentTime >= tMax) {
+        currentTime = tMax;
+        isRunning = false;
+      }
+
+      document.getElementById("time-badge").textContent = `t = ${currentTime.toFixed(2)} s`;
+      document.getElementById("res-x").textContent = `${calc.curX.toFixed(2)} m`;
+      document.getElementById("res-dx").textContent = `${calc.deltaX.toFixed(2)} m`;
+      document.getElementById("res-v").textContent = `${calc.curV.toFixed(2)} m/s`;
+
+      drawSVG(calc);
+
+      if (isRunning) {
+        animFrameId = requestAnimationFrame(updatePhysicsAnimation);
+      }
+    }
+
+    function createChartConfig(label, color, bgColor, yMin, yMax) {
+      return {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: label,
+            data: [],
+            borderColor: color,
+            backgroundColor: bgColor,
+            borderWidth: 2,
+            fill: true,
+            tension: 0.2,
+            pointRadius: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              grid: { color: '#EBCFD7' },
+              ticks: { color: '#8B7075', font: { size: 8 } },
+              suggestedMin: yMin,
+              suggestedMax: yMax
+            },
+            x: {
+              grid: { color: '#EBCFD7' },
+              ticks: { color: '#8B7075', font: { size: 8 } }
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      };
+    }
+
+    function updateCharts() {
+      const labels = [];
+      const dataX = [];
+      const dataV = [];
+      const dataA = [];
+      const steps = 30;
+
+      for (let i = 0; i <= steps; i++) {
+        const t = (tMax / steps) * i;
+        labels.push(t.toFixed(1));
+
+        const posX = x0 + (v0 * t) + (0.5 * accel * t * t);
+        const velV = v0 + (accel * t);
+
+        dataX.push(posX.toFixed(2));
+        dataV.push(velV.toFixed(2));
+        dataA.push(accel.toFixed(2));
+      }
+
+      if (!chartXInstance) {
+        const ctxX = document.getElementById('chartX').getContext('2d');
+        const ctxV = document.getElementById('chartV').getContext('2d');
+        const ctxA = document.getElementById('chartA').getContext('2d');
+
+        chartXInstance = new Chart(ctxX, createChartConfig('x(t) [m]', '#D95D82', 'rgba(217, 93, 130, 0.12)'));
+        chartVInstance = new Chart(ctxV, createChartConfig('v(t) [m/s]', '#4A3035', 'rgba(74, 48, 53, 0.12)'));
+        chartAInstance = new Chart(ctxA, createChartConfig('a(t) [m/s²]', '#8B7075', 'rgba(139, 112, 117, 0.12)', -12, 12));
+      }
+
+      chartXInstance.data.labels = labels;
+      chartXInstance.data.datasets[0].data = dataX;
+      chartXInstance.update();
+
+      chartVInstance.data.labels = labels;
+      chartVInstance.data.datasets[0].data = dataV;
+      chartVInstance.update();
+
+      chartAInstance.data.labels = labels;
+      chartAInstance.data.datasets[0].data = dataA;
+      chartAInstance.update();
+    }
+
+    function update() {
+      x0 = parseFloat(document.getElementById("slider-x0").value);
+      v0 = parseFloat(document.getElementById("slider-v0").value);
+      accel = parseFloat(document.getElementById("slider-a").value);
+      tMax = parseFloat(document.getElementById("slider-tmax").value);
+
+      document.getElementById("lbl-x0").textContent = `${x0} m`;
+      document.getElementById("lbl-v0").textContent = `${v0} m/s`;
+      document.getElementById("lbl-a").textContent = `${accel.toFixed(1)} m/s²`;
+      document.getElementById("lbl-tmax").textContent = `${tMax} s`;
+
+      document.getElementById("res-a").textContent = `${accel.toFixed(2)} m/s²`;
+
+      const calc = getCalculations();
+      document.getElementById("res-x").textContent = `${calc.curX.toFixed(2)} m`;
+      document.getElementById("res-dx").textContent = `${calc.deltaX.toFixed(2)} m`;
+      document.getElementById("res-v").textContent = `${calc.curV.toFixed(2)} m/s`;
+
+      drawSVG(calc);
+      updateCharts();
+    }
+
+    function exportToCSV() {
+      let csv = "data:text/csv;charset=utf-8,Tiempo(s),Posicion(m),Velocidad(m/s),Aceleracion(m/s2)\n";
+      const steps = 50;
+      for (let i = 0; i <= steps; i++) {
+        const t = (tMax / steps) * i;
+        const x = x0 + (v0 * t) + (0.5 * accel * t * t);
+        const v = v0 + (accel * t);
+        csv += `${t.toFixed(2)},${x.toFixed(2)},${v.toFixed(2)},${accel.toFixed(2)}\n`;
+      }
+      const encodedUri = encodeURI(csv);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "reporte_mrua.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function generateQuiz() {
+      const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+      currentQuizQuestions = shuffled.slice(0, 5);
+      const container = document.getElementById("quiz-container");
+      container.innerHTML = "";
+
+      currentQuizQuestions.forEach((qObj, qIdx) => {
+        const qDiv = document.createElement("div");
+        qDiv.style.background = "var(--bg)";
+        qDiv.style.padding = "12px";
+        qDiv.style.borderRadius = "8px";
+        qDiv.style.border = "1px solid var(--border)";
+        qDiv.style.marginBottom = "10px";
+
+        const title = document.createElement("h4");
+        title.style.margin = "0 0 8px 0";
+        title.style.color = "var(--chocolate)";
+        title.style.fontSize = "0.9rem";
+        title.textContent = `${qIdx + 1}. ${qObj.q}`;
+        qDiv.appendChild(title);
+
+        qObj.options.forEach((opt, optIdx) => {
+          const label = document.createElement("label");
+          label.className = "quiz-option";
+          label.innerHTML = `<input type="radio" name="q_${qIdx}" value="${optIdx}" style="display:none;">${opt}`;
+          label.addEventListener("click", () => {
+            qDiv.querySelectorAll(".quiz-option").forEach(s => s.classList.remove("selected"));
+            label.classList.add("selected");
+            label.querySelector("input").checked = true;
+          });
+          qDiv.appendChild(label);
+        });
+        container.appendChild(qDiv);
+      });
+      document.getElementById("quiz-score").textContent = "";
+    }
+
+    function evaluateQuiz() {
+      let score = 0;
+      currentQuizQuestions.forEach((qObj, qIdx) => {
+        const container = document.getElementById("quiz-container");
+        const qDiv = container.children[qIdx];
+        const selected = document.querySelector(`input[name="q_${qIdx}"]:checked`);
+        const userIdx = selected ? parseInt(selected.value) : -1;
+        const isCorrect = userIdx === qObj.correct;
+        if (isCorrect) score++;
+
+        let fb = qDiv.querySelector(".quiz-feedback");
+        if (!fb) {
+          fb = document.createElement("div");
+          fb.className = "quiz-feedback";
+          fb.style.marginTop = "8px";
+          fb.style.padding = "8px";
+          fb.style.borderRadius = "6px";
+          fb.style.fontSize = "0.78rem";
+          qDiv.appendChild(fb);
+        }
+        fb.style.background = isCorrect ? "rgba(16, 185, 129, 0.12)" : "rgba(217, 93, 130, 0.12)";
+        fb.style.color = isCorrect ? "#065f46" : "var(--chocolate)";
+        fb.style.border = isCorrect ? "1px solid #a7f3d0" : "1px solid var(--border)";
+        fb.innerHTML = `<strong>${isCorrect ? "Correcto" : "Incorrecto"}:</strong> ${qObj.explanation}`;
+      });
+      const scoreEl = document.getElementById("quiz-score");
+      scoreEl.textContent = `Calificación: ${score}/${currentQuizQuestions.length}`;
+    }
+
+    // Event Listeners
+    document.getElementById("btn-play").addEventListener("click", () => {
+      if (!isRunning) {
+        if (currentTime >= tMax) currentTime = 0;
+        isRunning = true;
+        updatePhysicsAnimation();
+      }
+    });
+
+    document.getElementById("btn-pause").addEventListener("click", () => {
+      isRunning = false;
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+    });
+
+    document.getElementById("btn-stop").addEventListener("click", () => {
+      isRunning = false;
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+      currentTime = 0;
+      document.getElementById("time-badge").textContent = "t = 0.00 s";
+      update();
+    });
+
+    ["slider-x0", "slider-v0", "slider-a", "slider-tmax"].forEach(id => {
+      document.getElementById(id).addEventListener("input", () => {
+        currentTime = 0;
+        update();
+      });
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      update();
+      generateQuiz();
+      lucide.createIcons();
+      document.getElementById("btn-export-csv").addEventListener("click", exportToCSV);
+      document.getElementById("btn-new-quiz").addEventListener("click", generateQuiz);
+      document.getElementById("btn-submit-quiz").addEventListener("click", evaluateQuiz);
+    });
+  </script>
+ </body>
+</html>
