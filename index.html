@@ -5,10 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Laboratorio Virtual de Física</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
+
   <script src="https://unpkg.com/lucide@latest"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link
     href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
     rel="stylesheet"
@@ -185,6 +189,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
       margin-bottom: 28px;
       padding-bottom: 14px;
       border-bottom: 1px solid var(--primary-soft);
@@ -194,6 +200,31 @@
       display: flex;
       align-items: center;
       gap: 12px;
+    }
+
+    .panel-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* ESTILOS DE LA LISTA DESPLEGABLE DE FILTRO */
+    .unit-select {
+      background-color: var(--surface);
+      color: var(--chocolate);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .unit-select:focus, .unit-select:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(217, 93, 130, 0.15);
     }
 
     .panel-heading svg {
@@ -222,6 +253,7 @@
     /* UNITS & MODULES */
     .unit-section {
       margin-bottom: 32px;
+      transition: opacity 0.3s ease;
     }
 
     .unit-section:last-child {
@@ -520,15 +552,20 @@
         grid-template-columns: 1fr;
         padding: 16px;
       }
-      .project-metrics {
-        grid-template-columns: 1fr;
-      }
       .simulators-grid {
         grid-template-columns: 1fr;
       }
       .cat-widget {
         bottom: 16px;
         left: 16px;
+      }
+      .panel-heading {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .panel-controls {
+        width: 100%;
+        justify-content: space-between;
       }
     }
   </style>
@@ -541,64 +578,62 @@
       <!-- HERO -->
       <section class="hero">
 
-      <div class="hero-icon">
-        <i data-lucide="flask-conical"></i>
-      </div>
+        <div class="hero-icon">
+          <i data-lucide="flask-conical"></i>
+        </div>
 
-      <h1 class="title-font">
-        Laboratorio Virtual<br>
-        de Física
-      </h1>
+        <h1 class="title-font">
+          Laboratorio Virtual<br>
+          de Física</h1>
 
         <p class="subtitle">
           Experimenta · Calcula · Comprueba
         </p>
 
         <!-- DATOS ACADÉMICOS / STUDENT CARD -->
+        <div class="student-card">
 
-      <div class="student-card">
-
-        <div class="student-item">
-          <i data-lucide="graduation-cap"></i>
-          <div>
-            <small>Estudiante</small>
-            <strong>Erandi Palomares Sánchez</strong>
+          <div class="student-item">
+            <i data-lucide="graduation-cap"></i>
+            <div>
+              <small>Estudiante</small>
+              <strong>Erandi Palomares Sánchez</strong>
+            </div>
           </div>
-        </div>
 
-        <div class="student-item">
-          <i data-lucide="monitor-cog"></i>
-          <div>
-            <small>Carrera</small>
-            <strong>Ingeniería en Sistemas Computacionales</strong>
+          <div class="student-item">
+            <i data-lucide="monitor-cog"></i>
+            <div>
+              <small>Carrera</small>
+              <strong>Ingeniería en Sistemas Computacionales</strong>
+            </div>
           </div>
-        </div>
 
-        <div class="student-item">
-          <i data-lucide="book-open"></i>
-          <div>
-            <small>Materia</small>
-            <strong>Física General</strong>
+          <div class="student-item">
+            <i data-lucide="book-open"></i>
+            <div>
+              <small>Materia</small>
+              <strong>Física General</strong>
+            </div>
           </div>
-        </div>
 
-        <div class="student-item">
-          <i data-lucide="users"></i>
-          <div>
-            <small>Semestre / Grupo</small>
-            <strong>3S1M</strong>
+          <div class="student-item">
+            <i data-lucide="users"></i>
+            <div>
+              <small>Semestre / Grupo</small>
+              <strong>3S1M</strong>
+            </div>
           </div>
-        </div>
 
-        <div class="student-item">
-          <i data-lucide="calendar-days"></i>
-          <div>
-            <small>Periodo</small>
-            <strong>AGO-DIC 2026</strong>
+          <div class="student-item">
+            <i data-lucide="calendar-days"></i>
+            <div>
+              <small>Periodo</small>
+              <strong>AGO-DIC 2026</strong>
+            </div>
           </div>
-        </div>
 
-      </div>
+        </div>
 
       </section>
 
@@ -607,10 +642,25 @@
 
         <div class="panel-heading">
           <div class="panel-title-group">
-            <i data-lucide="atom"></i>
+            <i data-lucide="layout-grid"></i>
             <h2>Simuladores Interactivos</h2>
           </div>
-          <span class="stat-badge">2 Disponibles</span>
+
+          <div class="panel-controls">
+            <!-- FILTRO POR UNIDAD -->
+            <select id="unitFilter" class="unit-select" onchange="filterUnits()">
+              <option value="all">Todas las unidades</option>
+              <option value="1">Unidad 1: Estática</option>
+              <option value="2">Unidad 2: Dinámica</option>
+              <option value="3">Unidad 3: Óptica</option>
+              <option value="4">Unidad 4: Termodinámica</option>
+              <option value="5">Unidad 5: Electrostática</option>
+              <option value="6">Unidad 6: Electrodinámica</option>
+              <option value="7">Unidad 7: Electromagnetismo</option>
+            </select>
+
+            <span class="stat-badge">5 Disponibles</span>
+          </div>
         </div>
 
         <!-- UNIDAD 1 -->
@@ -681,64 +731,18 @@
         </div>
 
         <!-- UNIDAD 2 -->
-        <div class="unit-section" data-unit="2">
-
+        <div class="unit-section unit-pending" data-unit="2">
           <div class="unit-title">
             <div class="unit-title-text">
               <i data-lucide="layers"></i>
-              Unidad 2: Dinámica de la Partícula
+              Unidad 2  : Dinámica de la Partícula
             </div>
-            <span class="badge-status status-active">2 simuladores</span>
+            <span class="badge-status status-pending">Próximamente</span>
           </div>
-
-          <div class="simulators-grid">
-
-            <article class="simulator-card">
-              <div>
-                <div class="simulator-number">Tema 2.1.2</div>
-                <div class="simulator-icon">
-                  <i data-lucide="arrow-right"></i>
-                </div>
-                <h3>Movimiento Rectilíneo Uniforme</h3>
-                <p>
-                  Estudia los desplazamientos a velocidad constante y análisis de sus gráficas de posición contra tiempo.
-                </p>
-                <div class="simulator-info">
-                  <span class="tag">MRU</span>
-                  <span class="tag">Velocidad</span>
-                  <span class="tag">Aceleración</span>
-                </div>
-              </div>
-              <a href="mru.html" class="open-button">
-                Abrir simulador
-                <i data-lucide="chevron-right"></i>
-              </a>
-            </article>
-
-            <article class="simulator-card">
-              <div>
-                <div class="simulator-number">Tema 2.1.4</div>
-                <div class="simulator-icon">
-                  <i data-lucide="redo"></i>
-                </div>
-                <h3>Movimiento Rectilíneo Uniformemente Acelerado</h3>
-                <p>
-                  Estudia los desplazamientos con aceleración constante y análisis de sus gráficas de posición y velocidad contra tiempo.
-                </p>
-                <div class="simulator-info">
-                  <span class="tag">MRUA</span>
-                  <span class="tag">Aceleración</span>
-                  <span class="tag">Velocidad</span>
-                </div>
-              </div>
-              <a href="mrua.html" class="open-button">
-                Abrir simulador
-                <i data-lucide="chevron-right"></i>
-              </a>
-            </article>
-
+          <div class="empty-unit-card">
+            <i data-lucide="clock"></i>
+            <span>Simuladores en desarrollo para esta unidad.</span>
           </div>
-
         </div>
 
         <!-- UNIDAD 3 -->
@@ -854,6 +858,21 @@
       currentPhrase = (currentPhrase + 1) % catPhrases.length;
       const bubble = document.getElementById("catText");
       bubble.textContent = catPhrases[currentPhrase];
+    }
+
+    // FUNCIÓN DE FILTRADO POR UNIDAD
+    function filterUnits() {
+      const selectedValue = document.getElementById("unitFilter").value;
+      const units = document.querySelectorAll(".unit-section");
+
+      units.forEach(unit => {
+        const unitNumber = unit.getAttribute("data-unit");
+        if (selectedValue === "all" || selectedValue === unitNumber) {
+          unit.style.display = "block";
+        } else {
+          unit.style.display = "none";
+        }
+      });
     }
 
     window.addEventListener("DOMContentLoaded", () => {
