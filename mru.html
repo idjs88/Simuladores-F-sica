@@ -365,7 +365,7 @@
     <section class="hero">
      <div>
       <h1>Simulador Movimiento Rectilíneo Uniforme (MRU)</h1>
-      <p>Cámara móvil de seguimiento continuo con desplazamiento de carretera y coordenadas</p>
+      <p>Un simulador interactivo para comprender el movimiento rectilíneo uniforme.</p>
      </div>
      <a href="index.html" class="btn-ctrl" title="Volver al Inicio">
       <i data-lucide="arrow-left"></i> Regresar al Inicio
@@ -387,7 +387,7 @@
         <div class="panel-heading" style="justify-content: space-between;">
          <div style="display:flex; align-items:center; gap:8px;">
           <i data-lucide="move-right"></i>
-          <h2>Carretera y Plano en Movimiento (Cámara Móvil)</h2>
+          <h2>Carretera y Plano en Movimiento</h2>
          </div>
          <div style="display:flex; gap:6px;">
           <button id="btn-play" class="btn-ctrl"><i data-lucide="play"></i> Iniciar</button>
@@ -403,7 +403,6 @@
             <path d="M 0 0 L 10 5 L 0 10 z" fill="#4A3035"/>
            </marker>
            
-           <!-- Patrón de fondo para el suelo / carretera en movimiento -->
            <pattern id="road-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
             <line x1="0" y1="40" x2="40" y2="40" stroke="#EBCFD7" stroke-width="1"/>
            </pattern>
@@ -454,7 +453,7 @@
 
           <!-- Retícula / Indicador de Posición Central -->
           <line x1="200" y1="20" x2="200" y2="90" stroke="#D95D82" stroke-width="1" stroke-dasharray="3,3"/>
-          <text x="200" y="15" fill="#D95D82" font-size="10" font-weight="700" text-anchor="middle">Enfoque Cámara (x_actual)</text>
+          <text x="200" y="15" fill="#D95D82" font-size="10" font-weight="700" text-anchor="middle">Enfoque Cámara (x actual)</text>
          </svg>
         </div>
 
@@ -564,49 +563,78 @@
      </section>
     </div>
 
-    <!-- PESTAÑA 2: TEORÍA -->
+    <!-- PESTAÑA 2: TEORÍA COMPLETA Y MEJORADA -->
     <div id="tab-teoria" class="tab-pane">
      <section class="lab-panel panel-pad">
       <div class="panel-heading">
        <i data-lucide="book-open"></i>
-       <h2>Movimiento Rectilíneo Uniforme (MRU)</h2>
+       <h2>Fundamentos del Movimiento Rectilíneo Uniforme (MRU)</h2>
       </div>
-      <div style="color:var(--text); font-size:.88rem; line-height:1.6;">
-       <p style="margin-top:0;">
-        El <strong>Movimiento Rectilíneo Uniforme (MRU)</strong> describe a un cuerpo que se desplaza a lo largo de una trayectoria recta manteniendo una <strong>velocidad constante</strong> en módulo, dirección y sentido a lo largo del tiempo.
+      <div style="color:var(--text); font-size:.88rem; line-height:1.6; display:flex; flex-direction:column; gap:12px;">
+       <p style="margin:0;">
+        El <strong>Movimiento Rectilíneo Uniforme (MRU)</strong> es el modelo cinemático fundamental en el que un móvil se desplaza en una trayectoria puramente rectilínea manteniendo su velocidad instantánea constante tanto en magnitud como en dirección y sentido a lo largo del tiempo.
        </p>
        
-       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">1. Sistema de Referencia Móvil</h3>
-       <p style="color:var(--text-muted);">
-        Mientras que la velocidad del auto permanece constante, el plano graduado de la carretera se desplaza en sentido inverso para reflejar el cambio de posición en función del tiempo: $x(t) = x_0 + v \cdot t$[cite: 19].
-       </p>
+       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+        <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border);">
+         <h3 style="color:var(--chocolate); font-size:0.95rem; margin:0 0 6px 0; font-weight:700;">1. Leyes Cinemáticas Principales</h3>
+         <ul style="margin:0; padding-left:18px; color:var(--text-muted); font-size:.82rem;">
+          <li><strong style="color:var(--text);">Aceleración Nula:</strong> Al no cambiar la velocidad en ningún instante t, la aceleración a(t) = dv/dt = 0.</li>
+          <li><strong style="color:var(--text);">Proporcionalidad Directa:</strong> El desplazamiento ∆x es directamente proporcional al intervalo de tiempo transcurrido ∆t.</li>
+          <li><strong style="color:var(--text);">Velocidad Vectorial Constante:</strong> La magnitud del vector velocidad es invariable: vec{v}(t) = vₓ \hat{i}.</li>
+         </ul>
+        </div>
 
-       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">2. Ecuaciones Cinemáticas</h3>
-       <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border); margin:10px 0; font-family:monospace; color:var(--primary); display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
-        <div>
-         <strong>Posición x(t):</strong><br>
+        <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border);">
+         <h3 style="color:var(--chocolate); font-size:0.95rem; margin:0 0 6px 0; font-weight:700;">2. Sistema de Referencia Móvil</h3>
+         <p style="margin:0; color:var(--text-muted); font-size:.82rem;">
+          En este simulador interactivo, la cámara sigue el eje del móvil fija en el centro. Para representar visualmente el avance real, el plano coordenado graduado y la señalización de la carretera se desplazan en dirección opuesta con velocidad -v, demostrando el principio de relatividad galileana en marcos de referencia inerciales.
+         </p>
+        </div>
+       </div>
+
+       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:4px; font-weight:700;">3. Ecuaciones Fundamentales</h3>
+       <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border); font-family:monospace; color:var(--primary); display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; text-align:center;">
+        <div style="border-right:1px solid var(--border); padding-right:8px;">
+         <strong style="color:var(--chocolate);">Posición x(t)</strong><br>
          x(t) = x₀ + v · t
         </div>
-        <div>
-         <strong>Velocidad v(t):</strong><br>
-         v(t) = v = cte.
+        <div style="border-right:1px solid var(--border); padding-right:8px;">
+         <strong style="color:var(--chocolate);">Velocidad Instantánea</strong><br>
+         v(t) = ∆x / ∆t = cte
         </div>
         <div>
-         <strong>Aceleración a(t):</strong><br>
+         <strong style="color:var(--chocolate);">Aceleración</strong><br>
          a(t) = 0 m/s²
+        </div>
+       </div>
+
+       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:4px; font-weight:700;">4. Interpretación Gráfica del Movimiento</h3>
+       <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+        <div style="padding:10px; background:var(--surface-pink); border-radius:8px; border:1px solid var(--border);">
+         <strong style="color:var(--chocolate); font-size:.82rem;">Posición vs. Tiempo x(t):</strong>
+         <p style="margin:4px 0 0 0; color:var(--text-muted); font-size:.78rem;">Gráfica en línea recta. Su pendiente m equivale exactamente al valor numérico y signo de la velocidad v.</p>
+        </div>
+        <div style="padding:10px; background:var(--surface-pink); border-radius:8px; border:1px solid var(--border);">
+         <strong style="color:var(--chocolate); font-size:.82rem;">Velocidad vs. Tiempo v(t):</strong>
+         <p style="margin:4px 0 0 0; color:var(--text-muted); font-size:.78rem;">Línea horizontal paralela al eje temporal. El área bajo la recta representa el desplazamiento total ∆x.</p>
+        </div>
+        <div style="padding:10px; background:var(--surface-pink); border-radius:8px; border:1px solid var(--border);">
+         <strong style="color:var(--chocolate); font-size:.82rem;">Aceleración vs. Tiempo a(t):</strong>
+         <p style="margin:4px 0 0 0; color:var(--text-muted); font-size:.78rem;">Línea horizontal fija sobre el valor cero (a = 0), demostrando la ausencia de fuerzas netas ejercidas sobre el móvil.</p>
         </div>
        </div>
       </div>
      </section>
     </div>
 
-    <!-- PESTAÑA 3: EVALUACIÓN -->
+    <!-- PESTAÑA 3: EVALUACIÓN (BANCO COMPLETO DE 20 PREGUNTAS CON SELECCIÓN ALEATORIA DE 5) -->
     <div id="tab-evaluacion" class="tab-pane">
      <section class="lab-panel panel-pad">
       <div class="panel-heading" style="justify-content: space-between;">
        <div style="display:flex; align-items:center; gap:8px;">
         <i data-lucide="award"></i>
-        <h2>Evaluación</h2>
+        <h2>Evaluación Diagnóstica</h2>
        </div>
        <button id="btn-new-quiz" class="btn-ctrl">
         <i data-lucide="refresh-cw"></i> Generar Nuevo Cuestionario
@@ -638,6 +666,7 @@
     let chartVInstance = null;
     let chartAInstance = null;
 
+    // BANCO COMPLETO DE 20 PREGUNTAS DE CINEMÁTICA MRU
     const questionBank = [
       {
         q: "¿Cuál es el valor de la aceleración en un Movimiento Rectilíneo Uniforme (MRU)?",
@@ -649,25 +678,115 @@
         q: "En una gráfica de Posición vs. Tiempo (x - t) de un MRU, ¿qué representa la pendiente de la recta?",
         options: ["La aceleración", "La velocidad del móvil", "La distancia total", "El tiempo transcurrido"],
         correct: 1,
-        explanation: "La pendiente m = Δx/Δt corresponde exactamente a la velocidad del cuerpo."
+        explanation: "La pendiente m = Δx/Δt corresponde exactamente a la velocidad instantánea del cuerpo."
       },
       {
         q: "Si un móvil avanza a v = 20 m/s constante durante t = 5 s desde x0 = 10 m, ¿cuál es su posición final?",
         options: ["100 m", "110 m", "90 m", "50 m"],
         correct: 1,
-        explanation: "Usando la ecuación x = x0 + v*t: x = 10 + (20 * 5) = 110 metros."
+        explanation: "Usando la ecuación x = x0 + v·t: x = 10 + (20 · 5) = 110 metros."
       },
       {
         q: "¿Qué representa el área bajo la curva en una gráfica de Velocidad vs. Tiempo (v - t)?",
-        options: ["El desplazamiento (Δx)", "La aceleración media", "La posición inicial", "La fuerza n aplicada"],
+        options: ["El desplazamiento (Δx)", "La aceleración media", "La posición inicial", "La fuerza neta aplicada"],
         correct: 0,
-        explanation: "El área del rectángulo formado (base * altura = t * v) equivale al desplazamiento Δx."
+        explanation: "El área del rectángulo formado (base · altura = t · v) equivale al desplazamiento Δx."
       },
       {
         q: "Si la velocidad de un objeto es negativa en un MRU, significa que el móvil:",
         options: ["Está frenando", "Se mueve en sentido contrario al sistema de referencia positivo", "Se está deteniendo", "Tiene aceleración negativa"],
         correct: 1,
-        explanation: "El signo de la velocidad indica la dirección del movimiento respecto al eje escogido."
+        explanation: "El signo negativo de la velocidad indica que la dirección del movimiento es opuesta al eje positivo."
+      },
+      {
+        q: "¿Cuál de las siguientes ecuaciones es la forma general de la posición en el MRU?",
+        options: ["x(t) = x0 + v·t", "x(t) = x0 + ½·a·t²", "v(t) = a·t", "x(t) = v·t²"],
+        correct: 0,
+        explanation: "La función lineal x(t) = x0 + v·t describe exactamente el cambio de posición a velocidad constante."
+      },
+      {
+        q: "Si la distancia recorrida es directamente proporcional al tiempo, la velocidad del objeto es:",
+        options: ["Cero", "Creciente exponencialmente", "Constante", "Negativa siempre"],
+        correct: 2,
+        explanation: "La proporcionalidad directa Δx ∝ Δt es la característica definitoria de una velocidad constante."
+      },
+      {
+        q: "Un móvil recorre 100 metros en 5 segundos con MRU. ¿Cuál es el módulo de su velocidad?",
+        options: ["20 m/s", "500 m/s", "25 m/s", "10 m/s"],
+        correct: 0,
+        explanation: "v = Δx / Δt = 100 m / 5 s = 20 m/s."
+      },
+      {
+        q: "¿Cómo se expresa una velocidad de 72 km/h en metros por segundo (m/s)?",
+        options: ["10 m/s", "20 m/s", "30 m/s", "72 m/s"],
+        correct: 1,
+        explanation: "72 km/h dividido entre el factor 3.6 equivale a 20 m/s."
+      },
+      {
+        q: "En la simulación con cámara móvil, si la velocidad del móvil es +15 m/s, ¿cómo se mueve la carretera visualmente?",
+        options: ["Hacia la derecha a +15 m/s", "Hacia la izquierda a -15 m/s", "Permanece estática", "Rota en diagonal"],
+        correct: 1,
+        explanation: "En la perspectiva del móvil (marco inercial), el entorno se desplaza en sentido opuesto (-v)."
+      },
+      {
+        q: "¿Cuál es el valor del desplazamiento Δx si un móvil parte de x0 = -20 m y llega a x = 30 m?",
+        options: ["10 m", "50 m", "-50 m", "30 m"],
+        correct: 1,
+        explanation: "Δx = x - x0 = 30 m - (-20 m) = 50 m."
+      },
+      {
+        q: "La aceleración a(t) en el gráfico a-t de un MRU se visualiza como:",
+        options: ["Una curva parabólica", "Una línea recta horizontal exactamente sobre a = 0", "Una línea diagonal creciente", "Una recta vertical"],
+        correct: 1,
+        explanation: "Al ser constante la velocidad, la aceleración se mantiene nula en el eje a = 0."
+      },
+      {
+        q: "Si un móvil mantiene v = 0 m/s durante todo el intervalo de tiempo, el objeto está en:",
+        options: ["Movimiento Acelerado", "Reposo relativo", "Caída libre", "Movimiento Parabólico"],
+        correct: 1,
+        explanation: "Velocidad cero sostenida implica que la posición no cambia respecto al tiempo (reposo)."
+      },
+      {
+        q: "¿Qué unidad en el Sistema Internacional (SI) corresponde al desplazamiento?",
+        options: ["Metro por segundo (m/s)", "Segundo (s)", "Metro (m)", "Metro por segundo al cuadrado (m/s²)"],
+        correct: 2,
+        explanation: "La unidad fundamental del desplazamiento en el Sistema Internacional es el metro (m)."
+      },
+      {
+        q: "Si la pendiente de la recta x-t es horizontal (pendiente = 0), la velocidad es:",
+        options: ["Infinita", "Positiva máxima", "Cero (0 m/s)", "Negativa"],
+        correct: 2,
+        explanation: "Pendiente nula en la gráfica posición-tiempo significa velocidad igual a cero."
+      },
+      {
+        q: "En un recorrido con v = -10 m/s durante t = 4 s desde x0 = 50 m, la posición final es:",
+        options: ["10 m", "90 m", "40 m", "-10 m"],
+        correct: 0,
+        explanation: "x = 50 + (-10 · 4) = 50 - 40 = 10 m."
+      },
+      {
+        q: "La Primera Ley de Newton de la inercia establece que un cuerpo mantiene su MRU si:",
+        options: ["Se le aplica una fuerza constante", "La fuerza neta ejercida sobre él es cero", "Existe mucha fricción", "La velocidad cambia constantemente"],
+        correct: 1,
+        explanation: "En ausencia de fuerzas netas externas (F_neta = 0), el estado de MRU se conserva indefinidamente."
+      },
+      {
+        q: "¿Qué mide el término v · t en la ecuación x = x0 + v · t?",
+        options: ["La aceleración", "El desplazamiento total Δx", "El tiempo restante", "La velocidad inicial"],
+        correct: 1,
+        explanation: "El producto de la velocidad constante por el tiempo representa el desplazamiento alcanzado Δx."
+      },
+      {
+        q: "¿Por qué no existe curvatura en la gráfica x-t de un MRU?",
+        options: ["Porque la aceleración es mayor que cero", "Porque la velocidad es constante (derivada segunda nula)", "Porque se grafica en tres dimensiones", "Porque el tiempo es negativo"],
+        correct: 1,
+        explanation: "La falta de curvatura (línea recta) refleja una aceleración nula y velocidad constante."
+      },
+      {
+        q: "Si exportas los datos a CSV en este simulador, ¿cuál será el valor en la columna de aceleración?",
+        options: ["9.81 en todos los registros", "Valores crecientes", "0.00 en todos los registros", "Dependerá de la velocidad"],
+        correct: 2,
+        explanation: "Dado que es un MRU puro, la columna de aceleración registrará siempre 0.00 m/s²."
       }
     ];
 
@@ -695,25 +814,19 @@
       const spokeFront = document.getElementById("spoke-front");
       const spokeBack = document.getElementById("spoke-back");
 
-      // Escala: 1 metro = 10 píxeles
       const scaleX = 10;
-      // Posición fija de la cámara centrada en x = 200px
       const cameraCenterPx = 200;
 
-      // Dibuja las marcas del plano/carretera que se desplazan con la cámara
       ticksGroup.innerHTML = "";
       roadLinesGroup.innerHTML = "";
 
-      // Rango de marcas visibles alrededor de la posición actual
       const startMark = Math.floor((calc.curX - 30));
       const endMark = Math.ceil((calc.curX + 50));
 
       for (let xMark = startMark; xMark <= endMark; xMark++) {
-        // La posición en pantalla depende de la distancia relativa a la posición actual del coche
         const screenPx = cameraCenterPx + (xMark - calc.curX) * scaleX;
 
         if (screenPx >= -20 && screenPx <= 620) {
-          // Líneas discontinuas amarillas de la carretera
           if (xMark % 4 === 0) {
             const dash = document.createElementNS("http://www.w3.org/2000/svg", "line");
             dash.setAttribute("x1", screenPx); dash.setAttribute("y1", 135);
@@ -724,7 +837,6 @@
             roadLinesGroup.appendChild(dash);
           }
 
-          // Marcas numeradas del eje
           if (xMark % 5 === 0) {
             const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
             line.setAttribute("x1", screenPx); line.setAttribute("y1", 165);
@@ -747,16 +859,13 @@
         }
       }
 
-      // El coche permanece enfocado en cameraCenterPx (200px)
       const flipScale = v < 0 ? -1 : 1;
       mobileGroup.setAttribute("transform", `translate(${cameraCenterPx}, 0) scale(${flipScale}, 1)`);
 
-      // Animación de rotación de ruedas proporcional al avance
       wheelAngle += v * 0.8;
       spokeFront.setAttribute("transform", `rotate(${wheelAngle}, 14, 151)`);
       spokeBack.setAttribute("transform", `rotate(${wheelAngle}, -14, 151)`);
 
-      // Vector Velocidad
       const vecLength = v * 2;
       vecV.setAttribute("x1", cameraCenterPx);
       vecV.setAttribute("y1", 110);
