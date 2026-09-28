@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Simulador Movimiento Rectilíneo Uniforme (MRU)</title>
+  <title>MRU</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
@@ -186,7 +186,7 @@
     .cartesian-plane {
       position: relative;
       width: 100%;
-      height: 200px;
+      height: 220px;
       border-radius: 12px;
       border: 2px solid var(--border);
       background: radial-gradient(circle, #FFFFFF 0%, #FFF8F3 70%, #FCE7EF 100%);
@@ -365,7 +365,7 @@
     <section class="hero">
      <div>
       <h1>Simulador Movimiento Rectilíneo Uniforme (MRU)</h1>
-      <p>Análisis unidimensional con velocidad constante y aceleración nula (a = 0)</p>
+      <p>Cámara móvil de seguimiento continuo con desplazamiento de carretera y coordenadas</p>
      </div>
      <a href="index.html" class="btn-ctrl" title="Volver al Inicio">
       <i data-lucide="arrow-left"></i> Regresar al Inicio
@@ -381,13 +381,13 @@
     <!-- PESTAÑA 1: SIMULADOR -->
     <div id="tab-simulador" class="tab-pane active">
      <section class="sim-layout">
-      <!-- PANEL IZQUIERDO: PISTA Y GRÁFICAS (EN COLUMNA INDEPENDIENTE) -->
+      <!-- PANEL IZQUIERDO: PISTA Y GRÁFICAS -->
       <div style="display:flex; flex-direction:column; gap:12px; min-width:0;">
        <section class="lab-panel panel-pad" style="display:flex; flex-direction:column;">
         <div class="panel-heading" style="justify-content: space-between;">
          <div style="display:flex; align-items:center; gap:8px;">
           <i data-lucide="move-right"></i>
-          <h2>Pista de Movimiento</h2>
+          <h2>Carretera y Plano en Movimiento (Cámara Móvil)</h2>
          </div>
          <div style="display:flex; gap:6px;">
           <button id="btn-play" class="btn-ctrl"><i data-lucide="play"></i> Iniciar</button>
@@ -397,62 +397,77 @@
         </div>
 
         <div class="cartesian-plane">
-         <svg id="cartesian-svg" viewBox="0 0 600 200">
+         <svg id="cartesian-svg" viewBox="0 0 600 220">
           <defs>
            <marker id="arrow-v" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
             <path d="M 0 0 L 10 5 L 0 10 z" fill="#4A3035"/>
            </marker>
+           
+           <!-- Patrón de fondo para el suelo / carretera en movimiento -->
+           <pattern id="road-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="40" x2="40" y2="40" stroke="#EBCFD7" stroke-width="1"/>
+           </pattern>
           </defs>
 
-          <!-- Regla / Eje X -->
+          <!-- Carretera y Asfalto -->
+          <rect x="0" y="100" width="600" height="70" fill="#4A3035" opacity="0.08"/>
+          <line x1="0" y1="100" x2="600" y2="100" stroke="#EBCFD7" stroke-width="2"/>
+          <line x1="0" y1="170" x2="600" y2="170" stroke="#EBCFD7" stroke-width="2"/>
+
+          <!-- Grupo de Líneas Discontinuas de la Carretera (Móvil) -->
+          <g id="road-lines-group"></g>
+
+          <!-- Grupo del Eje Regla / Plano Cartesiano (Móvil) -->
           <g id="grid-axis">
-           <line x1="40" y1="140" x2="560" y2="140" stroke="#EBCFD7" stroke-width="2"/>
+           <line x1="0" y1="170" x2="600" y2="170" stroke="#D95D82" stroke-width="2"/>
           </g>
+          <g id="ticks-group"></g>
 
-          <!-- Marcas de distancia -->
-          <g id="ticks-group" opacity="0.95"></g>
-
-          <!-- Vector Velocidad -->
-          <line id="vec-v" x1="0" y1="0" x2="0" y2="0" stroke="#4A3035" stroke-width="3" marker-end="url(#arrow-v)"/>
-
-          <!-- Móvil / Carrito Estilizado -->
+          <!-- Móvil / Carrito Fijo en el Enfoque de la Cámara -->
           <g id="mobile-group">
            <!-- Sombra -->
-           <ellipse id="car-shadow" cx="0" cy="139" rx="28" ry="4" fill="rgba(74, 48, 53, 0.15)"/>
+           <ellipse id="car-shadow" cx="0" cy="155" rx="28" ry="4" fill="rgba(74, 48, 53, 0.2)"/>
            
            <!-- Cuerpo del Carrito -->
-           <path id="car-body" d="M -24,124 Q -26,110 -12,108 L 4,108 Q 14,108 20,118 L 26,118 Q 28,118 28,124 L 28,132 Q 28,135 24,135 L -20,135 Q -24,135 -24,124 Z" fill="#D95D82" stroke="#4A3035" stroke-width="1.5"/>
+           <path id="car-body" d="M -24,140 Q -26,126 -12,124 L 4,124 Q 14,124 20,134 L 26,134 Q 28,134 28,140 L 28,148 Q 28,151 24,151 L -20,151 Q -24,151 -24,140 Z" fill="#D95D82" stroke="#4A3035" stroke-width="1.5"/>
            
-           <!-- Cabina / Ventana -->
-           <path id="car-window" d="M -10,111 L 2,111 Q 10,111 14,118 L -10,118 Z" fill="#FCE7EF" stroke="#4A3035" stroke-width="1"/>
+           <!-- Ventana -->
+           <path id="car-window" d="M -10,127 L 2,127 Q 10,127 14,134 L -10,134 Z" fill="#FCE7EF" stroke="#4A3035" stroke-width="1"/>
            
-           <!-- Faros -->
-           <circle id="car-headlight" cx="26" cy="124" r="2.5" fill="#FFF8F3" stroke="#4A3035" stroke-width="0.8"/>
-           <rect id="car-taillight" x="-24" y="121" width="2" height="5" rx="1" fill="#4A3035"/>
+           <!-- Luces -->
+           <circle id="car-headlight" cx="26" cy="140" r="2.5" fill="#FFF8F3" stroke="#4A3035" stroke-width="0.8"/>
+           <rect id="car-taillight" x="-24" y="137" width="2" height="5" rx="1" fill="#4A3035"/>
 
-           <!-- Ruedas Delantera y Trasera -->
+           <!-- Ruedas Rotatorias -->
            <g id="wheel-front">
-            <circle cx="14" cy="135" r="6" fill="#4A3035"/>
-            <circle cx="14" cy="135" r="2.5" fill="#FFF8F3"/>
+            <circle cx="14" cy="151" r="6" fill="#4A3035"/>
+            <line id="spoke-front" x1="14" y1="145" x2="14" y2="157" stroke="#FFF8F3" stroke-width="1.5"/>
            </g>
            <g id="wheel-back">
-            <circle cx="-14" cy="135" r="6" fill="#4A3035"/>
-            <circle cx="-14" cy="135" r="2.5" fill="#FFF8F3"/>
+            <circle cx="-14" cy="151" r="6" fill="#4A3035"/>
+            <line id="spoke-back" x1="-14" y1="145" x2="-14" y2="157" stroke="#FFF8F3" stroke-width="1.5"/>
            </g>
           </g>
+
+          <!-- Vector Velocidad sobre el coche -->
+          <line id="vec-v" x1="0" y1="0" x2="0" y2="0" stroke="#4A3035" stroke-width="3" marker-end="url(#arrow-v)"/>
+
+          <!-- Retícula / Indicador de Posición Central -->
+          <line x1="200" y1="20" x2="200" y2="90" stroke="#D95D82" stroke-width="1" stroke-dasharray="3,3"/>
+          <text x="200" y="15" fill="#D95D82" font-size="10" font-weight="700" text-anchor="middle">Enfoque Cámara (x_actual)</text>
          </svg>
         </div>
 
         <div style="margin-top: 8px; display:flex; justify-content:space-between; align-items:center; background:var(--bg); padding:6px 12px; border-radius:8px; border:1px solid var(--border);">
          <div style="display:flex; gap:12px;">
-          <span style="font-size:.75rem; color:var(--primary); font-weight:700;">■ Posición (x)</span>
+          <span style="font-size:.75rem; color:var(--primary); font-weight:700;">■ Posición x(t)</span>
           <span style="font-size:.75rem; color:var(--chocolate); font-weight:700;">➔ Vector Velocidad (v)</span>
          </div>
          <span id="time-badge" style="font-size:.75rem; font-weight:700; padding:2px 8px; border-radius:4px; background:var(--surface-pink); color:var(--chocolate);">t = 0.00 s</span>
         </div>
        </section>
 
-       <!-- SECCIÓN DE LAS TRES GRÁFICAS -->
+       <!-- GRÁFICAS -->
        <section class="lab-panel panel-pad">
         <div style="display:flex; justify-content:space-between; align-items:center;">
          <div class="panel-heading" style="margin:0;">
@@ -489,7 +504,7 @@
        </section>
       </div>
 
-      <!-- PANEL LATERAL DE CONTROLES -->
+      <!-- CONTROLES -->
       <aside class="lab-panel panel-pad" style="display:flex; flex-direction:column; gap:10px;">
        <div class="panel-heading">
         <i data-lucide="sliders"></i>
@@ -502,12 +517,12 @@
           <label>Posición Inicial (x₀):</label>
           <span id="lbl-x0" style="font-weight:700; color:var(--primary);">0 m</span>
          </div>
-         <input id="slider-x0" type="range" min="0" max="100" value="0" step="5">
+         <input id="slider-x0" type="range" min="-100" max="100" value="0" step="5">
         </div>
 
         <div class="field-group">
          <div style="display:flex; justify-content:space-between;">
-          <label>Velocidad (v):</label>
+          <label>Velocidad Constante (v):</label>
           <span id="lbl-v" style="font-weight:700; color:var(--chocolate);">15 m/s</span>
          </div>
          <input id="slider-v" type="range" min="-50" max="50" value="15" step="1">
@@ -515,7 +530,7 @@
 
         <div class="field-group">
          <div style="display:flex; justify-content:space-between;">
-          <label>Tiempo Límite (t_{máx}):</label>
+          <label>Tiempo Límite (t máx):</label>
           <span id="lbl-tmax" style="font-weight:700; color:var(--primary-light);">10 s</span>
          </div>
          <input id="slider-tmax" type="range" min="2" max="30" value="10" step="1">
@@ -561,12 +576,10 @@
         El <strong>Movimiento Rectilíneo Uniforme (MRU)</strong> describe a un cuerpo que se desplaza a lo largo de una trayectoria recta manteniendo una <strong>velocidad constante</strong> en módulo, dirección y sentido a lo largo del tiempo.
        </p>
        
-       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">1. Propiedades Fundamentales</h3>
-       <ul style="margin:6px 0; padding-left:20px; color:var(--text-muted);">
-        <li><strong style="color:var(--text);">Aceleración Nula:</strong> Al no existir variación de velocidad, la aceleración es exactamente cero (a = 0).</li>
-        <li><strong style="color:var(--text);">Distancias Iguales:</strong> El móvil recorre distancias exactamente iguales en intervalos de tiempo iguales.</li>
-        <li><strong style="color:var(--text);">Dirección Unidimensional:</strong> El movimiento transcurre sobre un único eje coordenado (X).</li>
-       </ul>
+       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">1. Sistema de Referencia Móvil</h3>
+       <p style="color:var(--text-muted);">
+        Mientras que la velocidad del auto permanece constante, el plano graduado de la carretera se desplaza en sentido inverso para reflejar el cambio de posición en función del tiempo: $x(t) = x_0 + v \cdot t$[cite: 19].
+       </p>
 
        <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">2. Ecuaciones Cinemáticas</h3>
        <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border); margin:10px 0; font-family:monospace; color:var(--primary); display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
@@ -583,13 +596,6 @@
          a(t) = 0 m/s²
         </div>
        </div>
-
-       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:14px;">3. Interpretación Gráfica</h3>
-       <p style="color:var(--text-muted);">
-        • <strong style="color:var(--text);">Gráfica Posición vs. Tiempo (x-t):</strong> Es una línea recta inclinada. Su pendiente equivale al valor de la velocidad ($v$).<br>
-        • <strong style="color:var(--text);">Gráfica Velocidad vs. Tiempo (v-t):</strong> Es una línea horizontal constante. El área bajo la recta corresponde al desplazamiento ($\Delta x$).<br>
-        • <strong style="color:var(--text);">Gráfica Aceleración vs. Tiempo (a-t):</strong> Es una línea horizontal sobre el eje horizontal ($a = 0$).
-       </p>
       </div>
      </section>
     </div>
@@ -626,6 +632,7 @@
     let isRunning = false;
     let currentTime = 0;
     let animFrameId = null;
+    let wheelAngle = 0;
 
     let chartXInstance = null;
     let chartVInstance = null;
@@ -684,47 +691,77 @@
       const ticksGroup = document.getElementById("ticks-group");
       const mobileGroup = document.getElementById("mobile-group");
       const vecV = document.getElementById("vec-v");
+      const roadLinesGroup = document.getElementById("road-lines-group");
+      const spokeFront = document.getElementById("spoke-front");
+      const spokeBack = document.getElementById("spoke-back");
 
-      const minX = -50;
-      const maxX = 250;
-      const scaleX = 520 / (maxX - minX);
-      const originPx = 40 + (0 - minX) * scaleX;
+      // Escala: 1 metro = 10 píxeles
+      const scaleX = 10;
+      // Posición fija de la cámara centrada en x = 200px
+      const cameraCenterPx = 200;
 
+      // Dibuja las marcas del plano/carretera que se desplazan con la cámara
       ticksGroup.innerHTML = "";
-      for (let xMark = -40; xMark <= 240; xMark += 20) {
-        const pxMark = originPx + xMark * scaleX;
-        if (pxMark >= 40 && pxMark <= 560) {
-          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-          line.setAttribute("x1", pxMark); line.setAttribute("y1", 135);
-          line.setAttribute("x2", pxMark); line.setAttribute("y2", 145);
-          line.setAttribute("stroke", "#EBCFD7");
-          line.setAttribute("stroke-width", "1.5");
+      roadLinesGroup.innerHTML = "";
 
-          const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-          text.setAttribute("x", pxMark);
-          text.setAttribute("y", 160);
-          text.setAttribute("fill", "#8B7075");
-          text.setAttribute("font-size", "9");
-          text.setAttribute("font-weight", "500");
-          text.setAttribute("text-anchor", "middle");
-          text.textContent = `${xMark}m`;
+      // Rango de marcas visibles alrededor de la posición actual
+      const startMark = Math.floor((calc.curX - 30));
+      const endMark = Math.ceil((calc.curX + 50));
 
-          ticksGroup.appendChild(line);
-          ticksGroup.appendChild(text);
+      for (let xMark = startMark; xMark <= endMark; xMark++) {
+        // La posición en pantalla depende de la distancia relativa a la posición actual del coche
+        const screenPx = cameraCenterPx + (xMark - calc.curX) * scaleX;
+
+        if (screenPx >= -20 && screenPx <= 620) {
+          // Líneas discontinuas amarillas de la carretera
+          if (xMark % 4 === 0) {
+            const dash = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            dash.setAttribute("x1", screenPx); dash.setAttribute("y1", 135);
+            dash.setAttribute("x2", screenPx + 20); dash.setAttribute("y2", 135);
+            dash.setAttribute("stroke", "#FFF8F3");
+            dash.setAttribute("stroke-width", "3");
+            dash.setAttribute("stroke-dasharray", "10,5");
+            roadLinesGroup.appendChild(dash);
+          }
+
+          // Marcas numeradas del eje
+          if (xMark % 5 === 0) {
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", screenPx); line.setAttribute("y1", 165);
+            line.setAttribute("x2", screenPx); line.setAttribute("y2", 175);
+            line.setAttribute("stroke", "#D95D82");
+            line.setAttribute("stroke-width", "2");
+
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", screenPx);
+            text.setAttribute("y", 192);
+            text.setAttribute("fill", "#8B7075");
+            text.setAttribute("font-size", "10");
+            text.setAttribute("font-weight", "600");
+            text.setAttribute("text-anchor", "middle");
+            text.textContent = `${xMark}m`;
+
+            ticksGroup.appendChild(line);
+            ticksGroup.appendChild(text);
+          }
         }
       }
 
-      const objPx = originPx + calc.curX * scaleX;
-      
-      // Orientar y posicionar el coche según la dirección de la velocidad
+      // El coche permanece enfocado en cameraCenterPx (200px)
       const flipScale = v < 0 ? -1 : 1;
-      mobileGroup.setAttribute("transform", `translate(${objPx}, 0) scale(${flipScale}, 1)`);
+      mobileGroup.setAttribute("transform", `translate(${cameraCenterPx}, 0) scale(${flipScale}, 1)`);
 
-      const vecLength = v * 1.5;
-      vecV.setAttribute("x1", objPx);
-      vecV.setAttribute("y1", 90);
-      vecV.setAttribute("x2", objPx + vecLength);
-      vecV.setAttribute("y2", 90);
+      // Animación de rotación de ruedas proporcional al avance
+      wheelAngle += v * 0.8;
+      spokeFront.setAttribute("transform", `rotate(${wheelAngle}, 14, 151)`);
+      spokeBack.setAttribute("transform", `rotate(${wheelAngle}, -14, 151)`);
+
+      // Vector Velocidad
+      const vecLength = v * 2;
+      vecV.setAttribute("x1", cameraCenterPx);
+      vecV.setAttribute("y1", 110);
+      vecV.setAttribute("x2", cameraCenterPx + vecLength);
+      vecV.setAttribute("y2", 110);
     }
 
     function updatePhysicsAnimation() {
@@ -790,7 +827,7 @@
       const dataX = [];
       const dataV = [];
       const dataA = [];
-      const steps = 20;
+      const steps = 30;
 
       for (let i = 0; i <= steps; i++) {
         const t = (tMax / steps) * i;
@@ -853,7 +890,7 @@
       const encodedUri = encodeURI(csv);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "reporte_mru.csv");
+      link.setAttribute("download", "reporte_mru_camara_movil.csv");
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -925,7 +962,7 @@
       scoreEl.textContent = `Calificación: ${score}/${currentQuizQuestions.length}`;
     }
 
-    // Listeners
+    // Event Listeners
     document.getElementById("btn-play").addEventListener("click", () => {
       if (!isRunning) {
         if (currentTime >= tMax) currentTime = 0;
@@ -943,6 +980,7 @@
       isRunning = false;
       if (animFrameId) cancelAnimationFrame(animFrameId);
       currentTime = 0;
+      wheelAngle = 0;
       document.getElementById("time-badge").textContent = "t = 0.00 s";
       update();
     });
@@ -950,6 +988,7 @@
     ["slider-x0", "slider-v", "slider-tmax"].forEach(id => {
       document.getElementById(id).addEventListener("input", () => {
         currentTime = 0;
+        wheelAngle = 0;
         update();
       });
     });
