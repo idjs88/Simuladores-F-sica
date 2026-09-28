@@ -1,953 +1,738 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full bg-[var(--bg)] text-[var(--text)] antialiased transition-colors duration-300">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>Laboratorio Virtual de Física</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
-
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
-    rel="stylesheet"
-  >
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            academic: {
+              rose: '#D95D82',
+              roseSoft: '#FCE7EF',
+              roseLight: '#F8DCE5',
+              chocolate: '#4A3035',
+              cream: '#FFF8F3',
+              borderRose: '#EBCFD7',
+              textRose: '#3D2A2E',
+              mutedRose: '#8B7075'
+            }
+          }
+        }
+      }
+    }
+  </script>
 
   <style>
     :root {
       --bg: #FFF8F3;
-      --surface: #FFFFFF;
-      --surface-pink: #FCE7EF;
-
-      --primary: #D95D82;
-      --primary-light: #E98AA8;
-      --primary-soft: #F8DCE5;
-
-      --text: #3D2A2E;
-      --text-muted: #8B7075;
-
-      --border: #EBCFD7;
-      --chocolate: #4A3035;
+      --surface: #FFFFFF; 
+      --surface-subtle: #FCE7EF;
+      --border: #EBCFD7; 
+      --text: #3D2A2E; 
+      --text-muted: #8B7075; 
+      --primary: #D95D82; 
+      --primary-hover: #C24B6F;  
+      --chocolate: #4A3035;  
+      --accent-soft: #F8DCE5; 
+      --grid-color: rgba(74, 48, 53, 0.05);
     }
 
-    * {
-      box-sizing: border-box;
+    .dark {
+      --bg: #1A1214;   
+      --surface: #261B1E;  
+      --surface-subtle: #362529;
+      --border: #4A3035; 
+      --text: #FCE7EF;  
+      --text-muted: #C4A1A8; 
+      --primary: #E98AA8; 
+      --primary-hover: #F8DCE5;
+      --chocolate: #FCE7EF;
+      --accent-soft: #3D2A2E;
+      --grid-color: rgba(233, 138, 168, 0.05);
     }
 
-    body {
-      width: 100%;
-      margin: 0;
-      font-family: "DM Sans", sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.5;
+    .bg-grid-pattern {
+      background-size: 24px 24px;
+      background-image: 
+        linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
     }
 
-    .title-font {
-      font-family: "Playfair Display", serif;
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
     }
-
-    .page {
-      width: min(1100px, 92%);
-      margin: auto;
-      padding: 50px 0;
+    ::-webkit-scrollbar-track {
+      background: transparent;
     }
-
-    .app-wrapper {
-      width: 100%;
-      min-height: 100vh;
-      padding: 24px 16px;
-      background-image:
-        radial-gradient(circle at 12% 12%, rgba(217, 93, 130, 0.08), transparent 28rem),
-        radial-gradient(circle at 88% 88%, rgba(233, 138, 168, 0.1), transparent 30rem);
-    }
-
-    .main-content {
-      width: 100%;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    /* HERO */
-    .hero {
-      text-align: center;
-      padding: 45px 20px 35px;
-    }
-
-    .hero-icon {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 20px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: var(--primary-soft);
-      color: var(--primary);
-
-      border: 1px solid var(--border);
-      border-radius: 20px;
-    }
-
-    .hero-icon svg {
-      width: 32px;
-      height: 32px;
-    }
-
-    .eyebrow {
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--primary);
-      margin-bottom: 8px;
-    }
-
-    .hero h1 {
-      margin: 0;
-      font-size: clamp(2.2rem, 5vw, 4rem);
-      line-height: 1.05;
-      color: var(--chocolate);
-    }
-
-    .subtitle {
-      margin-top: 15px;
-      color: var(--text-muted);
-      font-size: 1rem;
-      letter-spacing: 0.05em;
-    }
-
-    /* STUDENT CARD */
-    .student-card {
-      max-width: 700px;
-      margin: 30px auto 0;
-
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-
-      padding: 22px;
-
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-
-      text-align: left;
-    }
-
-    .student-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .student-item-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .student-item-header svg {
-      color: var(--primary);
-      width: 15px;
-      height: 15px;
-      flex-shrink: 0;
-    }
-
-    .student-item small {
-      display: block;
-      color: var(--text-muted);
-      font-size: 0.75rem;
-    }
-
-    .student-item strong {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--chocolate);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* LAB PANEL */
-    .lab-panel {
-      margin-top: 40px;
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      background: var(--surface);
-      box-shadow: 0 12px 35px rgba(74, 48, 53, 0.04);
-      padding: 32px;
-    }
-
-    .panel-heading {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-bottom: 28px;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--primary-soft);
-    }
-
-    .panel-title-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .panel-controls {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* ESTILOS DE LA LISTA DESPLEGABLE DE FILTRO */
-    .unit-select {
-      background-color: var(--surface);
-      color: var(--chocolate);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 6px 14px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      outline: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .unit-select:focus, .unit-select:hover {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(217, 93, 130, 0.15);
-    }
-
-    .panel-heading svg {
-      width: 24px;
-      height: 24px;
-      color: var(--primary);
-    }
-
-    .panel-heading h2 {
-      margin: 0;
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: var(--chocolate);
-    }
-
-    .stat-badge {
-      font-size: 0.75rem;
-      font-weight: 700;
-      padding: 5px 12px;
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
       border-radius: 999px;
-      background: var(--surface-pink);
-      color: var(--primary);
-      border: 1px solid var(--border);
     }
-
-    /* UNITS & MODULES */
-    .unit-section {
-      margin-bottom: 32px;
-      transition: opacity 0.3s ease;
-    }
-
-    .unit-section:last-child {
-      margin-bottom: 0;
-    }
-
-    .unit-section.unit-pending {
-      opacity: 0.75;
-    }
-
-    .unit-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--chocolate);
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 1px stroke var(--border);
-    }
-
-    .unit-title-text {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .unit-title-text svg {
-      color: var(--primary);
-      width: 18px;
-      height: 18px;
-    }
-
-    .badge-status {
-      font-size: 0.65rem;
-      padding: 3px 10px;
-      border-radius: 6px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .status-active {
-      background: var(--surface-pink);
-      color: var(--primary);
-      border: 1px solid var(--border);
-    }
-
-    .status-pending {
-      background: var(--bg);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
-
-    /* SIMULATORS GRID */
-    .simulators-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-    }
-
-    .simulator-card {
-      position: relative;
-
-      padding: 28px;
-
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-
-      transition: 0.2s ease;
-    }
-
-    .simulator-card:not(.disabled):hover {
-      transform: translateY(-4px);
-      border-color: var(--primary-light);
-      box-shadow: 0 14px 30px rgba(217, 93, 130, 0.12);
-    }
-
-    .simulator-number {
-      font-size: 0.7rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--primary);
-      margin-bottom: 10px;
-    }
-
-    .simulator-icon {
-      width: 48px;
-      height: 48px;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      background: var(--primary-soft);
-      color: var(--primary);
-
-      border-radius: 15px;
-
-      margin-bottom: 20px;
-    }
-
-    .simulator-icon svg {
-      width: 22px;
-      height: 22px;
-      color: var(--primary);
-    }
-
-    .simulator-card h3 {
-      margin: 0;
-      font-size: 1.15rem;
-      color: var(--chocolate);
-    }
-
-    .simulator-card p {
-      margin: 0 0 16px;
-      font-size: 0.85rem;
-      line-height: 1.5;
-      color: var(--text-muted);
-    }
-
-    .simulator-info {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
-
-    .tag {
-      padding: 4px 10px;
-      border-radius: 999px;
-      background: var(--surface-pink);
-      color: var(--primary);
-      font-size: 0.7rem;
-      font-weight: 700;
-    }
-
-    .open-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 10px 16px;
-      border-radius: 12px;
+    ::-webkit-scrollbar-thumb:hover {
       background: var(--primary);
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .open-button:hover {
-      background: var(--chocolate);
-    }
-
-    .open-button svg {
-      width: 16px;
-    }
-
-    .simulator-card.disabled {
-      border-style: dashed;
-      background: var(--bg);
-    }
-
-    .disabled-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 10px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: not-allowed;
-      user-select: none;
-    }
-
-    .empty-unit-card {
-      border: 1px dashed var(--border);
-      border-radius: 16px;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      background: var(--surface);
-      color: var(--text-muted);
-    }
-
-    .empty-unit-card svg {
-      width: 18px;
-      height: 18px;
-      color: var(--primary-light);
-    }
-
-    .empty-unit-card span {
-      font-size: 0.82rem;
-      font-weight: 600;
-    }
-
-    /* FOOTER */
-    footer {
-      margin-top: 60px;
-      padding: 24px 0;
-      text-align: center;
-      border-top: 1px solid var(--border);
-      color: var(--text-muted);
-      font-size: 0.75rem;
-    }
-
-    footer p {
-      margin: 4px 0;
-    }
-
-    /* CAT INTERACTIVE WIDGET */
-    .cat-widget {
-      position: fixed;
-      bottom: 24px;
-      left: 24px;
-      z-index: 100;
-      display: flex;
-      align-items: flex-end;
-      gap: 12px;
-    }
-
-    .cat-avatar {
-      width: 52px;
-      height: 52px;
-      background: var(--surface);
-      border: 2px solid var(--primary);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: 0 8px 20px rgba(217, 93, 130, 0.25);
-      transition: transform 0.2s ease;
-      user-select: none;
-    }
-
-    .cat-avatar:hover {
-      transform: scale(1.1) rotate(6deg);
-    }
-
-    .cat-avatar svg {
-      width: 26px;
-      height: 26px;
-      color: var(--primary);
-    }
-
-    .cat-bubble {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 12px 16px;
-      border-radius: 16px 16px 16px 0;
-      font-size: 0.8rem;
-      font-weight: 500;
-      max-width: 240px;
-      box-shadow: 0 8px 24px rgba(74, 48, 53, 0.08);
-      animation: fadeIn 0.3s ease;
-      line-height: 1.45;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 900px) {
-      .student-card {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 640px) {
-      .app-wrapper {
-        padding: 16px 12px;
-      }
-      .lab-panel {
-        padding: 20px;
-      }
-      .student-card {
-        grid-template-columns: 1fr;
-        padding: 16px;
-      }
-      .simulators-grid {
-        grid-template-columns: 1fr;
-      }
-      .cat-widget {
-        bottom: 16px;
-        left: 16px;
-      }
-      .panel-heading {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .panel-controls {
-        width: 100%;
-        justify-content: space-between;
-      }
     }
   </style>
 </head>
-<body>
+<body class="h-full bg-grid-pattern font-sans text-sm selection:bg-[var(--surface-subtle)] selection:text-[var(--primary)]">
 
-  <div class="app-wrapper">
-    <main class="main-content">
+  <div class="min-h-screen flex flex-col md:flex-row">
 
-      <!-- HERO -->
-      <section class="hero">
+    <!-- SIDEBAR LATERAL -->
+    <aside class="w-full md:w-80 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col justify-between p-5 shrink-0 z-20 transition-colors duration-300">
+      
+      <div class="space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-[var(--border)]">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center font-mono font-bold text-base shadow-sm">
+              Φ
+            </div>
+            <div>
+              <h1 class="font-semibold text-[var(--chocolate)] tracking-tight text-base leading-snug">Laboratorio Virtual</h1>
+              <p class="text-xs text-[var(--text-muted)] font-mono">Física General</p>
+            </div>
+          </div>
 
-        <div class="hero-icon">
-          <i data-lucide="flask-conical"></i>
+          <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors" title="Cambiar tema">
+            <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
+          </button>
         </div>
 
-        <h1 class="title-font">
-          Laboratorio Virtual<br>
-          de Física</h1>
-
-        <p class="subtitle">
-          Experimenta · Calcula · Comprueba
-        </p>
-
-        <!-- DATOS ACADÉMICOS / STUDENT CARD -->
-        <div class="student-card">
-
-          <div class="student-item">
-            <i data-lucide="graduation-cap"></i>
-            <div>
-              <small>Estudiante</small>
-              <strong>Erandi Palomares Sánchez</strong>
-            </div>
+        <div class="bg-[var(--bg)] border border-[var(--border)] rounded-xl p-4 space-y-3 transition-colors duration-300">
+          <div class="flex items-center justify-between">
+            <i data-lucide="user" class="w-5 h-5 text-[var(--primary)]"></i>
+            <span class="text-[11px] uppercase tracking-wider font-mono font-semibold text-[var(--text-muted)]">Estudiante</span>
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-[var(--surface-subtle)] text-[var(--primary)] border border-[var(--border)]">Activo</span>
+          </div>
+          
+          <div>
+            <div class="font-medium text-[var(--chocolate)] text-sm">Erandi Palomares Sánchez</div>
+            <div class="text-xs text-[var(--text-muted)]">Ing. Sistemas Computacionales</div>
           </div>
 
-          <div class="student-item">
-            <i data-lucide="monitor-cog"></i>
-            <div>
-              <small>Carrera</small>
-              <strong>Ingeniería en Sistemas Computacionales</strong>
+          <div class="pt-2 border-t border-[var(--border)] text-xs text-[var(--text-muted)] space-y-1.5 font-mono">
+            <div class="flex justify-between">
+              <span>Grupo:</span>
+              <span class="text-[var(--chocolate)] font-medium">3S1M</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Periodo:</span>
+              <span class="text-[var(--chocolate)] font-medium">AGO-DIC 2026</span>
             </div>
           </div>
+        </div>
 
-          <div class="student-item">
-            <i data-lucide="book-open"></i>
-            <div>
-              <small>Materia</small>
-              <strong>Física General</strong>
-            </div>
+        <div class="space-y-2">
+          <div class="flex justify-between text-xs font-mono">
+            <span class="text-[var(--text-muted)]">Progreso Unidades</span>
+            <span class="text-[var(--chocolate)] font-semibold" id="globalProgressText">2 / 7</span>
           </div>
-
-          <div class="student-item">
-            <i data-lucide="users"></i>
-            <div>
-              <small>Semestre / Grupo</small>
-              <strong>3S1M</strong>
-            </div>
+          <div class="w-full h-2 bg-[var(--bg)] border border-[var(--border)] rounded-full overflow-hidden">
+            <div class="h-full bg-[var(--primary)] transition-all duration-500" style="width: 28.5%;"></div>
           </div>
+        </div>
 
-          <div class="student-item">
-            <i data-lucide="calendar-days"></i>
-            <div>
-              <small>Periodo</small>
-              <strong>AGO-DIC 2026</strong>
-            </div>
+        <div>
+          <div class="text-[11px] font-mono font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-2">Marcados / Favoritos</div>
+          <div id="favoritesList" class="space-y-1 text-xs">
+            <p class="text-[var(--text-muted)] italic font-mono text-[11px] py-1">Sin simuladores marcados</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-6 pt-4 border-t border-[var(--border)] text-xs font-mono text-[var(--text-muted)] flex items-center justify-between">
+        <span>Laboratorio TecNM</span>
+        <span>2026</span>
+      </div>
+
+    </aside>
+
+    <!-- ÁREA PRINCIPAL / CONTENIDO -->
+    <main class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative" id="mainContentScroll">
+      <header class="bg-[var(--surface)] border-b border-[var(--border)] p-4 md:px-8 flex flex-col sm:flex-row gap-4 items-center justify-between sticky top-0 z-10 shadow-sm transition-colors duration-300">
+        
+        <div class="relative w-full sm:w-80">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"></i>
+          <input 
+            type="text" 
+            id="searchInput"
+            oninput="handleSearch()"
+            placeholder="Buscar por tema, palabra clave o tag..." 
+            class="w-full bg-[var(--bg)] border border-[var(--border)] rounded-lg pl-9 pr-3 py-1.5 text-xs text-[var(--text)] placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--primary)] font-mono transition-all"
+          >
+        </div>
+
+        <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+          
+          <select id="statusFilter" onchange="filterSimulators()" class="bg-[var(--bg)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-xs font-mono text-[var(--text)] focus:outline-none focus:border-[var(--primary)]">
+            <option value="all">Todos los estados</option>
+            <option value="available">Disponibles</option>
+            <option value="pending">Próximamente</option>
+          </select>
+
+          <div class="flex items-center bg-[var(--bg)] border border-[var(--border)] rounded-lg p-0.5">
+            <button onclick="setViewMode('grid')" id="btnViewGrid" class="p-1.5 rounded text-[var(--primary)] bg-[var(--surface)] shadow-sm" title="Vista en Cuadrícula">
+              <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="setViewMode('list')" id="btnViewList" class="p-1.5 rounded text-[var(--text-muted)] hover:text-[var(--primary)]" title="Vista en Lista">
+              <i data-lucide="list" class="w-3.5 h-3.5"></i>
+            </button>
           </div>
 
         </div>
+      </header>
 
-      </section>
-
-      <!-- PANEL PRINCIPAL -->
-      <section class="lab-panel">
-
-        <div class="panel-heading">
-          <div class="panel-title-group">
-            <i data-lucide="layout-grid"></i>
-            <h2>Simuladores Interactivos</h2>
-          </div>
-
-          <div class="panel-controls">
-            <!-- FILTRO POR UNIDAD -->
-            <select id="unitFilter" class="unit-select" onchange="filterUnits()">
-              <option value="all">Todas las unidades</option>
-              <option value="1">Unidad 1: Estática</option>
-              <option value="2">Unidad 2: Dinámica</option>
-              <option value="3">Unidad 3: Óptica</option>
-              <option value="4">Unidad 4: Termodinámica</option>
-              <option value="5">Unidad 5: Electrostática</option>
-              <option value="6">Unidad 6: Electrodinámica</option>
-              <option value="7">Unidad 7: Electromagnetismo</option>
-            </select>
-
-            <span class="stat-badge">5 Disponibles</span>
-          </div>
+      <!-- NAVEGACIÓN POR PESTAÑAS (UNIDADES) -->
+      <nav class="bg-[var(--surface)] border-b border-[var(--border)] px-4 md:px-8 overflow-x-auto no-scrollbar transition-colors duration-300">
+        <div class="flex gap-1 min-w-max py-2" id="tabsContainer">
+          <button onclick="selectTab('all')" data-tab="all" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium bg-[var(--primary)] text-white transition-all">
+            Todas
+          </button>
+          <button onclick="selectTab('1')" data-tab="1" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
+            U1: Estática
+          </button>
+          <button onclick="selectTab('2')" data-tab="2" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
+            U2: Dinámica
+          </button>
+          <button onclick="selectTab('3')" data-tab="3" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
+            U3: Óptica
+          </button>
+          <button onclick="selectTab('4')" data-tab="4" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
+            U4: Termodinámica
+          </button>
+          <button onclick="selectTab('5')" data-tab="5" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
+            U5: Electrostática
+          </button>
+          <button onclick="selectTab('6')" data-tab="6" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
+            U6: Electrodinámica
+          </button>
+          <button onclick="selectTab('7')" data-tab="7" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
+            U7: Electromagnetismo
+          </button>
         </div>
+      </nav>
+
+      <!-- CONTENEDOR DE UNIDADES Y SIMULADORES -->
+      <div class="p-4 md:p-8 space-y-8 flex-1" id="mainContent">
 
         <!-- UNIDAD 1 -->
-        <div class="unit-section" data-unit="1">
-
-          <div class="unit-title">
-            <div class="unit-title-text">
-              <i data-lucide="layers"></i>
-              Unidad 1: Estática de la Partícula
+        <section class="unit-block space-y-4" data-unit="1" data-status="available">
+          <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--surface-subtle)] text-[var(--primary)] border border-[var(--border)]">
+                UNIDAD 1
+              </span>
+              <h2 class="font-semibold text-[var(--chocolate)] text-sm">Estática de la Partícula</h2>
             </div>
-            <span class="badge-status status-active">2 Simuladores</span>
+            <span class="text-xs font-mono text-[var(--text-muted)]">2 Simuladores</span>
           </div>
 
-          <div class="simulators-grid">
-
-            <!-- SIMULADOR 1 -->
-            <article class="simulator-card">
-              <div>
-                <div class="simulator-number">Tema 1.3</div>
-                <div class="simulator-icon">
-                  <i data-lucide="move-diagonal"></i>
+          <div class="simulators-wrapper grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            
+            <!-- Simulador 1 -->
+            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] transition-all shadow-sm group" data-title="componentes rectangulares" data-tags="vectores trigonometría fuerzas">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 1.3</span>
+                  <button onclick="toggleFavorite('sim-1', 'Componentes Rectangulares')" class="text-[var(--text-muted)] hover:text-amber-500 transition-colors" title="Marcar como favorito">
+                    <i data-lucide="star" id="star-sim-1" class="w-4 h-4"></i>
+                  </button>
                 </div>
-                <h3>Componentes Rectangulares</h3>
-                <p>
-                    Descompón fuerzas en sus componentes
-                    horizontal y vertical y analiza su
-                    comportamiento mediante el simulador.
-                </p>
-                <div class="simulator-info">
-                  <span class="tag">Vectores</span>
-                  <span class="tag">Trigonometría</span>
-                  <span class="tag">Fuerzas</span>
+
+                <div>
+                  <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Componentes Rectangulares</h3>
+                  <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                    Descompón fuerzas en sus componentes horizontal y vertical y analiza su comportamiento vectorial.
+                  </p>
+                </div>
+
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Vectores</span>
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Trigonometría</span>
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Fuerzas</span>
                 </div>
               </div>
-              <a href="componentes-rectangulares.html" class="open-button">
-                Abrir simulador
-                <i data-lucide="chevron-right"></i>
-              </a>
+
+              <div class="pt-4 mt-4 border-t border-[var(--border)] flex items-center justify-between">
+                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Listo
+                </span>
+                <a href="componentes-rectangulares.html" class="inline-flex items-center gap-1 text-xs font-medium text-[var(--primary)] hover:underline font-mono">
+                  Abrir <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
             </article>
 
-            <!-- SIMULADOR 2 -->
-            <article class="simulator-card">
-              <div>
-                <div class="simulator-number">Tema 1.4</div>
-                <div class="simulator-icon">
-                  <i data-lucide="circle-dot"></i>
+            <!-- Simulador 2 -->
+            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] transition-all shadow-sm group" data-title="mesa de fuerzas" data-tags="vectores equilibrio estática">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 1.4</span>
+                  <button onclick="toggleFavorite('sim-2', 'Mesa de Fuerzas')" class="text-[var(--text-muted)] hover:text-amber-500 transition-colors" title="Marcar como favorito">
+                    <i data-lucide="star" id="star-sim-2" class="w-4 h-4"></i>
+                  </button>
                 </div>
-                <h3>Mesa de Fuerzas</h3>
-                <p>
-                    Experimenta con diferentes fuerzas,
-                    ángulos y magnitudes para obtener
-                    la fuerza resultante de un sistema.
-                </p>
-                <div class="simulator-info">
-                  <span class="tag">Vectores</span>
-                  <span class="tag">Equilibrio</span>
-                  <span class="tag">Estática</span>
+
+                <div>
+                  <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Mesa de Fuerzas</h3>
+                  <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                    Experimenta con fuerzas, ángulos y magnitudes concurrentes para hallar la fuerza resultante de equilibrio.
+                  </p>
+                </div>
+
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Vectores</span>
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Equilibrio</span>
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Estática</span>
                 </div>
               </div>
-              <a href="mesa-de-fuerzas.html" class="open-button">
-                Abrir simulador
-                <i data-lucide="chevron-right"></i>
-              </a>
+
+              <div class="pt-4 mt-4 border-t border-[var(--border)] flex items-center justify-between">
+                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Listo
+                </span>
+                <a href="mesa-de-fuerzas.html" class="inline-flex items-center gap-1 text-xs font-medium text-[var(--primary)] hover:underline font-mono">
+                  Abrir <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
             </article>
 
           </div>
-
-        </div>
+        </section>
 
         <!-- UNIDAD 2 -->
-        <div class="unit-section" data-unit="2">
-
-          <div class="unit-title">
-            <div class="unit-title-text">
-              <i data-lucide="layers"></i>
-              Unidad 2: Dinámica de la Partícula
+        <section class="unit-block space-y-4" data-unit="2" data-status="available">
+          <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--surface-subtle)] text-[var(--primary)] border border-[var(--border)]">
+                UNIDAD 2
+              </span>
+              <h2 class="font-semibold text-[var(--chocolate)] text-sm">Dinámica de la Partícula</h2>
             </div>
-            <span class="badge-status status-active">3 simuladores</span>
+            <span class="text-xs font-mono text-[var(--text-muted)]">3 Simuladores</span>
           </div>
 
-          <div class="simulators-grid">
+          <div class="simulators-wrapper grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            
+            <!-- Simulador MRU -->
+            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] transition-all shadow-sm group" data-title="movimiento rectilínio uniforme mru" data-tags="mru velocidad aceleración cinemática">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 2.1.2</span>
+                  <button onclick="toggleFavorite('sim-3', 'MRU')" class="text-[var(--text-muted)] hover:text-amber-500 transition-colors">
+                    <i data-lucide="star" id="star-sim-3" class="w-4 h-4"></i>
+                  </button>
+                </div>
 
-            <article class="simulator-card">
-              <div>
-                <div class="simulator-number">Tema 2.1.2</div>
-                <div class="simulator-icon">
-                  <i data-lucide="arrow-right"></i>
+                <div>
+                  <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Movimiento Rectilíneo Uniforme</h3>
+                  <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                    Estudia los desplazamientos a velocidad constante y analiza gráficas de posición contra tiempo.
+                  </p>
                 </div>
-                <h3>Movimiento Rectilíneo Uniforme</h3>
-                <p>
-                  Estudia los desplazamientos a velocidad constante y análisis de sus gráficas de posición contra tiempo.
-                </p>
-                <div class="simulator-info">
-                  <span class="tag">MRU</span>
-                  <span class="tag">Velocidad</span>
-                  <span class="tag">Aceleración</span>
-                </div>
-              </div>
-              <a href="mru.html" class="open-button">
-                Abrir simulador
-                <i data-lucide="chevron-right"></i>
-              </a>
-            </article>
 
-            <article class="simulator-card">
-              <div>
-                <div class="simulator-number">Tema 2.1.4</div>
-                <div class="simulator-icon">
-                  <i data-lucide="move-down-right"></i>
-                </div>
-                <h3>Movimiento Rectilíneo Uniformemente Acelerado</h3>
-                <p>
-                  Estudia los desplazamientos con aceleración constante y análisis de sus gráficas de posición y velocidad contra tiempo.
-                </p>
-                <div class="simulator-info">
-                  <span class="tag">MRUA</span>
-                  <span class="tag">Aceleración</span>
-                  <span class="tag">Velocidad</span>
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#MRU</span>
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Velocidad</span>
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Cinemática</span>
                 </div>
               </div>
-              <a href="mrua.html" class="open-button">
-                Abrir simulador
-                <i data-lucide="chevron-right"></i>
-              </a>
+
+              <div class="pt-4 mt-4 border-t border-[var(--border)] flex items-center justify-between">
+                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Listo
+                </span>
+                <a href="mru.html" class="inline-flex items-center gap-1 text-xs font-medium text-[var(--primary)] hover:underline font-mono">
+                  Abrir <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
             </article>
 
-            <article class="simulator-card">
-              <div>
-                <div class="simulator-number">Tema 2</div>
-                <div class="simulator-icon">
-                  <i data-lucide="redo"></i>
+            <!-- Simulador MRUA -->
+            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] transition-all shadow-sm group" data-title="movimiento rectilíneo uniformemente acelerado mrua" data-tags="mrua aceleración velocidad">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 2.1.4</span>
+                  <button onclick="toggleFavorite('sim-4', 'MRUA')" class="text-[var(--text-muted)] hover:text-amber-500 transition-colors">
+                    <i data-lucide="star" id="star-sim-4" class="w-4 h-4"></i>
+                  </button>
                 </div>
-                <h3>Tiro Parabólico</h3>
-                <p>
-                  Estudia el movimiento de un proyectil bajo la influencia de la gravedad y analiza su trayectoria, velocidad y tiempo de vuelo.
-                </p>
-                <div class="simulator-info">
-                  <span class="tag">Tiro Parabólico</span>
-                  <span class="tag">Gravedad</span>
-                  <span class="tag">Trayectoria</span>
+
+                <div>
+                  <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Movimiento R. Uniformemente Acelerado</h3>
+                  <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                    Análisis cinemático con aceleración constante y representación gráfica de velocidad contra tiempo.
+                  </p>
+                </div>
+
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#MRUA</span>
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Aceleración</span>
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Velocidad</span>
                 </div>
               </div>
-              <a href="tiro-parabolico.html" class="open-button">
-                Abrir simulador
-                <i data-lucide="chevron-right"></i>
-              </a>
+
+              <div class="pt-4 mt-4 border-t border-[var(--border)] flex items-center justify-between">
+                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Listo
+                </span>
+                <a href="mrua.html" class="inline-flex items-center gap-1 text-xs font-medium text-[var(--primary)] hover:underline font-mono">
+                  Abrir <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
             </article>
+
+            <!-- Simulador Tiro Parabólico -->
+            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] transition-all shadow-sm group" data-title="tiro parabolico proyectil" data-tags="tiro parabólico gravedad trayectoria proyectiles">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 2.2</span>
+                  <button onclick="toggleFavorite('sim-5', 'Tiro Parabólico')" class="text-[var(--text-muted)] hover:text-amber-500 transition-colors">
+                    <i data-lucide="star" id="star-sim-5" class="w-4 h-4"></i>
+                  </button>
+                </div>
+
+                <div>
+                  <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Tiro Parabólico</h3>
+                  <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
+                    Simulación de proyectiles bajo aceleración gravitacional, alcance máximo y ángulo de disparo.
+                  </p>
+                </div>
+
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Proyectiles</span>
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Gravedad</span>
+                  <span class="px-2 py-0.5 bg-[var(--bg)] border border-[var(--border)] rounded text-[10px] font-mono text-[var(--text-muted)]">#Trayectoria</span>
+                </div>
+              </div>
+
+              <div class="pt-4 mt-4 border-t border-[var(--border)] flex items-center justify-between">
+                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Listo
+                </span>
+                <a href="tiro-parabolico.html" class="inline-flex items-center gap-1 text-xs font-medium text-[var(--primary)] hover:underline font-mono">
+                  Abrir <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
+            </article>
+
           </div>
+        </section>
 
-        </div>
-
-        <!-- UNIDAD 3 -->
-        <div class="unit-section unit-pending" data-unit="3">
-          <div class="unit-title">
-            <div class="unit-title-text">
-              <i data-lucide="layers"></i>
-              Unidad 3: Óptica
+        <!-- UNIDADES 3 A 7 -->
+        <section class="unit-block space-y-4" data-unit="3" data-status="pending">
+          <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--bg)] text-[var(--text-muted)] border border-[var(--border)]">
+                UNIDAD 3
+              </span>
+              <h2 class="font-semibold text-[var(--chocolate)] text-sm">Óptica</h2>
             </div>
-            <span class="badge-status status-pending">Próximamente</span>
+            <span class="text-xs font-mono text-[var(--text-muted)]">En desarrollo</span>
           </div>
-          <div class="empty-unit-card">
-            <i data-lucide="clock"></i>
-            <span>Simuladores en desarrollo para esta unidad.</span>
+          <div class="bg-[var(--surface)] border border-dashed border-[var(--border)] rounded-xl p-4 text-center text-xs text-[var(--text-muted)] font-mono">
+            Módulos de refracción, reflexión y lentes en construcción.
           </div>
-        </div>
+        </section>
 
-        <!-- UNIDAD 4 -->
-        <div class="unit-section unit-pending" data-unit="4">
-          <div class="unit-title">
-            <div class="unit-title-text">
-              <i data-lucide="layers"></i>
-              Unidad 4: Termodinámica
+        <section class="unit-block space-y-4" data-unit="4" data-status="pending">
+          <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--bg)] text-[var(--text-muted)] border border-[var(--border)]">
+                UNIDAD 4
+              </span>
+              <h2 class="font-semibold text-[var(--chocolate)] text-sm">Termodinámica</h2>
             </div>
-            <span class="badge-status status-pending">Próximamente</span>
+            <span class="text-xs font-mono text-[var(--text-muted)]">En desarrollo</span>
           </div>
-          <div class="empty-unit-card">
-            <i data-lucide="clock"></i>
-            <span>Simuladores en desarrollo para esta unidad.</span>
+          <div class="bg-[var(--surface)] border border-dashed border-[var(--border)] rounded-xl p-4 text-center text-xs text-[var(--text-muted)] font-mono">
+            Leyes de la termodinámica y procesos isobáricos/isocóricos en desarrollo.
           </div>
-        </div>
+        </section>
 
-        <!-- UNIDAD 5 -->
-        <div class="unit-section unit-pending" data-unit="5">
-          <div class="unit-title">
-            <div class="unit-title-text">
-              <i data-lucide="layers"></i>
-              Unidad 5: Electrostática
+        <section class="unit-block space-y-4" data-unit="5" data-status="pending">
+          <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--bg)] text-[var(--text-muted)] border border-[var(--border)]">
+                UNIDAD 5
+              </span>
+              <h2 class="font-semibold text-[var(--chocolate)] text-sm">Electrostática</h2>
             </div>
-            <span class="badge-status status-pending">Próximamente</span>
+            <span class="text-xs font-mono text-[var(--text-muted)]">En desarrollo</span>
           </div>
-          <div class="empty-unit-card">
-            <i data-lucide="clock"></i>
-            <span>Simuladores en desarrollo para esta unidad.</span>
+          <div class="bg-[var(--surface)] border border-dashed border-[var(--border)] rounded-xl p-4 text-center text-xs text-[var(--text-muted)] font-mono">
+            Ley de Coulomb y campo eléctrico en desarrollo.
           </div>
-        </div>
+        </section>
 
-        <!-- UNIDAD 6 -->
-        <div class="unit-section unit-pending" data-unit="6">
-          <div class="unit-title">
-            <div class="unit-title-text">
-              <i data-lucide="layers"></i>
-              Unidad 6: Electrodinámica
+        <section class="unit-block space-y-4" data-unit="6" data-status="pending">
+          <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--bg)] text-[var(--text-muted)] border border-[var(--border)]">
+                UNIDAD 6
+              </span>
+              <h2 class="font-semibold text-[var(--chocolate)] text-sm">Electrodinámica</h2>
             </div>
-            <span class="badge-status status-pending">Próximamente</span>
+            <span class="text-xs font-mono text-[var(--text-muted)]">En desarrollo</span>
           </div>
-          <div class="empty-unit-card">
-            <i data-lucide="clock"></i>
-            <span>Simuladores en desarrollo para esta unidad.</span>
+          <div class="bg-[var(--surface)] border border-dashed border-[var(--border)] rounded-xl p-4 text-center text-xs text-[var(--text-muted)] font-mono">
+            Circuitos Ley de Ohm y Kirchhoff en desarrollo.
           </div>
-        </div>
+        </section>
 
-        <!-- UNIDAD 7 -->
-        <div class="unit-section unit-pending" data-unit="7">
-          <div class="unit-title">
-            <div class="unit-title-text">
-              <i data-lucide="layers"></i>
-              Unidad 7: Electromagnetismo
+        <section class="unit-block space-y-4" data-unit="7" data-status="pending">
+          <div class="flex items-center justify-between pb-2 border-b border-[var(--border)]">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--bg)] text-[var(--text-muted)] border border-[var(--border)]">
+                UNIDAD 7
+              </span>
+              <h2 class="font-semibold text-[var(--chocolate)] text-sm">Electromagnetismo</h2>
             </div>
-            <span class="badge-status status-pending">Próximamente</span>
+            <span class="text-xs font-mono text-[var(--text-muted)]">En desarrollo</span>
           </div>
-          <div class="empty-unit-card">
-            <i data-lucide="clock"></i>
-            <span>Simuladores en desarrollo para esta unidad.</span>
+          <div class="bg-[var(--surface)] border border-dashed border-[var(--border)] rounded-xl p-4 text-center text-xs text-[var(--text-muted)] font-mono">
+            Inducción magnética y Ley de Faraday en desarrollo.
           </div>
-        </div>
+        </section>
 
-      </section>
+      </div>
 
-      <!-- FOOTER -->
-      <footer>
-        <p><strong>Laboratorio Virtual de Física</strong> · 2026</p>
+      <!-- FOOTER MINIMALISTA -->
+      <footer class="bg-[var(--surface)] border-t border-[var(--border)] p-4 px-8 text-xs font-mono text-[var(--text-muted)] flex flex-col sm:flex-row items-center justify-between gap-2 transition-colors duration-300">
+        <div>Laboratorio Virtual de Física · 2026</div>
       </footer>
 
     </main>
+
   </div>
 
-  <!-- MASCOTA GATITO INTERACTIVA -->
-  <aside class="cat-widget">
-    <button class="cat-avatar" onclick="meow()" aria-label="Mascota interactiva">
-      <i data-lucide="cat"></i>
-    </button>
-    <div class="cat-bubble" id="catText" aria-live="polite">
-      ¡Hola! Bienvenid@ al laboratorio de Física. Selecciona un simulador para comenzar 🐾
+  <!-- MASCOTA / ASISTENTE VIRTUAL FIJO (FIXED EN ESQUINA INFERIOR IZQUIERDA) -->
+  <!-- Al tener position fixed, se mantiene en el mismo lugar de la pantalla sin importar el scroll -->
+  <aside class="fixed bottom-6 left-6 z-50 pointer-events-auto">
+    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-3 shadow-xl flex items-start gap-3 max-w-xs transition-all duration-300 backdrop-blur-md">
+      <button onclick="meow()" class="w-10 h-10 rounded-xl bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center shrink-0 hover:scale-105 hover:border-[var(--primary)] transition-all shadow-sm group" title="Haz clic para interactuar">
+        <i data-lucide="cat" class="w-5 h-5 text-[var(--primary)] group-hover:rotate-12 transition-transform"></i>
+      </button>
+      <div class="space-y-1">
+        <div class="text-[10px] font-mono font-semibold text-[var(--text-muted)] uppercase flex items-center justify-between gap-4">
+          <span>Asistente Lab</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        </div>
+        <p id="catText" class="text-xs text-[var(--chocolate)] leading-relaxed italic">
+          "Selecciona un simulador para comenzar las pruebas."
+        </p>
+      </div>
     </div>
   </aside>
 
+  <!-- JAVASCRIPT CON LÓGICA INTERACTIVA -->
   <script>
-    const catPhrases = [
-      "¡Hola! Bienvenid@ al laboratorio de Física. Selecciona un simulador para comenzar 🐾",
-      "No le tengas miedo a los vectores, yo tampoco 😼",
-      "No necesitas memorizar todo; primero entiende qué está pasando.",
-      "Confío en ti. Más o menos. 🐈",
-      "Yo también me confundo con las fuerzas, pero no se lo digas a nadie.",
-      "miau miau miau miau miau miau miau miau miau miau miau miau miau miau miau",
-      "Algo me dice que no has hecho tus tareas de física. Pero no te preocupes, yo tampoco.",
-      "Gracias por usar este laboratorio virtual. Espero que te ayude a aprender y a divertirte con la física."
-    ];
+    // 1. MODO OSCURO / CLARO
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      
+      html.classList.toggle('dark');
+      const isDark = html.classList.contains('dark');
 
-    let currentPhrase = 0;
+      localStorage.setItem('lab_theme', isDark ? 'dark' : 'light');
 
-    function meow() {
-      currentPhrase = (currentPhrase + 1) % catPhrases.length;
-      const bubble = document.getElementById("catText");
-      bubble.textContent = catPhrases[currentPhrase];
+      if (isDark) {
+        themeIcon.setAttribute('data-lucide', 'sun');
+      } else {
+        themeIcon.setAttribute('data-lucide', 'moon');
+      }
+      
+      if (window.lucide) {
+        lucide.createIcons();
+      }
     }
 
-    // FUNCIÓN DE FILTRADO POR UNIDAD
-    function filterUnits() {
-      const selectedValue = document.getElementById("unitFilter").value;
-      const units = document.querySelectorAll(".unit-section");
+    // Cargar Tema Guardado
+    function loadSavedTheme() {
+      const savedTheme = localStorage.getItem('lab_theme');
+      const themeIcon = document.getElementById('themeIcon');
+      
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        if (themeIcon) themeIcon.setAttribute('data-lucide', 'sun');
+      } else {
+        document.documentElement.classList.remove('dark');
+        if (themeIcon) themeIcon.setAttribute('data-lucide', 'moon');
+      }
+    }
+
+    // 2. FRASES DEL GATITO ACADÉMICO
+    const catPhrases = [
+      "Bienvenid@ al Laboratorio Virtual de Física.",
+      "Laboratorio listo y calibrado para los experimentos de hoy.",
+      "Recuerda que puedes marcar tus simuladores favoritos.",
+      "Explora las unidades y descubre nuevas simulaciones.",
+      "miau miau miau miau miau miau miau miau miau miau miau miau miau miau miau miau miau miau",
+      "Una mente curiosa es la chispa de la ciencia."
+    ];
+    let phraseIndex = 0;
+
+    function meow() {
+      phraseIndex = (phraseIndex + 1) % catPhrases.length;
+      document.getElementById("catText").textContent = `"${catPhrases[phraseIndex]}"`;
+    }
+
+    // 3. PESTAÑAS (TABS)
+    let currentTab = 'all';
+    function selectTab(unitNumber) {
+      currentTab = unitNumber;
+      
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-tab') === unitNumber) {
+          btn.className = "tab-btn px-3 py-1.5 rounded-md text-xs font-medium bg-[var(--primary)] text-white transition-all";
+        } else {
+          btn.className = "tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all";
+        }
+      });
+
+      applyFilters();
+    }
+
+    // 4. BUSCADOR Y FILTROS
+    function handleSearch() {
+      applyFilters();
+    }
+
+    function filterSimulators() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const status = document.getElementById('statusFilter').value;
+      const units = document.querySelectorAll('.unit-block');
 
       units.forEach(unit => {
-        const unitNumber = unit.getAttribute("data-unit");
-        if (selectedValue === "all" || selectedValue === unitNumber) {
-          unit.style.display = "block";
+        const unitNumber = unit.getAttribute('data-unit');
+        const unitStatus = unit.getAttribute('data-status');
+
+        const matchTab = (currentTab === 'all' || currentTab === unitNumber);
+        const matchStatus = (status === 'all' || 
+                            (status === 'available' && unitStatus === 'available') || 
+                            (status === 'pending' && unitStatus === 'pending'));
+
+        const cards = unit.querySelectorAll('.sim-card');
+        let hasMatchingCard = false;
+
+        if (cards.length > 0) {
+          cards.forEach(card => {
+            const title = card.getAttribute('data-title') || '';
+            const tags = card.getAttribute('data-tags') || '';
+            const matchQuery = title.includes(query) || tags.includes(query);
+
+            if (matchQuery) {
+              card.style.display = 'flex';
+              hasMatchingCard = true;
+            } else {
+              card.style.display = 'none';
+            }
+          });
         } else {
-          unit.style.display = "none";
+          hasMatchingCard = query === '';
+        }
+
+        if (matchTab && matchStatus && (hasMatchingCard || query === '')) {
+          unit.style.display = 'block';
+        } else {
+          unit.style.display = 'none';
         }
       });
     }
 
-    window.addEventListener("DOMContentLoaded", () => {
+    // 5. MODO DE VISTA (GRID / LIST)
+    function setViewMode(mode) {
+      const wrappers = document.querySelectorAll('.simulators-wrapper');
+      const btnGrid = document.getElementById('btnViewGrid');
+      const btnList = document.getElementById('btnViewList');
+
+      if (mode === 'list') {
+        wrappers.forEach(w => {
+          w.classList.remove('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
+          w.classList.add('grid-cols-1');
+        });
+        btnList.className = "p-1.5 rounded text-[var(--primary)] bg-[var(--surface)] shadow-sm";
+        btnGrid.className = "p-1.5 rounded text-[var(--text-muted)] hover:text-[var(--primary)]";
+      } else {
+        wrappers.forEach(w => {
+          w.classList.remove('grid-cols-1');
+          w.classList.add('grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3');
+        });
+        btnGrid.className = "p-1.5 rounded text-[var(--primary)] bg-[var(--surface)] shadow-sm";
+        btnList.className = "p-1.5 rounded text-[var(--text-muted)] hover:text-[var(--primary)]";
+      }
+    }
+
+    // 6. SISTEMA DE FAVORITOS (LOCALSTORAGE)
+    let favorites = JSON.parse(localStorage.getItem('lab_favorites') || '{}');
+
+    function toggleFavorite(id, title) {
+      if (favorites[id]) {
+        delete favorites[id];
+      } else {
+        favorites[id] = title;
+      }
+      localStorage.setItem('lab_favorites', JSON.stringify(favorites));
+      renderFavorites();
+    }
+
+    function renderFavorites() {
+      const container = document.getElementById('favoritesList');
+      const keys = Object.keys(favorites);
+
+      document.querySelectorAll('[id^="star-"]').forEach(star => {
+        const simId = star.id.replace('star-', '');
+        if (favorites[simId]) {
+          star.classList.add('text-amber-500', 'fill-amber-500');
+          star.classList.remove('text-[var(--text-muted)]');
+        } else {
+          star.classList.remove('text-amber-500', 'fill-amber-500');
+          star.classList.add('text-[var(--text-muted)]');
+        }
+      });
+
+      if (keys.length === 0) {
+        container.innerHTML = `<p class="text-[var(--text-muted)] italic font-mono text-[11px] py-1">Sin simuladores marcados</p>`;
+        return;
+      }
+
+      container.innerHTML = keys.map(id => `
+        <div class="flex items-center justify-between p-1.5 rounded bg-[var(--bg)] border border-[var(--border)] text-xs font-mono">
+          <span class="truncate text-[var(--chocolate)]">${favorites[id]}</span>
+          <button onclick="toggleFavorite('${id}', '${favorites[id]}')" class="text-[var(--text-muted)] hover:text-red-500 ml-2">×</button>
+        </div>
+      `).join('');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedTheme();
       if (window.lucide) {
         lucide.createIcons();
       }
+      renderFavorites();
     });
   </script>
-
 </body>
 </html>
