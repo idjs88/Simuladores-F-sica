@@ -1,239 +1,81 @@
-<!doctype html>
-<html lang="es">
- <head>
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[var(--bg)] text-[var(--text)] antialiased transition-colors duration-300">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MRU</title>
-  
+  <title>Simulador MRU</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
 
   <style>
     :root {
-      --bg: #FFF8F3;
-      --surface: #FFFFFF;
-      --surface-pink: #FCE7EF;
-
-      --primary: #D95D82;
-      --primary-light: #E98AA8;
-      --primary-soft: #F8DCE5;
-
-      --text: #3D2A2E;
-      --text-muted: #8B7075;
-
-      --border: #EBCFD7;
-      --chocolate: #4A3035;
+      --bg: #FFF8F3;               /* Beige Crema */
+      --surface: #FFFFFF;          /* Blanco */
+      --surface-subtle: #FCE7EF;   /* Rosa suave */
+      --border: #EBCFD7;           /* Borde rosa tenue */
+      --text: #3D2A2E;             /* Texto café oscuro */
+      --text-muted: #8B7075;       /* Texto café apagado */
+      --primary: #D95D82;          /* Rosa principal */
+      --primary-hover: #C24B6F;    /* Rosa interactivo */
+      --chocolate: #4A3035;        /* Café profundo */
+      --accent-soft: #F8DCE5;      /* Rosa pastel suave */
+      --grid-color: rgba(74, 48, 53, 0.05);
     }
 
-    * { box-sizing: border-box; }
-
-    body {
-      width: 100%;
-      height: 100vh;
-      margin: 0;
-      font-family: "DM Sans", sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      font-size: 0.85rem;
-      overflow: hidden;
+    .dark {
+      --bg: #1A1214;               /* Moka / Café negro */
+      --surface: #261B1E;          /* Moka oscuro */
+      --surface-subtle: #362529;   /* Moka intermedio */
+      --border: #4A3035;           /* Borde café */
+      --text: #FCE7EF;             /* Texto crema rosado */
+      --text-muted: #C4A1A8;       /* Texto café claro */
+      --primary: #E98AA8;          /* Rosa claro neón */
+      --primary-hover: #F8DCE5;    /* Rosa claro pastel */
+      --chocolate: #FCE7EF;        /* Reemplazo café en oscuro */
+      --accent-soft: #3D2A2E;      /* Contenedor suave oscuro */
+      --grid-color: rgba(233, 138, 168, 0.05);
     }
 
-    h1, .font-heading {
-      font-family: "Playfair Display", serif;
+    .bg-grid-pattern {
+      background-size: 24px 24px;
+      background-image: 
+        linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
     }
 
-    button, input, select { font: inherit; }
-
-    .app-wrapper {
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      padding: 12px 16px;
-      background-image:
-        radial-gradient(circle at 15% 15%, rgba(217, 93, 130, 0.08), transparent 30rem),
-        radial-gradient(circle at 85% 85%, rgba(233, 138, 168, 0.12), transparent 30rem);
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
     }
-
-    .main-content {
-      width: 100%;
-      max-width: 1280px;
-      margin: 0 auto;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      overflow: hidden;
-    }
-
-    .hero { 
-      padding: 4px 0; 
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-shrink: 0;
-    }
-
-    .hero h1 {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--chocolate);
-    }
-
-    .hero p {
-      margin: 0;
-      color: var(--text-muted);
-      font-size: .8rem;
-    }
-
-    .nav-tabs {
-      display: flex;
-      gap: 8px;
-      border-bottom: 2px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    .tab-btn {
-      padding: 8px 16px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      color: var(--text-muted);
+    ::-webkit-scrollbar-track {
       background: transparent;
-      border: none;
-      border-bottom: 3px solid transparent;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
     }
-
-    .tab-btn:hover {
-      color: var(--chocolate);
-      background: var(--surface-pink);
-      border-radius: 6px 6px 0 0;
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 999px;
     }
-
-    .tab-btn.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-      background: var(--surface-pink);
-      border-radius: 6px 6px 0 0;
-    }
-
-    .tab-pane {
-      display: none;
-      flex: 1;
-      height: calc(100% - 90px);
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .tab-pane.active {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .tab-pane::-webkit-scrollbar { width: 6px; }
-    .tab-pane::-webkit-scrollbar-track { background: var(--bg); border-radius: 4px; }
-    .tab-pane::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-    .tab-pane::-webkit-scrollbar-thumb:hover { background: var(--primary-light); }
-
-    .lab-panel {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--surface);
-      box-shadow: 0 4px 16px rgba(74, 48, 53, 0.05);
-    }
-
-    .panel-pad { padding: 14px; }
-
-    .panel-heading {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .panel-heading svg {
-      width: 18px;
-      height: 18px;
-      color: var(--primary);
-    }
-
-    .panel-heading h2 {
-      margin: 0;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--chocolate);
-    }
-
-    .sim-layout {
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 12px;
-      align-items: start;
-      min-height: 0;
-    }
-
-    .cartesian-plane {
-      position: relative;
-      width: 100%;
-      height: 220px;
-      border-radius: 12px;
-      border: 2px solid var(--border);
-      background: radial-gradient(circle, #FFFFFF 0%, #FFF8F3 70%, #FCE7EF 100%);
-      box-shadow: inset 0 0 25px rgba(217, 93, 130, 0.05), 0 4px 12px rgba(74, 48, 53, 0.04);
-      overflow: hidden;
-    }
-
-    #cartesian-svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .btn-ctrl {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 6px 12px;
-      font-size: .78rem;
-      font-weight: 600;
-      background: var(--surface);
-      color: var(--chocolate);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-decoration: none;
-    }
-
-    .btn-ctrl:hover {
-      background: var(--surface-pink);
-      border-color: var(--primary-light);
-      color: var(--chocolate);
-    }
-
-    .field-group {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .field-group label {
-      font-size: .75rem;
-      font-weight: 600;
-      color: var(--text-muted);
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
     }
 
     input[type=range] {
@@ -245,50 +87,34 @@
       cursor: pointer;
     }
 
-    .result-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .result-item {
-      padding: 8px 10px;
+    .cartesian-plane {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      border-radius: 12px;
       border: 1px solid var(--border);
-      border-radius: 8px;
       background: var(--bg);
-    }
-
-    .result-label {
-      font-size: .68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-      color: var(--text-muted);
-      display: block;
-    }
-
-    .result-value {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--chocolate);
+      box-shadow: inset 0 0 25px rgba(217, 93, 130, 0.05);
+      overflow: hidden;
     }
 
     .quiz-option {
-      display: block;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       padding: 10px 14px;
       border: 1px solid var(--border);
       border-radius: 8px;
-      background: var(--bg);
+      background: var(--surface);
       color: var(--text);
-      margin-bottom: 6px;
       cursor: pointer;
-      transition: all 0.2s;
-      font-size: .8rem;
+      transition: all 0.2s ease;
+      font-size: 0.82rem;
     }
 
     .quiz-option:hover {
-      border-color: var(--primary-light);
-      background: var(--surface-pink);
+      border-color: var(--primary);
+      background: var(--surface-subtle);
     }
 
     .quiz-option.selected {
@@ -298,361 +124,459 @@
       font-weight: 600;
     }
 
-    .action-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 8px 14px;
-      font-size: .78rem;
-      font-weight: 700;
-      border-radius: 6px;
-      border: 0;
-      cursor: pointer;
-      background: var(--primary);
-      color: #ffffff;
-      transition: all 0.2s;
+    .tab-pane {
+      display: none;
     }
-
-    .action-button:hover {
-      background: var(--chocolate);
-      box-shadow: 0 2px 8px rgba(74, 48, 53, 0.2);
-    }
-
-    .charts-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .chart-card {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 8px;
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    .chart-card h3 {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--chocolate);
-      margin: 0 0 6px 0;
-      text-align: center;
-    }
-
-    .chart-container {
-      position: relative;
-      height: 160px;
-      width: 100%;
-    }
-
-    @media (max-width: 1024px) {
-      .sim-layout { grid-template-columns: 1fr; }
-      .charts-grid { grid-template-columns: 1fr; }
-      body { overflow: auto; height: auto; }
-      .app-wrapper { height: auto; min-height: 100vh; }
-      .tab-pane { height: auto; overflow-y: visible; }
+    .tab-pane.active {
+      display: block;
     }
   </style>
- </head>
- <body>
-  <div class="app-wrapper">
-   <main class="main-content">
-    <section class="hero">
-     <div>
-      <h1>Simulador Movimiento Rectilíneo Uniforme (MRU)</h1>
-      <p>Un simulador interactivo para comprender el movimiento rectilíneo uniforme.</p>
-     </div>
-     <a href="index.html" class="btn-ctrl" title="Volver al Inicio">
-      <i data-lucide="arrow-left"></i> Regresar al Inicio
-     </a>
-    </section>
+</head>
+<body class="h-full bg-grid-pattern font-sans text-sm selection:bg-[var(--surface-subtle)] selection:text-[var(--primary)]">
 
-    <nav class="nav-tabs">
-     <button class="tab-btn active" onclick="switchTab('simulador', event)"><i data-lucide="gamepad-2"></i> Simulador</button>
-     <button class="tab-btn" onclick="switchTab('teoria', event)"><i data-lucide="book-open"></i> Teoría</button>
-     <button class="tab-btn" onclick="switchTab('evaluacion', event)"><i data-lucide="award"></i> Evaluación</button>
-    </nav>
+  <div class="min-h-screen flex flex-col md:flex-row">
 
-    <!-- PESTAÑA 1: SIMULADOR -->
-    <div id="tab-simulador" class="tab-pane active">
-     <section class="sim-layout">
-      <!-- PANEL IZQUIERDO: PISTA Y GRÁFICAS -->
-      <div style="display:flex; flex-direction:column; gap:12px; min-width:0;">
-       <section class="lab-panel panel-pad" style="display:flex; flex-direction:column;">
-        <div class="panel-heading" style="justify-content: space-between;">
-         <div style="display:flex; align-items:center; gap:8px;">
-          <i data-lucide="move-right"></i>
-          <h2>Carretera y Plano en Movimiento</h2>
-         </div>
-         <div style="display:flex; gap:6px;">
-          <button id="btn-play" class="btn-ctrl"><i data-lucide="play"></i> Iniciar</button>
-          <button id="btn-pause" class="btn-ctrl"><i data-lucide="pause"></i> Pausa</button>
-          <button id="btn-stop" class="btn-ctrl"><i data-lucide="rotate-ccw"></i> Reiniciar</button>
-         </div>
-        </div>
-
-        <div class="cartesian-plane">
-         <svg id="cartesian-svg" viewBox="0 0 600 220">
-          <defs>
-           <marker id="arrow-v" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M 0 0 L 10 5 L 0 10 z" fill="#4A3035"/>
-           </marker>
-           
-           <pattern id="road-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-            <line x1="0" y1="40" x2="40" y2="40" stroke="#EBCFD7" stroke-width="1"/>
-           </pattern>
-          </defs>
-
-          <!-- Carretera y Asfalto -->
-          <rect x="0" y="100" width="600" height="70" fill="#4A3035" opacity="0.08"/>
-          <line x1="0" y1="100" x2="600" y2="100" stroke="#EBCFD7" stroke-width="2"/>
-          <line x1="0" y1="170" x2="600" y2="170" stroke="#EBCFD7" stroke-width="2"/>
-
-          <!-- Grupo de Líneas Discontinuas de la Carretera (Móvil) -->
-          <g id="road-lines-group"></g>
-
-          <!-- Grupo del Eje Regla / Plano Cartesiano (Móvil) -->
-          <g id="grid-axis">
-           <line x1="0" y1="170" x2="600" y2="170" stroke="#D95D82" stroke-width="2"/>
-          </g>
-          <g id="ticks-group"></g>
-
-          <!-- Móvil / Carrito Fijo en el Enfoque de la Cámara -->
-          <g id="mobile-group">
-           <!-- Sombra -->
-           <ellipse id="car-shadow" cx="0" cy="155" rx="28" ry="4" fill="rgba(74, 48, 53, 0.2)"/>
-           
-           <!-- Cuerpo del Carrito -->
-           <path id="car-body" d="M -24,140 Q -26,126 -12,124 L 4,124 Q 14,124 20,134 L 26,134 Q 28,134 28,140 L 28,148 Q 28,151 24,151 L -20,151 Q -24,151 -24,140 Z" fill="#D95D82" stroke="#4A3035" stroke-width="1.5"/>
-           
-           <!-- Ventana -->
-           <path id="car-window" d="M -10,127 L 2,127 Q 10,127 14,134 L -10,134 Z" fill="#FCE7EF" stroke="#4A3035" stroke-width="1"/>
-           
-           <!-- Luces -->
-           <circle id="car-headlight" cx="26" cy="140" r="2.5" fill="#FFF8F3" stroke="#4A3035" stroke-width="0.8"/>
-           <rect id="car-taillight" x="-24" y="137" width="2" height="5" rx="1" fill="#4A3035"/>
-
-           <!-- Ruedas Rotatorias -->
-           <g id="wheel-front">
-            <circle cx="14" cy="151" r="6" fill="#4A3035"/>
-            <line id="spoke-front" x1="14" y1="145" x2="14" y2="157" stroke="#FFF8F3" stroke-width="1.5"/>
-           </g>
-           <g id="wheel-back">
-            <circle cx="-14" cy="151" r="6" fill="#4A3035"/>
-            <line id="spoke-back" x1="-14" y1="145" x2="-14" y2="157" stroke="#FFF8F3" stroke-width="1.5"/>
-           </g>
-          </g>
-
-          <!-- Vector Velocidad sobre el coche -->
-          <line id="vec-v" x1="0" y1="0" x2="0" y2="0" stroke="#4A3035" stroke-width="3" marker-end="url(#arrow-v)"/>
-
-          <!-- Retícula / Indicador de Posición Central -->
-          <line x1="200" y1="20" x2="200" y2="90" stroke="#D95D82" stroke-width="1" stroke-dasharray="3,3"/>
-          <text x="200" y="15" fill="#D95D82" font-size="10" font-weight="700" text-anchor="middle">Enfoque Cámara (x actual)</text>
-         </svg>
-        </div>
-
-        <div style="margin-top: 8px; display:flex; justify-content:space-between; align-items:center; background:var(--bg); padding:6px 12px; border-radius:8px; border:1px solid var(--border);">
-         <div style="display:flex; gap:12px;">
-          <span style="font-size:.75rem; color:var(--primary); font-weight:700;">■ Posición x(t)</span>
-          <span style="font-size:.75rem; color:var(--chocolate); font-weight:700;">➔ Vector Velocidad (v)</span>
-         </div>
-         <span id="time-badge" style="font-size:.75rem; font-weight:700; padding:2px 8px; border-radius:4px; background:var(--surface-pink); color:var(--chocolate);">t = 0.00 s</span>
-        </div>
-       </section>
-
-       <!-- GRÁFICAS -->
-       <section class="lab-panel panel-pad">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-         <div class="panel-heading" style="margin:0;">
-          <i data-lucide="line-chart"></i>
-          <h2>Gráficas Cinemáticas en Tiempo Real</h2>
-         </div>
-         <button id="btn-export-csv" class="btn-ctrl" style="background:var(--primary); color:#FFFFFF; border-color:var(--primary);">
-          <i data-lucide="download"></i> Exportar CSV
-         </button>
-        </div>
-
-        <div class="charts-grid">
-         <div class="chart-card">
-          <h3>Posición vs Tiempo x(t)</h3>
-          <div class="chart-container">
-           <canvas id="chartX"></canvas>
-          </div>
-         </div>
-
-         <div class="chart-card">
-          <h3>Velocidad vs Tiempo v(t)</h3>
-          <div class="chart-container">
-           <canvas id="chartV"></canvas>
-          </div>
-         </div>
-
-         <div class="chart-card">
-          <h3>Aceleración vs Tiempo a(t)</h3>
-          <div class="chart-container">
-           <canvas id="chartA"></canvas>
-          </div>
-         </div>
-        </div>
-       </section>
-      </div>
-
-      <!-- CONTROLES -->
-      <aside class="lab-panel panel-pad" style="display:flex; flex-direction:column; gap:10px;">
-       <div class="panel-heading">
-        <i data-lucide="sliders"></i>
-        <h2>Parámetros Iniciales</h2>
-       </div>
-
-       <div style="display:grid; gap:8px; background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
-        <div class="field-group">
-         <div style="display:flex; justify-content:space-between;">
-          <label>Posición Inicial (x₀):</label>
-          <span id="lbl-x0" style="font-weight:700; color:var(--primary);">0 m</span>
-         </div>
-         <input id="slider-x0" type="range" min="-100" max="100" value="0" step="5">
-        </div>
-
-        <div class="field-group">
-         <div style="display:flex; justify-content:space-between;">
-          <label>Velocidad Constante (v):</label>
-          <span id="lbl-v" style="font-weight:700; color:var(--chocolate);">15 m/s</span>
-         </div>
-         <input id="slider-v" type="range" min="-50" max="50" value="15" step="1">
-        </div>
-
-        <div class="field-group">
-         <div style="display:flex; justify-content:space-between;">
-          <label>Tiempo Límite (t máx):</label>
-          <span id="lbl-tmax" style="font-weight:700; color:var(--primary-light);">10 s</span>
-         </div>
-         <input id="slider-tmax" type="range" min="2" max="30" value="10" step="1">
-        </div>
-       </div>
-
-       <div class="panel-heading" style="margin-top:4px;">
-        <i data-lucide="calculator"></i>
-        <h2>Variables en Tiempo Real</h2>
-       </div>
-
-       <div class="result-grid">
-        <div class="result-item">
-         <span class="result-label">Posición Actual (x)</span>
-         <span id="res-x" class="result-value" style="color:var(--primary);">0.00 m</span>
-        </div>
-        <div class="result-item">
-         <span class="result-label">Desplazamiento (∆x)</span>
-         <span id="res-dx" class="result-value" style="color:var(--chocolate);">0.00 m</span>
-        </div>
-        <div class="result-item">
-         <span class="result-label">Velocidad (v)</span>
-         <span id="res-v" class="result-value">15.00 m/s</span>
-        </div>
-        <div class="result-item">
-         <span class="result-label">Aceleración (a)</span>
-         <span id="res-a" class="result-value" style="color:var(--text-muted);">0.00 m/s²</span>
-        </div>
-       </div>
-      </aside>
-     </section>
-    </div>
-
-    <!-- PESTAÑA 2: TEORÍA COMPLETA Y MEJORADA -->
-    <div id="tab-teoria" class="tab-pane">
-     <section class="lab-panel panel-pad">
-      <div class="panel-heading">
-       <i data-lucide="book-open"></i>
-       <h2>Fundamentos del Movimiento Rectilíneo Uniforme (MRU)</h2>
-      </div>
-      <div style="color:var(--text); font-size:.88rem; line-height:1.6; display:flex; flex-direction:column; gap:12px;">
-       <p style="margin:0;">
-        El <strong>Movimiento Rectilíneo Uniforme (MRU)</strong> es el modelo cinemático fundamental en el que un móvil se desplaza en una trayectoria puramente rectilínea manteniendo su velocidad instantánea constante tanto en magnitud como en dirección y sentido a lo largo del tiempo.
-       </p>
-       
-       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-        <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border);">
-         <h3 style="color:var(--chocolate); font-size:0.95rem; margin:0 0 6px 0; font-weight:700;">1. Leyes Cinemáticas Principales</h3>
-         <ul style="margin:0; padding-left:18px; color:var(--text-muted); font-size:.82rem;">
-          <li><strong style="color:var(--text);">Aceleración Nula:</strong> Al no cambiar la velocidad en ningún instante t, la aceleración a(t) = dv/dt = 0.</li>
-          <li><strong style="color:var(--text);">Proporcionalidad Directa:</strong> El desplazamiento ∆x es directamente proporcional al intervalo de tiempo transcurrido ∆t.</li>
-          <li><strong style="color:var(--text);">Velocidad Vectorial Constante:</strong> La magnitud del vector velocidad es invariable: vec{v}(t) = vₓ \hat{i}.</li>
-         </ul>
-        </div>
-
-        <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border);">
-         <h3 style="color:var(--chocolate); font-size:0.95rem; margin:0 0 6px 0; font-weight:700;">2. Sistema de Referencia Móvil</h3>
-         <p style="margin:0; color:var(--text-muted); font-size:.82rem;">
-          En este simulador interactivo, la cámara sigue el eje del móvil fija en el centro. Para representar visualmente el avance real, el plano coordenado graduado y la señalización de la carretera se desplazan en dirección opuesta con velocidad -v, demostrando el principio de relatividad galileana en marcos de referencia inerciales.
-         </p>
-        </div>
-       </div>
-
-       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:4px; font-weight:700;">3. Ecuaciones Fundamentales</h3>
-       <div style="background:var(--bg); padding:12px; border-radius:8px; border:1px solid var(--border); font-family:monospace; color:var(--primary); display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; text-align:center;">
-        <div style="border-right:1px solid var(--border); padding-right:8px;">
-         <strong style="color:var(--chocolate);">Posición x(t)</strong><br>
-         x(t) = x₀ + v · t
-        </div>
-        <div style="border-right:1px solid var(--border); padding-right:8px;">
-         <strong style="color:var(--chocolate);">Velocidad Instantánea</strong><br>
-         v(t) = ∆x / ∆t = cte
-        </div>
-        <div>
-         <strong style="color:var(--chocolate);">Aceleración</strong><br>
-         a(t) = 0 m/s²
-        </div>
-       </div>
-
-       <h3 style="color:var(--chocolate); font-size:1rem; margin-top:4px; font-weight:700;">4. Interpretación Gráfica del Movimiento</h3>
-       <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
-        <div style="padding:10px; background:var(--surface-pink); border-radius:8px; border:1px solid var(--border);">
-         <strong style="color:var(--chocolate); font-size:.82rem;">Posición vs. Tiempo x(t):</strong>
-         <p style="margin:4px 0 0 0; color:var(--text-muted); font-size:.78rem;">Gráfica en línea recta. Su pendiente m equivale exactamente al valor numérico y signo de la velocidad v.</p>
-        </div>
-        <div style="padding:10px; background:var(--surface-pink); border-radius:8px; border:1px solid var(--border);">
-         <strong style="color:var(--chocolate); font-size:.82rem;">Velocidad vs. Tiempo v(t):</strong>
-         <p style="margin:4px 0 0 0; color:var(--text-muted); font-size:.78rem;">Línea horizontal paralela al eje temporal. El área bajo la recta representa el desplazamiento total ∆x.</p>
-        </div>
-        <div style="padding:10px; background:var(--surface-pink); border-radius:8px; border:1px solid var(--border);">
-         <strong style="color:var(--chocolate); font-size:.82rem;">Aceleración vs. Tiempo a(t):</strong>
-         <p style="margin:4px 0 0 0; color:var(--text-muted); font-size:.78rem;">Línea horizontal fija sobre el valor cero (a = 0), demostrando la ausencia de fuerzas netas ejercidas sobre el móvil.</p>
-        </div>
-       </div>
-      </div>
-     </section>
-    </div>
-
-    <!-- PESTAÑA 3: EVALUACIÓN (BANCO COMPLETO DE 20 PREGUNTAS CON SELECCIÓN ALEATORIA DE 5) -->
-    <div id="tab-evaluacion" class="tab-pane">
-     <section class="lab-panel panel-pad">
-      <div class="panel-heading" style="justify-content: space-between;">
-       <div style="display:flex; align-items:center; gap:8px;">
-        <i data-lucide="award"></i>
-        <h2>Evaluación Diagnóstica</h2>
-       </div>
-       <button id="btn-new-quiz" class="btn-ctrl">
-        <i data-lucide="refresh-cw"></i> Generar Nuevo Cuestionario
-       </button>
-      </div>
-
-      <div id="quiz-container"></div>
+    <!-- SIDEBAR LATERAL -->
+    <aside class="w-full md:w-80 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col justify-between p-5 shrink-0 z-20 transition-colors duration-300">
       
-      <div style="margin-top:16px; display:flex; justify-content:space-between; align-items:center;">
-       <button id="btn-submit-quiz" class="action-button"><i data-lucide="check-circle"></i> Calificar Cuestionario</button>
-       <span id="quiz-score" style="font-size:1.05rem; font-weight:700; color:var(--primary);"></span>
+      <div class="space-y-6">
+        <!-- Header / Logo -->
+        <div class="flex items-center justify-between pb-4 border-b border-[var(--border)]">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center font-mono font-bold text-base shadow-sm">
+              ✦
+            </div>
+            <div>
+              <h1 class="font-semibold text-[var(--chocolate)] tracking-tight text-base leading-snug">Laboratorio Virtual</h1>
+              <p class="text-xs text-[var(--text-muted)] font-mono">Física General</p>
+            </div>
+          </div>
+
+          <!-- BOTÓN MODO OSCURO / CLARO -->
+          <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors" title="Cambiar tema">
+            <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div>
+          <a href="index.html" class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] transition-colors">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            Regresar al Menú Principal
+          </a>
+        </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL / CONTENIDO -->
+    <main class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative" id="mainContentScroll">
+
+      <!-- HEADER SUPERIOR DE SIMULADOR -->
+      <header class="bg-[var(--surface)] border-b border-[var(--border)] p-4 md:px-8 flex flex-col sm:flex-row gap-4 items-center justify-between sticky top-0 z-10 shadow-sm transition-colors duration-300">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--surface-subtle)] text-[var(--primary)] border border-[var(--border)]">
+              Tema 2.1.2
+            </span>
+            <h1 class="font-semibold text-[var(--chocolate)] text-base">Movimiento Rectilíneo Uniforme (MRU)</h1>
+          </div>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Analiza el comportamiento cinemático a velocidad constante y aceleración nula.</p>
+        </div>
+
+        <!-- NAVEGACIÓN PESTAÑAS INTERNAS -->
+        <div class="flex items-center bg-[var(--bg)] border border-[var(--border)] rounded-lg p-1 gap-1 font-mono text-xs">
+          <button onclick="switchTab('simulador')" id="tab-btn-simulador" class="tab-btn px-3 py-1.5 rounded-md font-medium bg-[var(--primary)] text-white transition-all">
+            Simulador
+          </button>
+          <button onclick="switchTab('teoria')" id="tab-btn-teoria" class="tab-btn px-3 py-1.5 rounded-md font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-all">
+            Teoría
+          </button>
+          <button onclick="switchTab('evaluacion')" id="tab-btn-evaluacion" class="tab-btn px-3 py-1.5 rounded-md font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-all">
+            Evaluación
+          </button>
+        </div>
+      </header>
+
+      <div class="p-4 md:p-8 space-y-6 flex-1">
+
+        <!-- PESTAÑA 1: SIMULADOR -->
+        <div id="tab-simulador" class="tab-pane active space-y-6">
+          
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- PANEL IZQUIERDO DE SIMULACIÓN (2 COLUMNAS) -->
+            <div class="lg:col-span-2 space-y-6">
+
+              <!-- CONTENEDOR DE LA CARRETERA Y ANIMACIÓN -->
+              <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-4 shadow-sm">
+                
+                <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="move-right" class="w-4 h-4 text-[var(--primary)]"></i>
+                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Carretera y Enfoque de Cámara</h2>
+                  </div>
+                  
+                  <div class="flex items-center gap-2 font-mono">
+                    <button id="btn-play" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white text-xs font-medium hover:bg-[var(--primary-hover)] transition-colors">
+                      <i data-lucide="play" class="w-3.5 h-3.5"></i> Iniciar
+                    </button>
+                    <button id="btn-pause" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] text-xs font-medium hover:border-[var(--primary)] transition-colors">
+                      <i data-lucide="pause" class="w-3.5 h-3.5"></i> Pausa
+                    </button>
+                    <button id="btn-stop" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] text-xs font-medium hover:border-[var(--primary)] transition-colors">
+                      <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reiniciar
+                    </button>
+                  </div>
+                </div>
+
+                <!-- CANVAS SVG -->
+                <div class="cartesian-plane">
+                  <svg id="cartesian-svg" viewBox="0 0 600 220" class="w-full h-full">
+                    <defs>
+                      <marker id="arrow-v" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--chocolate)"/>
+                      </marker>
+                    </defs>
+
+                    <!-- Pista y Asfalto -->
+                    <rect x="0" y="100" width="600" height="70" fill="var(--chocolate)" opacity="0.1"/>
+                    <line x1="0" y1="100" x2="600" y2="100" stroke="var(--border)" stroke-width="2"/>
+                    <line x1="0" y1="170" x2="600" y2="170" stroke="var(--border)" stroke-width="2"/>
+
+                    <!-- Líneas dinámicas -->
+                    <g id="road-lines-group"></g>
+                    <g id="grid-axis">
+                      <line x1="0" y1="170" x2="600" y2="170" stroke="var(--primary)" stroke-width="2"/>
+                    </g>
+                    <g id="ticks-group"></g>
+
+                    <!-- Vehículo / Carrito -->
+                    <g id="mobile-group">
+                      <ellipse id="car-shadow" cx="0" cy="155" rx="28" ry="4" fill="rgba(74, 48, 53, 0.2)"/>
+                      <path id="car-body" d="M -24,140 Q -26,126 -12,124 L 4,124 Q 14,124 20,134 L 26,134 Q 28,134 28,140 L 28,148 Q 28,151 24,151 L -20,151 Q -24,151 -24,140 Z" fill="var(--primary)" stroke="var(--chocolate)" stroke-width="1.5"/>
+                      <path id="car-window" d="M -10,127 L 2,127 Q 10,127 14,134 L -10,134 Z" fill="var(--surface-subtle)" stroke="var(--chocolate)" stroke-width="1"/>
+                      <circle id="car-headlight" cx="26" cy="140" r="2.5" fill="var(--bg)" stroke="var(--chocolate)" stroke-width="0.8"/>
+                      <rect id="car-taillight" x="-24" y="137" width="2" height="5" rx="1" fill="var(--chocolate)"/>
+
+                      <g id="wheel-front">
+                        <circle cx="14" cy="151" r="6" fill="var(--chocolate)"/>
+                        <line id="spoke-front" x1="14" y1="145" x2="14" y2="157" stroke="var(--bg)" stroke-width="1.5"/>
+                      </g>
+                      <g id="wheel-back">
+                        <circle cx="-14" cy="151" r="6" fill="var(--chocolate)"/>
+                        <line id="spoke-back" x1="-14" y1="145" x2="-14" y2="157" stroke="var(--bg)" stroke-width="1.5"/>
+                      </g>
+                    </g>
+
+                    <!-- Vector Velocidad -->
+                    <line id="vec-v" x1="0" y1="0" x2="0" y2="0" stroke="var(--chocolate)" stroke-width="3" marker-end="url(#arrow-v)"/>
+
+                    <!-- Eje de Enfoque Fijo -->
+                    <line x1="200" y1="20" x2="200" y2="90" stroke="var(--primary)" stroke-width="1" stroke-dasharray="3,3"/>
+                    <text x="200" y="15" fill="var(--primary)" font-size="10" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">Cámara en Movimiento [x(t)]</text>
+                  </svg>
+                </div>
+
+                <div class="flex items-center justify-between bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl font-mono text-xs">
+                  <div class="flex items-center gap-4">
+                    <span class="text-[var(--primary)] font-semibold flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-[var(--primary)]"></span> Posición x(t)
+                    </span>
+                    <span class="text-[var(--chocolate)] font-semibold flex items-center gap-1.5">
+                      <span class="w-2 h-2 rounded-full bg-[var(--chocolate)]"></span> Vector Velocidad (v)
+                    </span>
+                  </div>
+                  <span id="time-badge" class="px-2.5 py-1 rounded bg-[var(--surface-subtle)] text-[var(--chocolate)] font-bold">t = 0.00 s</span>
+                </div>
+
+              </div>
+
+              <!-- CONTENEDOR DE GRÁFICAS -->
+              <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-4 shadow-sm">
+                
+                <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="line-chart" class="w-4 h-4 text-[var(--primary)]"></i>
+                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Gráficas Cinemáticas en Tiempo Real</h2>
+                  </div>
+                  <button id="btn-export-csv" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white font-mono text-xs font-semibold hover:bg-[var(--primary-hover)] transition-colors">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar CSV
+                  </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
+                    <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Posición vs Tiempo x(t)</h3>
+                    <div class="h-36 relative">
+                      <canvas id="chartX"></canvas>
+                    </div>
+                  </div>
+
+                  <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
+                    <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Velocidad vs Tiempo v(t)</h3>
+                    <div class="h-36 relative">
+                      <canvas id="chartV"></canvas>
+                    </div>
+                  </div>
+
+                  <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
+                    <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Aceleración vs Tiempo a(t)</h3>
+                    <div class="h-36 relative">
+                      <canvas id="chartA"></canvas>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL DERECHO DE CONTROLES Y RESULTADOS -->
+            <div class="space-y-6">
+              
+              <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-5 shadow-sm">
+                
+                <div class="flex items-center gap-2 pb-3 border-b border-[var(--border)]">
+                  <i data-lucide="sliders" class="w-4 h-4 text-[var(--primary)]"></i>
+                  <h2 class="font-semibold text-[var(--chocolate)] text-sm">Parámetros Iniciales</h2>
+                </div>
+
+                <div class="space-y-4 font-mono text-xs">
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between">
+                      <label class="text-[var(--text-muted)] font-medium">Posición Inicial (x₀):</label>
+                      <span id="lbl-x0" class="font-bold text-[var(--primary)]">0 m</span>
+                    </div>
+                    <input id="slider-x0" type="range" min="-100" max="100" value="0" step="5">
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between">
+                      <label class="text-[var(--text-muted)] font-medium">Velocidad Constante (v):</label>
+                      <span id="lbl-v" class="font-bold text-[var(--chocolate)]">15 m/s</span>
+                    </div>
+                    <input id="slider-v" type="range" min="-50" max="50" value="15" step="1">
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between">
+                      <label class="text-[var(--text-muted)] font-medium">Tiempo Límite (t máx):</label>
+                      <span id="lbl-tmax" class="font-bold text-[var(--primary)]">10 s</span>
+                    </div>
+                    <input id="slider-tmax" type="range" min="2" max="30" value="10" step="1">
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-2 border-t border-[var(--border)]">
+                  <i data-lucide="calculator" class="w-4 h-4 text-[var(--primary)]"></i>
+                  <h2 class="font-semibold text-[var(--chocolate)] text-sm">Resultados en Vivo</h2>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 font-mono">
+                  <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
+                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Posición (x)</span>
+                    <span id="res-x" class="text-base font-bold text-[var(--primary)]">0.00 m</span>
+                  </div>
+
+                  <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
+                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Desplazamiento (∆x)</span>
+                    <span id="res-dx" class="text-base font-bold text-[var(--chocolate)]">0.00 m</span>
+                  </div>
+
+                  <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
+                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Velocidad (v)</span>
+                    <span id="res-v" class="text-base font-bold text-[var(--text)]">15.00 m/s</span>
+                  </div>
+
+                  <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
+                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Aceleración (a)</span>
+                    <span id="res-a" class="text-base font-bold text-[var(--text-muted)]">0.00 m/s²</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PESTAÑA 2: TEORÍA -->
+        <div id="tab-teoria" class="tab-pane space-y-6">
+          <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 space-y-6 shadow-sm">
+            
+            <div class="flex items-center gap-2 pb-3 border-b border-[var(--border)]">
+              <i data-lucide="book-open" class="w-5 h-5 text-[var(--primary)]"></i>
+              <h2 class="font-semibold text-[var(--chocolate)] text-base">Fundamentos del Movimiento Rectilíneo Uniforme (MRU)</h2>
+            </div>
+
+            <p class="leading-relaxed text-[var(--text)]">
+              El <strong>Movimiento Rectilíneo Uniforme (MRU)</strong> es el modelo cinemático fundamental en el que un móvil se desplaza en una trayectoria puramente rectilínea manteniendo su velocidad instantánea constante tanto en magnitud como en dirección y sentido a lo largo del tiempo.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+                <h3 class="font-bold text-[var(--chocolate)] text-sm">1. Leyes Cinemáticas Principales</h3>
+                <ul class="list-disc list-inside space-y-1 text-xs text-[var(--text-muted)]">
+                  <li><strong class="text-[var(--text)]">Aceleración Nula:</strong> Al no cambiar la velocidad en ningún instante t, la aceleración a(t) = dv/dt = 0.</li>
+                  <li><strong class="text-[var(--text)]">Proporcionalidad Directa:</strong> El desplazamiento ∆x es directamente proporcional al intervalo de tiempo transcurrido ∆t.</li>
+                  <li><strong class="text-[var(--text)]">Velocidad Vectorial Constante:</strong> La magnitud del vector velocidad es invariable: v(t) = v.</li>
+                </ul>
+              </div>
+
+              <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+                <h3 class="font-bold text-[var(--chocolate)] text-sm">2. Sistema de Referencia Móvil</h3>
+                <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+                  En este simulador interactivo, la cámara sigue el eje del móvil fija en el centro. Para representar visualmente el avance real, el plano coordenado graduado y la señalización de la carretera se desplazan en dirección opuesta con velocidad -v, demostrando el principio de relatividad galileana en marcos de referencia inerciales.
+                </p>
+              </div>
+            </div>
+
+            <h3 class="font-bold text-[var(--chocolate)] text-sm">3. Ecuaciones Fundamentales</h3>
+            <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl font-mono text-center grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+              <div class="space-y-1 border-r border-[var(--border)] pr-2">
+                <span class="font-bold text-[var(--chocolate)] block">Posición x(t)</span>
+                <span class="text-[var(--primary)] font-bold">x(t) = x₀ + v · t</span>
+              </div>
+              <div class="space-y-1 border-r border-[var(--border)] pr-2">
+                <span class="font-bold text-[var(--chocolate)] block">Velocidad Instantánea</span>
+                <span class="text-[var(--primary)] font-bold">v(t) = ∆x / ∆t = constante</span>
+              </div>
+              <div class="space-y-1">
+                <span class="font-bold text-[var(--chocolate)] block">Aceleración</span>
+                <span class="text-[var(--primary)] font-bold">a(t) = 0 m/s²</span>
+              </div>
+            </div>
+
+            <h3 class="font-bold text-[var(--chocolate)] text-sm">4. Interpretación Gráfica del Movimiento</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="bg-[var(--surface-subtle)] border border-[var(--border)] p-4 rounded-xl space-y-1">
+                <strong class="text-[var(--chocolate)] text-xs block">Posición vs. Tiempo x(t):</strong>
+                <p class="text-xs text-[var(--text-muted)]">Gráfica en línea recta. Su pendiente m equivale exactamente al valor numérico y signo de la velocidad v.</p>
+              </div>
+              <div class="bg-[var(--surface-subtle)] border border-[var(--border)] p-4 rounded-xl space-y-1">
+                <strong class="text-[var(--chocolate)] text-xs block">Velocidad vs. Tiempo v(t):</strong>
+                <p class="text-xs text-[var(--text-muted)]">Línea horizontal paralela al eje temporal. El área bajo la recta representa el desplazamiento total ∆x.</p>
+              </div>
+              <div class="bg-[var(--surface-subtle)] border border-[var(--border)] p-4 rounded-xl space-y-1">
+                <strong class="text-[var(--chocolate)] text-xs block">Aceleración vs. Tiempo a(t):</strong>
+                <p class="text-xs text-[var(--text-muted)]">Línea horizontal fija sobre el valor cero (a = 0), demostrando la ausencia de fuerzas netas ejercidas sobre el móvil.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- PESTAÑA 3: EVALUACIÓN -->
+        <div id="tab-evaluacion" class="tab-pane space-y-6">
+          <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 space-y-6 shadow-sm">
+            
+            <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+              <div class="flex items-center gap-2">
+                <i data-lucide="award" class="w-5 h-5 text-[var(--primary)]"></i>
+                <h2 class="font-semibold text-[var(--chocolate)] text-base">Cuestionario</h2>
+              </div>
+              <button id="btn-new-quiz" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] transition-colors">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Generar Nuevo Cuestionario
+              </button>
+            </div>
+
+            <div id="quiz-container" class="space-y-4"></div>
+
+            <div class="flex items-center justify-between pt-4 border-t border-[var(--border)]">
+              <button id="btn-submit-quiz" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white font-mono text-xs font-bold hover:bg-[var(--primary-hover)] transition-colors">
+                <i data-lucide="check-circle" class="w-4 h-4"></i> Calificar Cuestionario
+              </button>
+              <span id="quiz-score" class="font-mono text-base font-bold text-[var(--primary)]"></span>
+            </div>
+
+          </div>
+        </div>
+
       </div>
-     </section>
-    </div>
-   </main>
+
+    </main>
+
   </div>
 
+  <!-- MASCOTA / ASISTENTE VIRTUAL FIJO -->
+  <aside class="fixed bottom-6 left-6 z-50 pointer-events-auto">
+    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-3 shadow-xl flex items-start gap-3 max-w-xs transition-all duration-300 backdrop-blur-md">
+      <button onclick="meow()" class="w-10 h-10 rounded-xl bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center shrink-0 hover:scale-105 hover:border-[var(--primary)] transition-all shadow-sm group" title="Haz clic para interactuar">
+        <i data-lucide="cat" class="w-5 h-5 text-[var(--primary)] group-hover:rotate-12 transition-transform"></i>
+      </button>
+      <div class="space-y-1">
+        <div class="text-[10px] font-mono font-semibold text-[var(--text-muted)] uppercase flex items-center justify-between gap-4">
+          <span>Asistente Lab</span>
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        </div>
+        <p id="catText" class="text-xs text-[var(--chocolate)] leading-relaxed italic">
+          "Recuerda que en el MRU la aceleración es siempre cero."
+        </p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- JAVASCRIPT CON LÓGICA Y SIMULACIÓN -->
   <script>
+    // 1. MODO OSCURO / CLARO
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      
+      html.classList.toggle('dark');
+      const isDark = html.classList.contains('dark');
+
+      localStorage.setItem('lab_theme', isDark ? 'dark' : 'light');
+
+      if (isDark) {
+        themeIcon.setAttribute('data-lucide', 'sun');
+      } else {
+        themeIcon.setAttribute('data-lucide', 'moon');
+      }
+      
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+      updateCharts();
+    }
+
+    function loadSavedTheme() {
+      const savedTheme = localStorage.getItem('lab_theme');
+      const themeIcon = document.getElementById('themeIcon');
+      
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        if (themeIcon) themeIcon.setAttribute('data-lucide', 'sun');
+      } else {
+        document.documentElement.classList.remove('dark');
+        if (themeIcon) themeIcon.setAttribute('data-lucide', 'moon');
+      }
+    }
+
+    // 2. FRASES DEL ASISTENTE VIRTUAL
+    const catPhrases = [
+      "En el MRU, la velocidad es constante y la aceleración es siempre 0 m/s².",
+      "La pendiente en la gráfica de posición contra tiempo representa la velocidad. 📐",
+      "El área bajo la curva de la gráfica v(t) es igual al desplazamiento total. ⚡",
+      "Si la velocidad es negativa, el móvil retrocede en el sistema de referencia.",
+      "Cámara en movimiento: el entorno se desplaza a -v para mantener enfocado al móvil."
+    ];
+    let phraseIndex = 0;
+
+    function meow() {
+      phraseIndex = (phraseIndex + 1) % catPhrases.length;
+      document.getElementById("catText").textContent = `"${catPhrases[phraseIndex]}"`;
+    }
+
+    // 3. CAMBIO DE PESTAÑAS
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = "tab-btn px-3 py-1.5 rounded-md font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-all";
+      });
+
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.className = "tab-btn px-3 py-1.5 rounded-md font-medium bg-[var(--primary)] text-white transition-all";
+      }
+    }
+
+    // 4. LÓGICA DE FÍSICA Y SIMULADOR
     let x0 = 0;
     let v = 15;
     let tMax = 10;
@@ -666,7 +590,6 @@
     let chartVInstance = null;
     let chartAInstance = null;
 
-    // BANCO COMPLETO DE 20 PREGUNTAS DE CINEMÁTICA MRU
     const questionBank = [
       {
         q: "¿Cuál es el valor de la aceleración en un Movimiento Rectilíneo Uniforme (MRU)?",
@@ -792,13 +715,6 @@
 
     let currentQuizQuestions = [];
 
-    function switchTab(tabId, event) {
-      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(`tab-${tabId}`).classList.add('active');
-      if (event && event.currentTarget) event.currentTarget.classList.add('active');
-    }
-
     function getCalculations() {
       const tClamped = Math.min(currentTime, tMax);
       const curX = x0 + v * tClamped;
@@ -831,7 +747,7 @@
             const dash = document.createElementNS("http://www.w3.org/2000/svg", "line");
             dash.setAttribute("x1", screenPx); dash.setAttribute("y1", 135);
             dash.setAttribute("x2", screenPx + 20); dash.setAttribute("y2", 135);
-            dash.setAttribute("stroke", "#FFF8F3");
+            dash.setAttribute("stroke", "var(--bg)");
             dash.setAttribute("stroke-width", "3");
             dash.setAttribute("stroke-dasharray", "10,5");
             roadLinesGroup.appendChild(dash);
@@ -841,15 +757,16 @@
             const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
             line.setAttribute("x1", screenPx); line.setAttribute("y1", 165);
             line.setAttribute("x2", screenPx); line.setAttribute("y2", 175);
-            line.setAttribute("stroke", "#D95D82");
+            line.setAttribute("stroke", "var(--primary)");
             line.setAttribute("stroke-width", "2");
 
             const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
             text.setAttribute("x", screenPx);
             text.setAttribute("y", 192);
-            text.setAttribute("fill", "#8B7075");
+            text.setAttribute("fill", "var(--text-muted)");
             text.setAttribute("font-size", "10");
             text.setAttribute("font-weight", "600");
+            text.setAttribute("font-family", "JetBrains Mono");
             text.setAttribute("text-anchor", "middle");
             text.textContent = `${xMark}m`;
 
@@ -896,6 +813,10 @@
     }
 
     function createChartConfig(label, color, bgColor, yMin, yMax) {
+      const isDark = document.documentElement.classList.contains('dark');
+      const gridColor = isDark ? '#4A3035' : '#EBCFD7';
+      const textColor = isDark ? '#C4A1A8' : '#8B7075';
+
       return {
         type: 'line',
         data: {
@@ -916,14 +837,14 @@
           maintainAspectRatio: false,
           scales: {
             y: {
-              grid: { color: '#EBCFD7' },
-              ticks: { color: '#8B7075', font: { size: 8 } },
+              grid: { color: gridColor },
+              ticks: { color: textColor, font: { size: 9, family: 'JetBrains Mono' } },
               suggestedMin: yMin,
               suggestedMax: yMax
             },
             x: {
-              grid: { color: '#EBCFD7' },
-              ticks: { color: '#8B7075', font: { size: 8 } }
+              grid: { color: gridColor },
+              ticks: { color: textColor, font: { size: 9, family: 'JetBrains Mono' } }
             }
           },
           plugins: { legend: { display: false } }
@@ -946,15 +867,21 @@
         dataA.push((0).toFixed(2));
       }
 
-      if (!chartXInstance) {
-        const ctxX = document.getElementById('chartX').getContext('2d');
-        const ctxV = document.getElementById('chartV').getContext('2d');
-        const ctxA = document.getElementById('chartA').getContext('2d');
+      if (chartXInstance) chartXInstance.destroy();
+      if (chartVInstance) chartVInstance.destroy();
+      if (chartAInstance) chartAInstance.destroy();
 
-        chartXInstance = new Chart(ctxX, createChartConfig('x(t) [m]', '#D95D82', 'rgba(217, 93, 130, 0.12)'));
-        chartVInstance = new Chart(ctxV, createChartConfig('v(t) [m/s]', '#4A3035', 'rgba(74, 48, 53, 0.12)', -60, 60));
-        chartAInstance = new Chart(ctxA, createChartConfig('a(t) [m/s²]', '#8B7075', 'rgba(139, 112, 117, 0.12)', -5, 5));
-      }
+      const ctxX = document.getElementById('chartX').getContext('2d');
+      const ctxV = document.getElementById('chartV').getContext('2d');
+      const ctxA = document.getElementById('chartA').getContext('2d');
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const primaryColor = isDark ? '#E98AA8' : '#D95D82';
+      const chocolateColor = isDark ? '#FCE7EF' : '#4A3035';
+
+      chartXInstance = new Chart(ctxX, createChartConfig('x(t) [m]', primaryColor, 'rgba(217, 93, 130, 0.12)'));
+      chartVInstance = new Chart(ctxV, createChartConfig('v(t) [m/s]', chocolateColor, 'rgba(74, 48, 53, 0.12)', -60, 60));
+      chartAInstance = new Chart(ctxA, createChartConfig('a(t) [m/s²]', '#8B7075', 'rgba(139, 112, 117, 0.12)', -5, 5));
 
       chartXInstance.data.labels = labels;
       chartXInstance.data.datasets[0].data = dataX;
@@ -999,7 +926,7 @@
       const encodedUri = encodeURI(csv);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "reporte_mru_camara_movil.csv");
+      link.setAttribute("download", "reporte_mru_tecnm.csv");
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -1013,30 +940,29 @@
 
       currentQuizQuestions.forEach((qObj, qIdx) => {
         const qDiv = document.createElement("div");
-        qDiv.style.background = "var(--bg)";
-        qDiv.style.padding = "12px";
-        qDiv.style.borderRadius = "8px";
-        qDiv.style.border = "1px solid var(--border)";
-        qDiv.style.marginBottom = "10px";
+        qDiv.className = "bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-3";
 
         const title = document.createElement("h4");
-        title.style.margin = "0 0 8px 0";
-        title.style.color = "var(--chocolate)";
-        title.style.fontSize = "0.9rem";
+        title.className = "font-bold text-[var(--chocolate)] text-sm";
         title.textContent = `${qIdx + 1}. ${qObj.q}`;
         qDiv.appendChild(title);
+
+        const optionsGroup = document.createElement("div");
+        optionsGroup.className = "space-y-2";
 
         qObj.options.forEach((opt, optIdx) => {
           const label = document.createElement("label");
           label.className = "quiz-option";
-          label.innerHTML = `<input type="radio" name="q_${qIdx}" value="${optIdx}" style="display:none;">${opt}`;
+          label.innerHTML = `<input type="radio" name="q_${qIdx}" value="${optIdx}" class="hidden"><span>${opt}</span>`;
           label.addEventListener("click", () => {
             qDiv.querySelectorAll(".quiz-option").forEach(s => s.classList.remove("selected"));
             label.classList.add("selected");
             label.querySelector("input").checked = true;
           });
-          qDiv.appendChild(label);
+          optionsGroup.appendChild(label);
         });
+
+        qDiv.appendChild(optionsGroup);
         container.appendChild(qDiv);
       });
       document.getElementById("quiz-score").textContent = "";
@@ -1055,15 +981,11 @@
         let fb = qDiv.querySelector(".quiz-feedback");
         if (!fb) {
           fb = document.createElement("div");
-          fb.className = "quiz-feedback";
-          fb.style.marginTop = "8px";
-          fb.style.padding = "8px";
-          fb.style.borderRadius = "6px";
-          fb.style.fontSize = "0.78rem";
+          fb.className = "quiz-feedback mt-3 p-3 rounded-lg text-xs font-mono leading-relaxed";
           qDiv.appendChild(fb);
         }
         fb.style.background = isCorrect ? "rgba(16, 185, 129, 0.12)" : "rgba(217, 93, 130, 0.12)";
-        fb.style.color = isCorrect ? "#065f46" : "var(--chocolate)";
+        fb.style.color = isCorrect ? "#059669" : "var(--primary)";
         fb.style.border = isCorrect ? "1px solid #a7f3d0" : "1px solid var(--border)";
         fb.innerHTML = `<strong>${isCorrect ? "Correcto" : "Incorrecto"}:</strong> ${qObj.explanation}`;
       });
@@ -1103,13 +1025,16 @@
     });
 
     window.addEventListener("DOMContentLoaded", () => {
+      loadSavedTheme();
       update();
       generateQuiz();
-      lucide.createIcons();
+      if (window.lucide) {
+        lucide.createIcons();
+      }
       document.getElementById("btn-export-csv").addEventListener("click", exportToCSV);
       document.getElementById("btn-new-quiz").addEventListener("click", generateQuiz);
       document.getElementById("btn-submit-quiz").addEventListener("click", evaluateQuiz);
     });
   </script>
- </body>
+</body>
 </html>
