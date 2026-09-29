@@ -23,14 +23,14 @@
           },
           colors: {
             academic: {
-              rose: '#D95D82',
-              roseSoft: '#FCE7EF',
-              roseLight: '#F8DCE5',
-              chocolate: '#4A3035',
-              cream: '#FFF8F3',
-              borderRose: '#EBCFD7',
-              textRose: '#3D2A2E',
-              mutedRose: '#8B7075'
+              lilac: '#9C77B8',
+              lilacSoft: '#F3ECF8',
+              lilacLight: '#E8DDF0',
+              plum: '#3D2540',
+              offwhite: '#FBF9F5',
+              borderLilac: '#E2D5EA',
+              textPlum: '#2A182E',
+              mutedLilac: '#7E6B88'
             }
           }
         }
@@ -40,31 +40,31 @@
 
   <style>
     :root {
-      --bg: #FFF8F3;
+      --bg: #FBF9F5;
       --surface: #FFFFFF; 
-      --surface-subtle: #FCE7EF;
-      --border: #EBCFD7; 
-      --text: #3D2A2E; 
-      --text-muted: #8B7075; 
-      --primary: #D95D82; 
-      --primary-hover: #C24B6F;  
-      --chocolate: #4A3035;  
-      --accent-soft: #F8DCE5; 
-      --grid-color: rgba(74, 48, 53, 0.05);
+      --surface-subtle: #F3ECF8;
+      --border: #E2D5EA; 
+      --text: #2A182E; 
+      --text-muted: #7E6B88; 
+      --primary: #9C77B8; 
+      --primary-hover: #825A9E;  
+      --chocolate: #3D2540;  
+      --accent-soft: #E8DDF0; 
+      --grid-color: rgba(61, 37, 64, 0.05);
     }
 
     .dark {
-      --bg: #1A1214;   
-      --surface: #261B1E;  
-      --surface-subtle: #362529;
-      --border: #4A3035; 
-      --text: #FCE7EF;  
-      --text-muted: #C4A1A8; 
-      --primary: #E98AA8; 
-      --primary-hover: #F8DCE5;
-      --chocolate: #FCE7EF;
-      --accent-soft: #3D2A2E;
-      --grid-color: rgba(233, 138, 168, 0.05);
+      --bg: #140E17;   
+      --surface: #1E1624;  
+      --surface-subtle: #2C1F35;
+      --border: #422D4F; 
+      --text: #F3ECF8;  
+      --text-muted: #B3A0BF; 
+      --primary: #B892D6; 
+      --primary-hover: #D1B3E8;
+      --chocolate: #F3ECF8;
+      --accent-soft: #2A182E;
+      --grid-color: rgba(184, 146, 214, 0.06);
     }
 
     .bg-grid-pattern {
@@ -74,7 +74,6 @@
         linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
     }
 
-    /* Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -102,7 +101,7 @@
         <div class="flex items-center justify-between pb-4 border-b border-[var(--border)]">
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center font-mono font-bold text-base shadow-sm">
-              Φ
+              ❀
             </div>
             <div>
               <h1 class="font-semibold text-[var(--chocolate)] tracking-tight text-base leading-snug">Laboratorio Virtual</h1>
@@ -119,7 +118,6 @@
           <div class="flex items-center justify-between">
             <i data-lucide="user" class="w-5 h-5 text-[var(--primary)]"></i>
             <span class="text-[11px] uppercase tracking-wider font-mono font-semibold text-[var(--text-muted)]">Estudiante</span>
-            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-[var(--surface-subtle)] text-[var(--primary)] border border-[var(--border)]">Activo</span>
           </div>
           
           <div>
@@ -129,7 +127,7 @@
 
           <div class="pt-2 border-t border-[var(--border)] text-xs text-[var(--text-muted)] space-y-1.5 font-mono">
             <div class="flex justify-between">
-              <span>Grupo:</span>
+              <span>Semestre / Grupo:</span>
               <span class="text-[var(--chocolate)] font-medium">3S1M</span>
             </div>
             <div class="flex justify-between">
@@ -156,12 +154,6 @@
           </div>
         </div>
       </div>
-
-      <div class="mt-6 pt-4 border-t border-[var(--border)] text-xs font-mono text-[var(--text-muted)] flex items-center justify-between">
-        <span>Laboratorio TecNM</span>
-        <span>2026</span>
-      </div>
-
     </aside>
 
     <!-- ÁREA PRINCIPAL / CONTENIDO -->
@@ -182,7 +174,7 @@
         <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
           
           <select id="statusFilter" onchange="filterSimulators()" class="bg-[var(--bg)] border border-[var(--border)] rounded-lg px-3 py-1.5 text-xs font-mono text-[var(--text)] focus:outline-none focus:border-[var(--primary)]">
-            <option value="all">Todos los estados</option>
+            <option value="all">Todos los simuladores</option>
             <option value="available">Disponibles</option>
             <option value="pending">Próximamente</option>
           </select>
@@ -198,36 +190,6 @@
 
         </div>
       </header>
-
-      <!-- NAVEGACIÓN POR PESTAÑAS (UNIDADES) -->
-      <nav class="bg-[var(--surface)] border-b border-[var(--border)] px-4 md:px-8 overflow-x-auto no-scrollbar transition-colors duration-300">
-        <div class="flex gap-1 min-w-max py-2" id="tabsContainer">
-          <button onclick="selectTab('all')" data-tab="all" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium bg-[var(--primary)] text-white transition-all">
-            Todas
-          </button>
-          <button onclick="selectTab('1')" data-tab="1" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
-            U1: Estática
-          </button>
-          <button onclick="selectTab('2')" data-tab="2" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
-            U2: Dinámica
-          </button>
-          <button onclick="selectTab('3')" data-tab="3" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
-            U3: Óptica
-          </button>
-          <button onclick="selectTab('4')" data-tab="4" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
-            U4: Termodinámica
-          </button>
-          <button onclick="selectTab('5')" data-tab="5" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
-            U5: Electrostática
-          </button>
-          <button onclick="selectTab('6')" data-tab="6" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
-            U6: Electrodinámica
-          </button>
-          <button onclick="selectTab('7')" data-tab="7" class="tab-btn px-3 py-1.5 rounded-md text-xs font-medium text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg)] transition-all">
-            U7: Electromagnetismo
-          </button>
-        </div>
-      </nav>
 
       <!-- CONTENEDOR DE UNIDADES Y SIMULADORES -->
       <div class="p-4 md:p-8 space-y-8 flex-1" id="mainContent">
@@ -247,17 +209,22 @@
           <div class="simulators-wrapper grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             
             <!-- Simulador 1 -->
-            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] transition-all shadow-sm group" data-title="componentes rectangulares" data-tags="vectores trigonometría fuerzas">
+            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] hover:shadow-md transition-all group" data-title="componentes rectangulares" data-tags="vectores trigonometría fuerzas">
               <div class="space-y-3">
+                
                 <div class="flex items-center justify-between">
-                  <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 1.3</span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 1.3</span>
+                  </div>
                   <button onclick="toggleFavorite('sim-1', 'Componentes Rectangulares')" class="text-[var(--text-muted)] hover:text-amber-500 transition-colors" title="Marcar como favorito">
                     <i data-lucide="star" id="star-sim-1" class="w-4 h-4"></i>
                   </button>
                 </div>
 
                 <div>
-                  <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Componentes Rectangulares</h3>
+                  <div class="flex items-center justify-between gap-2">
+                    <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Componentes Rectangulares</h3>
+                  </div>
                   <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
                     Descompón fuerzas en sus componentes horizontal y vertical y analiza su comportamiento vectorial.
                   </p>
@@ -271,27 +238,30 @@
               </div>
 
               <div class="pt-4 mt-4 border-t border-[var(--border)] flex items-center justify-between">
-                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Listo
-                </span>
-                <a href="componentes-rectangulares.html" class="inline-flex items-center gap-1 text-xs font-medium text-[var(--primary)] hover:underline font-mono">
-                  Abrir <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1"></span>
+                <a href="componentes-rectangulares.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-subtle)] hover:bg-[var(--primary)] text-[var(--primary)] hover:text-white border border-[var(--border)] text-xs font-medium font-mono transition-all">
+                  Iniciar laboratorio <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                 </a>
               </div>
             </article>
 
             <!-- Simulador 2 -->
-            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] transition-all shadow-sm group" data-title="mesa de fuerzas" data-tags="vectores equilibrio estática">
+            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] hover:shadow-md transition-all group" data-title="mesa de fuerzas" data-tags="vectores equilibrio estática">
               <div class="space-y-3">
+                
                 <div class="flex items-center justify-between">
-                  <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 1.4</span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 1.4</span>
+                  </div>
                   <button onclick="toggleFavorite('sim-2', 'Mesa de Fuerzas')" class="text-[var(--text-muted)] hover:text-amber-500 transition-colors" title="Marcar como favorito">
                     <i data-lucide="star" id="star-sim-2" class="w-4 h-4"></i>
                   </button>
                 </div>
 
                 <div>
-                  <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Mesa de Fuerzas</h3>
+                  <div class="flex items-center justify-between gap-2">
+                    <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Mesa de Fuerzas</h3>
+                  </div>
                   <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
                     Experimenta con fuerzas, ángulos y magnitudes concurrentes para hallar la fuerza resultante de equilibrio.
                   </p>
@@ -305,11 +275,9 @@
               </div>
 
               <div class="pt-4 mt-4 border-t border-[var(--border)] flex items-center justify-between">
-                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Listo
-                </span>
-                <a href="mesa-de-fuerzas.html" class="inline-flex items-center gap-1 text-xs font-medium text-[var(--primary)] hover:underline font-mono">
-                  Abrir <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1"></span>
+                <a href="mesa-de-fuerzas.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-subtle)] hover:bg-[var(--primary)] text-[var(--primary)] hover:text-white border border-[var(--border)] text-xs font-medium font-mono transition-all">
+                  Iniciar laboratorio <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                 </a>
               </div>
             </article>
@@ -332,17 +300,22 @@
           <div class="simulators-wrapper grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             
             <!-- Simulador MRU -->
-            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] transition-all shadow-sm group" data-title="movimiento rectilínio uniforme mru" data-tags="mru velocidad aceleración cinemática">
+            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] hover:shadow-md transition-all group" data-title="movimiento rectilíneo uniforme mru" data-tags="mru velocidad aceleración cinemática">
               <div class="space-y-3">
+                
                 <div class="flex items-center justify-between">
-                  <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 2.1.2</span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 2.1.2</span>
+                  </div>
                   <button onclick="toggleFavorite('sim-3', 'MRU')" class="text-[var(--text-muted)] hover:text-amber-500 transition-colors">
                     <i data-lucide="star" id="star-sim-3" class="w-4 h-4"></i>
                   </button>
                 </div>
 
                 <div>
-                  <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Movimiento Rectilíneo Uniforme</h3>
+                  <div class="flex items-center justify-between gap-2">
+                    <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Movimiento Rectilíneo Uniforme</h3>
+                  </div>
                   <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
                     Estudia los desplazamientos a velocidad constante y analiza gráficas de posición contra tiempo.
                   </p>
@@ -356,27 +329,30 @@
               </div>
 
               <div class="pt-4 mt-4 border-t border-[var(--border)] flex items-center justify-between">
-                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Listo
-                </span>
-                <a href="mru.html" class="inline-flex items-center gap-1 text-xs font-medium text-[var(--primary)] hover:underline font-mono">
-                  Abrir <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1"></span>
+                <a href="mru.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-subtle)] hover:bg-[var(--primary)] text-[var(--primary)] hover:text-white border border-[var(--border)] text-xs font-medium font-mono transition-all">
+                  Iniciar laboratorio <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                 </a>
               </div>
             </article>
 
             <!-- Simulador MRUA -->
-            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] transition-all shadow-sm group" data-title="movimiento rectilíneo uniformemente acelerado mrua" data-tags="mrua aceleración velocidad">
+            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] hover:shadow-md transition-all group" data-title="movimiento rectilíneo uniformemente acelerado mrua" data-tags="mrua aceleración velocidad">
               <div class="space-y-3">
+                
                 <div class="flex items-center justify-between">
-                  <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 2.1.4</span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 2.1.4</span>
+                  </div>
                   <button onclick="toggleFavorite('sim-4', 'MRUA')" class="text-[var(--text-muted)] hover:text-amber-500 transition-colors">
                     <i data-lucide="star" id="star-sim-4" class="w-4 h-4"></i>
                   </button>
                 </div>
 
                 <div>
-                  <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Movimiento R. Uniformemente Acelerado</h3>
+                  <div class="flex items-center justify-between gap-2">
+                    <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Movimiento Rectilíneo Uniformemente Acelerado</h3>
+                  </div>
                   <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
                     Análisis cinemático con aceleración constante y representación gráfica de velocidad contra tiempo.
                   </p>
@@ -390,27 +366,30 @@
               </div>
 
               <div class="pt-4 mt-4 border-t border-[var(--border)] flex items-center justify-between">
-                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Listo
-                </span>
-                <a href="mrua.html" class="inline-flex items-center gap-1 text-xs font-medium text-[var(--primary)] hover:underline font-mono">
-                  Abrir <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1"></span>
+                <a href="mrua.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-subtle)] hover:bg-[var(--primary)] text-[var(--primary)] hover:text-white border border-[var(--border)] text-xs font-medium font-mono transition-all">
+                  Iniciar laboratorio <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                 </a>
               </div>
             </article>
 
             <!-- Simulador Tiro Parabólico -->
-            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] transition-all shadow-sm group" data-title="tiro parabolico proyectil" data-tags="tiro parabólico gravedad trayectoria proyectiles">
+            <article class="sim-card bg-[var(--surface)] border border-[var(--border)] rounded-xl p-4 flex flex-col justify-between hover:border-[var(--primary)] hover:shadow-md transition-all group" data-title="tiro parabolico proyectil" data-tags="tiro parabólico gravedad trayectoria proyectiles">
               <div class="space-y-3">
+                
                 <div class="flex items-center justify-between">
-                  <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 2.2</span>
+                  <div class="flex items-center gap-2">
+                    <span class="font-mono text-[11px] text-[var(--text-muted)]">Tema 2.2</span>
+                  </div>
                   <button onclick="toggleFavorite('sim-5', 'Tiro Parabólico')" class="text-[var(--text-muted)] hover:text-amber-500 transition-colors">
                     <i data-lucide="star" id="star-sim-5" class="w-4 h-4"></i>
                   </button>
                 </div>
 
                 <div>
-                  <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Tiro Parabólico</h3>
+                  <div class="flex items-center justify-between gap-2">
+                    <h3 class="font-semibold text-[var(--chocolate)] text-base group-hover:text-[var(--primary)] transition-colors">Tiro Parabólico</h3>
+                  </div>
                   <p class="text-xs text-[var(--text-muted)] mt-1 leading-relaxed">
                     Simulación de proyectiles bajo aceleración gravitacional, alcance máximo y ángulo de disparo.
                   </p>
@@ -424,11 +403,9 @@
               </div>
 
               <div class="pt-4 mt-4 border-t border-[var(--border)] flex items-center justify-between">
-                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Listo
-                </span>
-                <a href="tiro-parabolico.html" class="inline-flex items-center gap-1 text-xs font-medium text-[var(--primary)] hover:underline font-mono">
-                  Abrir <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+                <span class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1"></span>
+                <a href="tiro-parabolico.html" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-subtle)] hover:bg-[var(--primary)] text-[var(--primary)] hover:text-white border border-[var(--border)] text-xs font-medium font-mono transition-all">
+                  Iniciar laboratorio <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
                 </a>
               </div>
             </article>
@@ -513,34 +490,9 @@
         </section>
 
       </div>
-
-      <!-- FOOTER MINIMALISTA -->
-      <footer class="bg-[var(--surface)] border-t border-[var(--border)] p-4 px-8 text-xs font-mono text-[var(--text-muted)] flex flex-col sm:flex-row items-center justify-between gap-2 transition-colors duration-300">
-        <div>Laboratorio Virtual de Física · 2026</div>
-      </footer>
-
     </main>
 
   </div>
-
-  <!-- MASCOTA / ASISTENTE VIRTUAL FIJO (FIXED EN ESQUINA INFERIOR IZQUIERDA) -->
-  <!-- Al tener position fixed, se mantiene en el mismo lugar de la pantalla sin importar el scroll -->
-  <aside class="fixed bottom-6 left-6 z-50 pointer-events-auto">
-    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-3 shadow-xl flex items-start gap-3 max-w-xs transition-all duration-300 backdrop-blur-md">
-      <button onclick="meow()" class="w-10 h-10 rounded-xl bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center shrink-0 hover:scale-105 hover:border-[var(--primary)] transition-all shadow-sm group" title="Haz clic para interactuar">
-        <i data-lucide="cat" class="w-5 h-5 text-[var(--primary)] group-hover:rotate-12 transition-transform"></i>
-      </button>
-      <div class="space-y-1">
-        <div class="text-[10px] font-mono font-semibold text-[var(--text-muted)] uppercase flex items-center justify-between gap-4">
-          <span>Asistente Lab</span>
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        </div>
-        <p id="catText" class="text-xs text-[var(--chocolate)] leading-relaxed italic">
-          "Selecciona un simulador para comenzar las pruebas."
-        </p>
-      </div>
-    </div>
-  </aside>
 
   <!-- JAVASCRIPT CON LÓGICA INTERACTIVA -->
   <script>
@@ -565,7 +517,6 @@
       }
     }
 
-    // Cargar Tema Guardado
     function loadSavedTheme() {
       const savedTheme = localStorage.getItem('lab_theme');
       const themeIcon = document.getElementById('themeIcon');
@@ -577,22 +528,6 @@
         document.documentElement.classList.remove('dark');
         if (themeIcon) themeIcon.setAttribute('data-lucide', 'moon');
       }
-    }
-
-    // 2. FRASES DEL GATITO ACADÉMICO
-    const catPhrases = [
-      "Bienvenid@ al Laboratorio Virtual de Física.",
-      "Laboratorio listo y calibrado para los experimentos de hoy.",
-      "Recuerda que puedes marcar tus simuladores favoritos.",
-      "Explora las unidades y descubre nuevas simulaciones.",
-      "miau miau miau miau miau miau miau miau miau miau miau miau miau miau miau miau miau miau",
-      "Una mente curiosa es la chispa de la ciencia."
-    ];
-    let phraseIndex = 0;
-
-    function meow() {
-      phraseIndex = (phraseIndex + 1) % catPhrases.length;
-      document.getElementById("catText").textContent = `"${catPhrases[phraseIndex]}"`;
     }
 
     // 3. PESTAÑAS (TABS)
@@ -700,7 +635,6 @@
 
     function renderFavorites() {
       const container = document.getElementById('favoritesList');
-      const keys = Object.keys(favorites);
 
       document.querySelectorAll('[id^="star-"]').forEach(star => {
         const simId = star.id.replace('star-', '');
@@ -713,6 +647,7 @@
         }
       });
 
+      const keys = Object.keys(favorites);
       if (keys.length === 0) {
         container.innerHTML = `<p class="text-[var(--text-muted)] italic font-mono text-[11px] py-1">Sin simuladores marcados</p>`;
         return;
