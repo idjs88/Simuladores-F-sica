@@ -1,229 +1,120 @@
-<!doctype html>
-<html lang="es">
- <head>
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[var(--bg)] text-[var(--text)] antialiased transition-colors duration-300">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Componentes Rectangulares</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
-    rel="stylesheet"
-  >
-  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            academic: {
+              lilac: '#9C77B8',
+              lilacSoft: '#F3ECF8',
+              lilacLight: '#E8DDF0',
+              plum: '#3D2540',
+              offwhite: '#FBF9F5',
+              borderLilac: '#E2D5EA',
+              textPlum: '#2A182E',
+              mutedLilac: '#7E6B88'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
     :root {
-      /* Fondo base y tarjetas */
-      --bg: #FFF8F3;
-      --card-bg: #FFFFFF;
-      --card-bg-soft: #FDF1F5;
-      
-      /* Colores primarios y acentos */
-      --primary: #D95D82;
-      --primary-hover: #C2486E;
-      --primary-light: #E98AA8;
-      --primary-soft: #F8DCE5;
-      
-      /* Componentes vectoriales (Plano Cartesiano) */
-      --color-fx: #2563EB;
-      --color-fy: #7C3AED;
-      --color-f: #D95D82;
+      --bg: #FBF9F5;
+      --surface: #FFFFFF; 
+      --surface-subtle: #F3ECF8;
+      --border: #E2D5EA; 
+      --text: #2A182E; 
+      --text-muted: #7E6B88; 
+      --primary: #9C77B8; 
+      --primary-hover: #825A9E;  
+      --chocolate: #3D2540;  
+      --accent-soft: #E8DDF0; 
+      --grid-color: rgba(61, 37, 64, 0.05);
 
-      /* Texto y bordes */
-      --text: #3D2A2E;
-      --text-muted: #8B7075;
-      --border: #EBCFD7;
-      --chocolate: #4A3035;
+      --color-fx: #3D2540;
+      --color-fy: #825A9E;
+      --color-f: #9C77B8;
     }
 
-    * { box-sizing: border-box; }
+    .dark {
+      --bg: #140E17;   
+      --surface: #1E1624;  
+      --surface-subtle: #2C1F35;
+      --border: #422D4F; 
+      --text: #F3ECF8;  
+      --text-muted: #B3A0BF; 
+      --primary: #B892D6; 
+      --primary-hover: #D1B3E8;
+      --chocolate: #F3ECF8;
+      --accent-soft: #2A182E;
+      --grid-color: rgba(184, 146, 214, 0.06);
 
-    body {
-      width: 100%;
-      height: 100vh;
-      margin: 0;
-      font-family: "DM Sans", sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      font-size: 0.85rem;
-      overflow: hidden;
+      --color-fx: #D1B3E8;
+      --color-fy: #9C77B8;
+      --color-f: #B892D6;
     }
 
-    button, input, select { font: inherit; }
-
-    .title-font{
-      font-family: "Playfair Display", serif;
+    .bg-grid-pattern {
+      background-size: 24px 24px;
+      background-image: 
+        linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
     }
 
-    .page{
-      width: min(1100px, 92%);
-      margin: auto;
-      padding: 50px 0;
-    }
-
-    .app-wrapper {
-      width: 100%;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      padding: 12px 16px;
-      background-image:
-        radial-gradient(circle at 15% 15%, rgba(217, 93, 130, 0.12), transparent 30rem),
-        radial-gradient(circle at 85% 85%, rgba(233, 138, 168, 0.15), transparent 30rem);
-    }
-
-    .main-content {
-      width: 100%;
-      max-width: 1280px;
-      margin: 0 auto;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .hero { 
-      padding: 4px 0; 
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-shrink: 0;
-    }
-
-    .hero h1 {
-      margin: 0;
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--chocolate);
-      text-shadow: 0 0 12px rgba(217, 93, 130, 0.2);
-    }
-
-    .hero p {
-      margin: 0;
-      color: var(--text-muted);
-      font-size: .75rem;
-    }
-
-    .subtitle {
-      margin-top: 15px;
-      color: var(--text-muted);
-      font-size: 1rem;
-      letter-spacing: 0.05em;
-    }
-
-    .nav-tabs {
-      display: flex;
-      gap: 8px;
-      border-bottom: 2px solid var(--border);
-      flex-shrink: 0;
-    }
-
-    .tab-btn {
-      padding: 8px 16px;
-      font-weight: 700;
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      background: transparent;
-      border: none;
-      border-bottom: 3px solid transparent;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-    }
-
-    .tab-btn:hover {
-      color: var(--chocolate);
-      background: var(--primary-soft);
-      border-radius: 6px 6px 0 0;
-    }
-
-    .tab-btn.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-      background: var(--primary-soft);
-      border-radius: 6px 6px 0 0;
-    }
-
-    .tab-pane {
-      display: none;
-      flex: 1;
-      height: calc(100% - 100px);
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .tab-pane.active {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .tab-pane::-webkit-scrollbar {
+    ::-webkit-scrollbar {
       width: 6px;
+      height: 6px;
     }
-    .tab-pane::-webkit-scrollbar-track {
-      background: var(--card-bg-soft);
-      border-radius: 4px;
+    ::-webkit-scrollbar-track {
+      background: transparent;
     }
-    .tab-pane::-webkit-scrollbar-thumb {
+    ::-webkit-scrollbar-thumb {
       background: var(--border);
-      border-radius: 4px;
+      border-radius: 999px;
     }
-    .tab-pane::-webkit-scrollbar-thumb:hover {
+    ::-webkit-scrollbar-thumb:hover {
       background: var(--primary);
     }
 
-    .lab-panel {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      background: var(--card-bg);
-      box-shadow: 0 4px 16px rgba(74, 48, 53, 0.06);
-    }
-
-    .panel-pad { padding: 14px; }
-
-    .panel-heading {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .panel-heading svg {
-      width: 18px;
-      height: 18px;
-      color: var(--primary);
-    }
-
-    .panel-heading h2 {
-      margin: 0;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--chocolate);
-    }
-
-    .sim-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(340px, 0.9fr);
-      gap: 12px;
-      height: 100%;
+    input[type=range] {
+      width: 100%;
+      height: 6px;
+      border-radius: 6px;
+      background: var(--border);
+      accent-color: var(--primary);
+      cursor: pointer;
     }
 
     .cartesian-plane {
       position: relative;
       width: 100%;
-      height: 100%;
-      min-height: 380px;
+      height: 380px;
       border-radius: 12px;
-      border: 2px solid var(--border);
-      background: var(--card-bg-soft);
-      box-shadow: inset 0 0 20px rgba(217, 93, 130, 0.05);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      box-shadow: inset 0 0 25px rgba(156, 119, 184, 0.05);
       overflow: hidden;
       cursor: grab;
     }
@@ -241,139 +132,45 @@
       fill: var(--text-muted);
       font-size: 10px;
       font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    .btn-ctrl {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 6px 12px;
-      font-size: .78rem;
-      font-weight: 600;
-      background: var(--surface);
-      color: var(--chocolate);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      text-decoration: none;
-    }
-
-    .btn-ctrl:hover {
-      background: var(--surface-pink);
-      border-color: var(--primary-light);
-      color: var(--chocolate);
-    }
-
-    .field-group {
+    .quiz-option {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .field-group label {
-      font-size: .72rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .num-input {
-      width: 100%;
-      padding: 4px 8px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      background: var(--card-bg);
-      color: var(--chocolate);
-      font-size: .8rem;
-      font-weight: 600;
-    }
-
-    .num-input:focus { outline: 2px solid var(--primary); }
-
-    input[type=range] {
-      width: 100%;
-      height: 5px;
-      border-radius: 6px;
-      background: var(--border);
-      accent-color: var(--primary);
-      cursor: pointer;
-    }
-
-    .result-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      align-items: center;
       gap: 8px;
-    }
-
-    .result-card-large {
-      padding: 8px 10px;
+      padding: 10px 14px;
       border: 1px solid var(--border);
       border-radius: 8px;
-      background: var(--card-bg);
-      position: relative;
-      overflow: hidden;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.82rem;
     }
 
-    .result-card-large::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; bottom: 0;
-      width: 3px;
+    .quiz-option:hover {
+      border-color: var(--primary);
+      background: var(--surface-subtle);
+    }
+
+    .quiz-option.selected {
+      border-color: var(--primary);
       background: var(--primary);
-    }
-
-    .result-label {
-      font-size: .65rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-      color: var(--text-muted);
-      display: block;
-    }
-
-    .result-value {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--chocolate);
-    }
-
-    .result-formula {
-      font-family: monospace;
-      font-size: .68rem;
-      color: var(--text-muted);
-    }
-
-    .components-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .78rem;
-    }
-
-    .components-table th, .components-table td {
-      padding: 6px 10px;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .components-table th {
-      color: var(--primary);
-      font-size: .68rem;
-      text-transform: uppercase;
-      letter-spacing: .05em;
-      background: var(--card-bg-soft);
+      color: #FFFFFF;
+      font-weight: 600;
     }
 
     .accordion-item {
       border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--card-bg);
-      margin-bottom: 6px;
+      border-radius: 12px;
+      background: var(--surface);
+      overflow: hidden;
     }
 
     .accordion-trigger {
       width: 100%;
-      padding: 8px 12px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -381,362 +178,406 @@
       border: 0;
       color: var(--chocolate);
       font-weight: 600;
-      font-size: .8rem;
+      font-size: 0.85rem;
       cursor: pointer;
     }
 
     .accordion-content {
       display: none;
-      padding: 0 12px 10px;
+      padding: 0 16px 16px;
       color: var(--text-muted);
-      font-size: .78rem;
-      line-height: 1.4;
+      font-size: 0.8rem;
+      line-height: 1.5;
     }
 
     .accordion-item.open .accordion-content { display: block; }
 
-    .quiz-option {
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
       display: block;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--card-bg);
-      color: var(--text);
-      margin-bottom: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: .78rem;
-    }
-
-    .quiz-option:hover {
-      border-color: var(--primary);
-      background: var(--primary-soft);
-    }
-
-    .quiz-option.selected {
-      border-color: var(--primary);
-      background: var(--primary);
-      color: #ffffff;
-      font-weight: 600;
-    }
-
-    .action-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 8px 14px;
-      font-size: .78rem;
-      font-weight: 700;
-      border-radius: 6px;
-      border: 0;
-      cursor: pointer;
-      background: var(--primary);
-      color: #ffffff;
-      transition: all 0.2s;
-    }
-
-    .action-button:hover {
-      background: var(--primary-hover);
-      box-shadow: 0 2px 8px rgba(217, 93, 130, 0.4);
-    }
-
-    .step-box {
-      background: var(--card-bg-soft);
-      border-left: 3px solid var(--primary);
-      padding: 8px 10px;
-      margin-bottom: 6px;
-      border-radius: 0 6px 6px 0;
-    }
-
-    .step-title {
-      font-weight: 700;
-      color: var(--primary);
-      font-size: 0.75rem;
-    }
-
-    .step-calc {
-      font-family: monospace;
-      color: var(--chocolate);
-      font-size: 0.78rem;
-    }
-
-    @media (max-width: 900px) {
-      body { overflow: auto; height: auto; }
-      .app-wrapper { height: auto; min-height: 100vh; }
-      .tab-pane { height: auto; overflow-y: visible; }
-      .sim-layout { grid-template-columns: 1fr; }
     }
   </style>
- </head>
- <body>
-  <div class="app-wrapper">
-   <main class="main-content">
-    <!-- ENCABEZADO PRINCIPAL -->
-    <section class="hero">
-     <a href="index.html" class="btn-ctrl" title="Volver a la Página Principal">
-      <i data-lucide="arrow-left"></i> Regresar al Inicio
-     </a>
-     <div>
-      <h1 class="title-font">Simulador Componentes Rectangulares</h1>
-     </div>
-    </section>
+</head>
+<body class="h-full bg-grid-pattern font-sans text-sm selection:bg-[var(--surface-subtle)] selection:text-[var(--primary)]">
 
-    <!-- NAVEGACIÓN POR PESTAÑAS -->
-    <nav class="nav-tabs">
-     <button class="tab-btn active" onclick="switchTab(event, 'simulador')">
-      <i data-lucide="gamepad-2"></i> Simulador
-     </button>
-     <button class="tab-btn" onclick="switchTab(event, 'teoria')">
-      <i data-lucide="book-open"></i> Teoría
-     </button>
-     <button class="tab-btn" onclick="switchTab(event, 'evaluacion')">
-      <i data-lucide="award"></i> Evaluación
-     </button>
-    </nav>
+  <div class="min-h-screen flex flex-col md:flex-row">
 
-    <!-- PESTAÑA 1: SIMULADOR -->
-    <div id="pane-simulador" class="tab-pane active">
-     <section class="sim-layout">
-      <!-- PANEL IZQUIERDO: PLANO CARTESIANO -->
-      <section class="lab-panel panel-pad" style="display:flex; flex-direction:column;">
-       <div class="panel-heading" style="justify-content: space-between;">
-        <div style="display:flex; align-items:center; gap:8px;">
-         <i data-lucide="crosshair"></i>
-         <h2>Plano Cartesiano</h2>
-        </div>
-        <!-- BARRAS DE CONTROL DE ANIMACIÓN -->
-        <div style="display:flex; gap:4px;">
-         <button id="btn-play" class="btn-ctrl" title="Iniciar Animación"><i data-lucide="play"></i></button>
-         <button id="btn-pause" class="btn-ctrl" title="Pausar Animación"><i data-lucide="pause"></i></button>
-         <button id="btn-stop" class="btn-ctrl" title="Detener Animación"><i data-lucide="square"></i></button>
-        </div>
-       </div>
-
-       <div class="cartesian-plane" id="plane-container">
-        <svg id="cartesian-svg" viewBox="0 0 500 500">
-         <defs>
-          <marker id="arrow-force" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
-           <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-f)" />
-          </marker>
-          <marker id="arrow-fx" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
-           <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-fx)" />
-          </marker>
-          <marker id="arrow-fy" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
-           <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-fy)" />
-          </marker>
-         </defs>
-
-         <g id="pan-zoom-layer">
-          <!-- REJILLA CON DIBUJO DE UNIDADES EN NEWTONS -->
-          <g id="grid-ticks" opacity=".6"></g>
-
-          <!-- EJES PRINCIPALES -->
-          <line x1="15" y1="250" x2="485" y2="250" stroke="var(--border)" stroke-width="2"></line>
-          <line x1="250" y1="485" x2="250" y2="15" stroke="var(--border)" stroke-width="2"></line>
-
-          <text class="svg-label" x="470" y="242">+X</text>
-          <text class="svg-label" x="15" y="242">-X</text>
-          <text class="svg-label" x="256" y="25">+Y</text>
-          <text class="svg-label" x="256" y="480">-Y</text>
-
-          <path id="arc-angle" fill="rgba(217, 93, 130, 0.15)" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="3,2"/>
-          <text id="txt-angle-val" font-size="11" font-weight="800" fill="var(--primary)">θ</text>
-
-          <g id="vector-layer"></g>
-
-          <circle cx="250" cy="250" r="5" fill="var(--primary)" stroke="#ffffff" stroke-width="2" id="origin-point"></circle>
-         </g>
-        </svg>
-       </div>
-
-       <div style="margin-top: 8px; display:flex; justify-content:space-between; align-items:center; background:var(--card-bg-soft); padding:6px 12px; border-radius:8px; border:1px solid var(--border);">
-        <div style="display:flex; gap:12px;">
-         <span style="font-size:.75rem; color:var(--color-f); font-weight:700;">■ Vector F</span>
-         <span style="font-size:.75rem; color:var(--color-fx); font-weight:700;">■ Fx (Eje X)</span>
-         <span style="font-size:.75rem; color:var(--color-fy); font-weight:700;">■ Fy (Eje Y)</span>
-        </div>
-        <span id="quadrant-badge" style="font-size:.72rem; font-weight:800; padding:2px 8px; border-radius:4px; background:var(--primary-soft); color:var(--primary);">I Cuadrante</span>
-       </div>
-      </section>
-
-      <!-- PANEL DERECHO: CONTROLES, RESULTADOS Y PASO A PASO -->
-      <aside class="lab-panel panel-pad" style="display:flex; flex-direction:column; gap:10px; overflow-y:auto;">
-       <div>
-        <div class="panel-heading">
-         <i data-lucide="sliders"></i>
-         <h2>Controles del Vector Fuerza</h2>
-        </div>
-
-        <div style="display:grid; gap:8px; background:var(--card-bg-soft); padding:10px; border-radius:8px; border:1px solid var(--border);">
-         <div class="field-group">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-           <label>Magnitud (F):</label>
-           <span id="label-mag-val" style="font-weight:800; color:var(--primary);">100 N</span>
+    <!-- SIDEBAR LATERAL -->
+    <aside class="w-full md:w-80 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col justify-between p-5 shrink-0 z-20 transition-colors duration-300">
+      <div class="space-y-6">
+        <div class="flex items-center justify-between pb-4 border-b border-[var(--border)]">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center font-mono font-bold text-base shadow-sm">
+              ❀
+            </div>
+            <div>
+              <h1 class="font-semibold text-[var(--chocolate)] tracking-tight text-base leading-snug">Laboratorio Virtual</h1>
+              <p class="text-xs text-[var(--text-muted)] font-mono">Física General</p>
+            </div>
           </div>
-          <input id="slider-mag" type="range" min="10" max="500" value="100" step="1">
-          <input id="num-mag" class="num-input" type="number" min="10" max="500" value="100">
-         </div>
 
-         <div class="field-group">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-           <label>Ángulo de Inclinación (θ):</label>
-           <span id="label-angle-val" style="font-weight:800; color:var(--primary);">60°</span>
+          <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors" title="Cambiar tema">
+            <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <div>
+          <a href="index.html" class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            Regresar al Menú Principal
+          </a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL / CONTENIDO -->
+    <main class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative">
+
+      <!-- HEADER SUPERIOR DE SIMULADOR -->
+      <header class="bg-[var(--surface)] border-b border-[var(--border)] p-4 md:px-8 flex flex-col sm:flex-row gap-4 items-center justify-between sticky top-0 z-10 shadow-sm transition-colors duration-300">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--surface-subtle)] text-[var(--primary)] border border-[var(--border)]">
+              Tema 1.3
+            </span>
+            <h1 class="font-semibold text-[var(--chocolate)] text-base">Componentes Rectangulares</h1>
           </div>
-          <input id="slider-angle" type="range" min="0" max="360" value="60" step="1">
-          <input id="num-angle" class="num-input" type="number" min="0" max="360" value="60">
-         </div>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Descomposición vectorial en el plano cartesiano y trigonometría de componentes ortogonales.</p>
         </div>
-       </div>
 
-       <!-- PROCEDIMIENTO EXPLICADO PASO A PASO EN TIEMPO REAL -->
-       <div>
-        <div class="panel-heading">
-         <i data-lucide="list-checks"></i>
-         <h2>Procedimiento Paso a Paso</h2>
+        <!-- NAVEGACIÓN PESTAÑAS INTERNAS -->
+        <div class="flex items-center bg-[var(--bg)] border border-[var(--border)] rounded-lg p-1 gap-1 font-mono text-xs">
+          <button onclick="switchTab('simulador')" id="tab-btn-simulador" class="tab-btn px-3 py-1.5 rounded-md font-medium bg-[var(--primary)] text-white transition-all">
+            Simulador
+          </button>
+          <button onclick="switchTab('teoria')" id="tab-btn-teoria" class="tab-btn px-3 py-1.5 rounded-md font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-all">
+            Teoría
+          </button>
+          <button onclick="switchTab('evaluacion')" id="tab-btn-evaluacion" class="tab-btn px-3 py-1.5 rounded-md font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-all">
+            Evaluación
+          </button>
         </div>
-        <div id="step-by-step-container"></div>
-       </div>
+      </header>
 
-       <!-- GRÁFICA COMPARATIVA Y BOTÓN CSV -->
-       <div>
-        <div class="panel-heading" style="justify-content:space-between;">
-         <div style="display:flex; align-items:center; gap:8px;">
-          <i data-lucide="bar-chart-2"></i>
-          <h2>Magnitudes Absolutas</h2>
-         </div>
-         <button id="btn-export-csv" class="btn-ctrl" style="background:var(--primary); color:#ffffff; border-color:var(--primary);">
-          <i data-lucide="download"></i> Exportar CSV
-         </button>
-        </div>
-        <div style="height: 120px; position: relative;">
-         <canvas id="componentsChart"></canvas>
-        </div>
-       </div>
+      <div class="p-4 md:p-8 space-y-6 flex-1">
 
-       <button id="btn-reset" class="btn-ctrl" style="width:100%; justify-content:center; padding:8px;">
-        <i data-lucide="rotate-ccw"></i> Restablecer Vista y Valores
-       </button>
-      </aside>
-     </section>
-    </div>
+        <!-- PESTAÑA 1: SIMULADOR -->
+        <div id="tab-simulador" class="tab-pane active space-y-6">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- PANEL IZQUIERDO DE SIMULACIÓN (2 COLUMNAS) -->
+            <div class="lg:col-span-2 space-y-6">
 
-    <!-- PESTAÑA 2: TEORÍA Y FUNDAMENTOS -->
-    <div id="pane-teoria" class="tab-pane">
-     <section class="lab-panel panel-pad">
-      <div class="panel-heading">
-       <i data-lucide="book-open"></i>
-       <h2>Tema 1.3 Componentes Rectangulares - Fundamentos Teóricos</h2>
-      </div>
+              <!-- CONTENEDOR DEL PLANO CARTESIANO -->
+              <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-4 shadow-sm">
+                
+                <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="crosshair" class="w-4 h-4 text-[var(--primary)]"></i>
+                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Plano Cartesiano</h2>
+                  </div>
+                  
+                  <div class="flex items-center gap-2 font-mono">
+                    <button id="btn-play" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white text-xs font-medium hover:bg-[var(--primary-hover)] transition-colors" title="Iniciar Animación">
+                      <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button id="btn-pause" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] text-xs font-medium hover:border-[var(--primary)] transition-colors" title="Pausar Animación">
+                      <i data-lucide="pause" class="w-3.5 h-3.5"></i>
+                    </button>
+                    <button id="btn-stop" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] text-xs font-medium hover:border-[var(--primary)] transition-colors" title="Detener Animación">
+                      <i data-lucide="square" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
+                </div>
 
-      <div style="display:grid; gap:12px;">
-       <div class="accordion-item open">
-        <button class="accordion-trigger">
-         <span>1. Conceptos Clave y Definiciones</span>
-         <i data-lucide="chevron-down"></i>
-        </button>
-        <div class="accordion-content">
-         <p style="margin-bottom:6px;">• <strong>Vector de Fuerza (F⃗):</strong> Magnitud física vectorial que describe la interacción de empuje o tirón sobre un cuerpo. Posee magnitud (medida en Newtons [N]), dirección y sentido.</p>
-         <p style="margin-bottom:6px;">• <strong>Componentes Rectangulares (Fx, Fy):</strong> Proyecciones ortogonales de un vector sobre los ejes cartesianos X e Y. Representan la influencia efectiva de la fuerza en cada eje perpendicular.</p>
-         <p>• <strong>Ángulo Dirección (θ):</strong> Ángulo medido en sentido antihorario desde el eje positivo de las X (+X) hasta la línea de acción del vector.</p>
-        </div>
-       </div>
+                <!-- CANVAS SVG -->
+                <div class="cartesian-plane" id="plane-container">
+                  <svg id="cartesian-svg" viewBox="0 0 500 500">
+                    <defs>
+                      <marker id="arrow-force" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-f)" />
+                      </marker>
+                      <marker id="arrow-fx" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-fx)" />
+                      </marker>
+                      <marker id="arrow-fy" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--color-fy)" />
+                      </marker>
+                    </defs>
 
-       <div class="accordion-item open">
-        <button class="accordion-trigger">
-         <span>2. Ecuaciones Fundamentales Explicadas</span>
-         <i data-lucide="chevron-down"></i>
-        </button>
-        <div class="accordion-content">
-         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-          <div style="background:var(--card-bg-soft); padding:8px; border-radius:6px; border:1px solid var(--border);">
-           <strong style="color:var(--color-fx);">Componente Horizontal:</strong>
-           <p class="step-calc" style="margin:4px 0;">Fₓ = F · cos(θ)</p>
-           <p style="font-size:0.73rem;">Utiliza el coseno porque la componente X corresponde al cateto adyacente del triángulo rectángulo formado por el vector.</p>
+                    <g id="pan-zoom-layer">
+                      <g id="grid-ticks" opacity=".6"></g>
+
+                      <!-- EJES PRINCIPALES -->
+                      <line x1="15" y1="250" x2="485" y2="250" stroke="var(--border)" stroke-width="2"></line>
+                      <line x1="250" y1="485" x2="250" y2="15" stroke="var(--border)" stroke-width="2"></line>
+
+                      <text class="svg-label" x="470" y="242">+X</text>
+                      <text class="svg-label" x="15" y="242">-X</text>
+                      <text class="svg-label" x="256" y="25">+Y</text>
+                      <text class="svg-label" x="256" y="480">-Y</text>
+
+                      <path id="arc-angle" fill="rgba(156, 119, 184, 0.15)" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="3,2"/>
+                      <text id="txt-angle-val" font-size="11" font-weight="800" fill="var(--primary)" font-family="JetBrains Mono">θ</text>
+
+                      <g id="vector-layer"></g>
+
+                      <circle cx="250" cy="250" r="5" fill="var(--primary)" stroke="var(--surface)" stroke-width="2" id="origin-point"></circle>
+                    </g>
+                  </svg>
+                </div>
+
+                <div class="flex items-center justify-between bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl font-mono text-xs">
+                  <div class="flex items-center gap-4">
+                    <span class="text-[var(--primary)] font-semibold flex items-center gap-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-[var(--primary)]"></span> Vector F
+                    </span>
+                    <span class="text-[var(--chocolate)] font-semibold flex items-center gap-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-[var(--chocolate)]"></span> Fx (Eje X)
+                    </span>
+                    <span class="text-[var(--text-muted)] font-semibold flex items-center gap-1.5">
+                      <span class="w-2.5 h-2.5 rounded-full bg-[var(--text-muted)]"></span> Fy (Eje Y)
+                    </span>
+                  </div>
+                  <span id="quadrant-badge" class="px-2.5 py-1 rounded bg-[var(--surface-subtle)] text-[var(--primary)] font-bold">I Cuadrante</span>
+                </div>
+
+              </div>
+
+              <!-- CONTENEDOR DE GRÁFICAS -->
+              <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-4 shadow-sm">
+                <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4 text-[var(--primary)]"></i>
+                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Magnitudes Absolutas</h2>
+                  </div>
+                  <button id="btn-export-csv" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white font-mono text-xs font-semibold hover:bg-[var(--primary-hover)] transition-colors">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar CSV
+                  </button>
+                </div>
+
+                <div class="h-36 relative">
+                  <canvas id="componentsChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- PANEL DERECHO DE CONTROLES Y RESULTADOS -->
+            <div class="space-y-6">
+              <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-5 shadow-sm">
+                
+                <div class="flex items-center gap-2 pb-3 border-b border-[var(--border)]">
+                  <i data-lucide="sliders" class="w-4 h-4 text-[var(--primary)]"></i>
+                  <h2 class="font-semibold text-[var(--chocolate)] text-sm">Controles del Vector Fuerza</h2>
+                </div>
+
+                <div class="space-y-4 font-mono text-xs">
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between">
+                      <label class="text-[var(--text-muted)] font-medium">Magnitud (F):</label>
+                      <span id="label-mag-val" class="font-bold text-[var(--primary)]">100 N</span>
+                    </div>
+                    <input id="slider-mag" type="range" min="10" max="500" value="100" step="1">
+                    <input id="num-mag" class="w-full p-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--chocolate)] font-mono text-xs font-bold" type="number" min="10" max="500" value="100">
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <div class="flex justify-between">
+                      <label class="text-[var(--text-muted)] font-medium">Ángulo de Inclinación (θ):</label>
+                      <span id="label-angle-val" class="font-bold text-[var(--chocolate)]">60°</span>
+                    </div>
+                    <input id="slider-angle" type="range" min="0" max="360" value="60" step="1">
+                    <input id="num-angle" class="w-full p-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--chocolate)] font-mono text-xs font-bold" type="number" min="0" max="360" value="60">
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-2 border-t border-[var(--border)]">
+                  <i data-lucide="list-checks" class="w-4 h-4 text-[var(--primary)]"></i>
+                  <h2 class="font-semibold text-[var(--chocolate)] text-sm">Procedimiento Paso a Paso</h2>
+                </div>
+
+                <div id="step-by-step-container" class="space-y-3 font-mono text-xs"></div>
+
+                <button id="btn-reset" class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
+                  <i data-lucide="rotate-ccw" class="w-4 h-4"></i> Restablecer Vista y Valores
+                </button>
+
+              </div>
+            </div>
+
           </div>
-          <div style="background:var(--card-bg-soft); padding:8px; border-radius:6px; border:1px solid var(--border);">
-           <strong style="color:var(--color-fy);">Componente Vertical:</strong>
-           <p class="step-calc" style="margin:4px 0;">Fᵧ = F · sin(θ)</p>
-           <p style="font-size:0.73rem;">Utiliza el seno porque la componente Y corresponde al cateto opuesto del triángulo rectángulo formado.</p>
+        </div>
+
+        <!-- PESTAÑA 2: TEORÍA -->
+        <div id="tab-teoria" class="tab-pane space-y-6">
+          <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 space-y-6 shadow-sm">
+            <div class="flex items-center gap-2 pb-3 border-b border-[var(--border)]">
+              <i data-lucide="book-open" class="w-5 h-5 text-[var(--primary)]"></i>
+              <h2 class="font-semibold text-[var(--chocolate)] text-base">Tema 1.3 Componentes Rectangulares</h2>
+            </div>
+
+            <div class="space-y-4">
+              <div class="accordion-item open">
+                <button class="accordion-trigger">
+                  <span>1. Conceptos Clave y Definiciones</span>
+                  <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </button>
+                <div class="accordion-content">
+                  <p class="mb-2">• <strong>Vector de Fuerza (F⃗):</strong> Magnitud física vectorial que describe la interacción de empuje o tirón sobre un cuerpo. Posee magnitud (medida en Newtons [N]), dirección y sentido.</p>
+                  <p class="mb-2">• <strong>Componentes Rectangulares (Fx, Fy):</strong> Proyecciones ortogonales de un vector sobre los ejes cartesianos X e Y. Representan la influencia efectiva de la fuerza en cada eje perpendicular.</p>
+                  <p>• <strong>Ángulo Dirección (θ):</strong> Ángulo medido en sentido antihorario desde el eje positivo de las X (+X) hasta la línea de acción del vector.</p>
+                </div>
+              </div>
+
+              <div class="accordion-item open">
+                <button class="accordion-trigger">
+                  <span>2. Ecuaciones Fundamentales Explicadas</span>
+                  <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </button>
+                <div class="accordion-content space-y-3">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="bg-[var(--bg)] p-3 rounded-xl border border-[var(--border)]">
+                      <strong class="text-[var(--chocolate)]">Componente Horizontal:</strong>
+                      <p class="font-mono text-xs text-[var(--primary)] font-bold my-1">Fₓ = F · cos(θ)</p>
+                      <p class="text-xs">Utiliza el coseno porque la componente X corresponde al cateto adyacente del triángulo rectángulo formado por el vector.</p>
+                    </div>
+                    <div class="bg-[var(--bg)] p-3 rounded-xl border border-[var(--border)]">
+                      <strong class="text-[var(--chocolate)]">Componente Vertical:</strong>
+                      <p class="font-mono text-xs text-[var(--primary)] font-bold my-1">Fᵧ = F · sin(θ)</p>
+                      <p class="text-xs">Utiliza el seno porque la componente Y corresponde al cateto opuesto del triángulo rectángulo formado.</p>
+                    </div>
+                  </div>
+                  <div class="bg-[var(--bg)] p-3 rounded-xl border border-[var(--border)]">
+                    <strong class="text-[var(--chocolate)]">Magnitud Resultante (Teorema de Pitágoras) y Ángulo:</strong>
+                    <p class="font-mono text-xs text-[var(--primary)] font-bold my-1">|F| = √(Fₓ² + Fᵧ²) &nbsp;&nbsp;|&nbsp;&nbsp; θ = tan⁻¹(|Fᵧ| / |Fₓ|)</p>
+                    <p class="text-xs">Permite recomponer la fuerza total a partir de sus componentes rectangulares o calcular el ángulo en cualquier cuadrante.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item open">
+                <button class="accordion-trigger">
+                  <span>3. Convención de Signos por Cuadrante</span>
+                  <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                </button>
+                <div class="accordion-content">
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs font-mono">
+                      <thead>
+                        <tr class="border-b border-[var(--border)] bg-[var(--surface-subtle)] text-[var(--chocolate)] font-semibold">
+                          <th class="p-2">Cuadrante</th>
+                          <th class="p-2">Rango de Ángulo (θ)</th>
+                          <th class="p-2">Signo Fₓ (Horizontal)</th>
+                          <th class="p-2">Signo Fᵧ (Vertical)</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-[var(--border)]">
+                        <tr><td class="p-2"><strong>I Cuadrante</strong></td><td class="p-2">0° &lt; θ &lt; 90°</td><td class="p-2 text-emerald-600 font-bold">Positivo (+)</td><td class="p-2 text-emerald-600 font-bold">Positivo (+)</td></tr>
+                        <tr><td class="p-2"><strong>II Cuadrante</strong></td><td class="p-2">90° &lt; θ &lt; 180°</td><td class="p-2 text-red-500 font-bold">Negativo (-)</td><td class="p-2 text-emerald-600 font-bold">Positivo (+)</td></tr>
+                        <tr><td class="p-2"><strong>III Cuadrante</strong></td><td class="p-2">180° &lt; θ &lt; 270°</td><td class="p-2 text-red-500 font-bold">Negativo (-)</td><td class="p-2 text-red-500 font-bold">Negativo (-)</td></tr>
+                        <tr><td class="p-2"><strong>IV Cuadrante</strong></td><td class="p-2">270° &lt; θ &lt; 360°</td><td class="p-2 text-emerald-600 font-bold">Positivo (+)</td><td class="p-2 text-red-500 font-bold">Negativo (-)</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
-         </div>
-         <div style="margin-top:8px; background:var(--card-bg-soft); padding:8px; border-radius:6px; border:1px solid var(--border);">
-          <strong style="color:var(--primary);">Magnitud Resultante (Teorema de Pitágoras) y Ángulo:</strong>
-          <p class="step-calc" style="margin:4px 0;">|F| = √(Fₓ² + Fᵧ²) &nbsp;&nbsp;|&nbsp;&nbsp; θ = tan⁻¹(|Fᵧ| / |Fₓ|)</p>
-          <p style="font-size:0.73rem;">Permite recomponer la fuerza total a partir de sus componentes rectangulares o calcular el ángulo en cualquier cuadrante.</p>
-         </div>
         </div>
-       </div>
 
-       <div class="accordion-item open">
-        <button class="accordion-trigger">
-         <span>3. Convención de Signos por Cuadrante</span>
-         <i data-lucide="chevron-down"></i>
-        </button>
-        <div class="accordion-content">
-         <table class="components-table">
-          <thead>
-           <tr>
-            <th>Cuadrante</th>
-            <th>Rango de Ángulo (θ)</th>
-            <th>Signo Fₓ (Horizontal)</th>
-            <th>Signo Fᵧ (Vertical)</th>
-           </tr>
-          </thead>
-          <tbody>
-           <tr><td><strong>I Cuadrante</strong></td><td>0° &lt; θ &lt; 90°</td><td style="color:#10b981;">Positivo (+)</td><td style="color:#10b981;">Positivo (+)</td></tr>
-           <tr><td><strong>II Cuadrante</strong></td><td>90° &lt; θ &lt; 180°</td><td style="color:#ef4444;">Negativo (-)</td><td style="color:#10b981;">Positivo (+)</td></tr>
-           <tr><td><strong>III Cuadrante</strong></td><td>180° &lt; θ &lt; 270°</td><td style="color:#ef4444;">Negativo (-)</td><td style="color:#ef4444;">Negativo (-)</td></tr>
-           <tr><td><strong>IV Cuadrante</strong></td><td>270° &lt; θ &lt; 360°</td><td style="color:#10b981;">Positivo (+)</td><td style="color:#ef4444;">Negativo (-)</td></tr>
-          </tbody>
-         </table>
+        <!-- PESTAÑA 3: EVALUACIÓN -->
+        <div id="tab-evaluacion" class="tab-pane space-y-6">
+          <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 space-y-6 shadow-sm">
+            <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+              <div class="flex items-center gap-2">
+                <i data-lucide="award" class="w-5 h-5 text-[var(--primary)]"></i>
+                <h2 class="font-semibold text-[var(--chocolate)] text-base">Cuestionario</h2>
+              </div>
+              <button id="btn-new-quiz" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] transition-colors">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Generar Nuevo Cuestionario
+              </button>
+            </div>
+
+            <div id="quiz-container" class="space-y-4"></div>
+
+            <div class="flex items-center justify-between pt-4 border-t border-[var(--border)]">
+              <button id="btn-submit-quiz" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white font-mono text-xs font-bold hover:bg-[var(--primary-hover)] transition-colors">
+                <i data-lucide="check-circle" class="w-4 h-4"></i> Calificar Cuestionario
+              </button>
+              <span id="quiz-score" class="font-mono text-base font-bold text-[var(--primary)]"></span>
+            </div>
+          </div>
         </div>
-       </div>
-      </div>
-     </section>
-    </div>
 
-    <!-- PESTAÑA 3: EVALUACIÓN DIAGNÓSTICA -->
-    <div id="pane-evaluacion" class="tab-pane">
-     <section class="lab-panel panel-pad">
-      <div class="panel-heading" style="justify-content: space-between;">
-       <div style="display:flex; align-items:center; gap:8px;">
-        <i data-lucide="award"></i>
-        <h2>Cuestionario Diagnóstico</h2>
-       </div>
-       <button id="btn-new-quiz" class="btn-ctrl">
-        <i data-lucide="refresh-cw"></i> Generar Nuevo Cuestionario
-       </button>
       </div>
+    </main>
 
-      <div id="quiz-container" style="display:grid; gap:10px;"></div>
-
-      <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center;">
-       <button id="btn-submit-quiz" class="action-button"><i data-lucide="check-circle"></i> Calificar Cuestionario</button>
-       <span id="quiz-score" style="font-size:1rem; font-weight:800;"></span>
-      </div>
-     </section>
-    </div>
-   </main>
   </div>
 
   <script>
+    function toggleDarkMode() {
+      const html = document.documentElement;
+      const themeIcon = document.getElementById('themeIcon');
+      
+      html.classList.toggle('dark');
+      const isDark = html.classList.contains('dark');
+
+      localStorage.setItem('lab_theme', isDark ? 'dark' : 'light');
+
+      if (isDark) {
+        themeIcon.setAttribute('data-lucide', 'sun');
+      } else {
+        themeIcon.setAttribute('data-lucide', 'moon');
+      }
+      
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+      updateAll();
+    }
+
+    function loadSavedTheme() {
+      const savedTheme = localStorage.getItem('lab_theme');
+      const themeIcon = document.getElementById('themeIcon');
+      
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+        if (themeIcon) themeIcon.setAttribute('data-lucide', 'sun');
+      } else {
+        document.documentElement.classList.remove('dark');
+        if (themeIcon) themeIcon.setAttribute('data-lucide', 'moon');
+      }
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.className = "tab-btn px-3 py-1.5 rounded-md font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-all";
+      });
+
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.className = "tab-btn px-3 py-1.5 rounded-md font-medium bg-[var(--primary)] text-white transition-all";
+      }
+    }
+
     let force = { magnitude: 100, angle: 60 };
     let chartInstance = null;
 
-    // Estado de animación
     let animId = null;
     let isPlaying = false;
     let animSpeed = 0.5;
 
-    // Pan y zoom
     let zoomLevel = 1;
     let panX = 0;
     let panY = 0;
     let isDragging = false;
     let startX = 0, startY = 0;
 
-    // BANCO COMPLETO DE 20 PREGUNTAS
     const fullQuestionBank = [
       { q: "1. ¿Cuál es la componente horizontal Fₓ de una fuerza de 100 N a un ángulo de 0°?", options: ["0 N", "100 N", "50 N", "-100 N"], correct: 1 },
       { q: "2. ¿Cuál es la componente vertical Fᵧ de una fuerza de 100 N a 90°?", options: ["100 N", "0 N", "50 N", "-100 N"], correct: 0 },
@@ -761,14 +602,6 @@
     ];
 
     let currentQuizQuestions = [];
-
-    function switchTab(event, tabId) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-
-      event.currentTarget.classList.add('active');
-      document.getElementById(`pane-${tabId}`).classList.add('active');
-    }
 
     function getQuadrant(angle) {
       if (angle === 360) return "Eje +X (360°)";
@@ -1005,6 +838,10 @@
     function updateChart(calc) {
       const data = [force.magnitude, Math.abs(calc.fx), Math.abs(calc.fy)];
 
+      const isDark = document.documentElement.classList.contains('dark');
+      const textColor = isDark ? '#F3ECF8' : '#2A182E';
+      const gridColor = isDark ? 'rgba(184, 146, 214, 0.1)' : 'rgba(61, 37, 64, 0.08)';
+
       if (!chartInstance) {
         const ctx = document.getElementById('componentsChart').getContext('2d');
         chartInstance = new Chart(ctx, {
@@ -1014,7 +851,7 @@
             datasets: [{
               label: 'Magnitud (N)',
               data: data,
-              backgroundColor: ['#D95D82', '#2563EB', '#7C3AED'],
+              backgroundColor: ['#9C77B8', '#3D2540', '#825A9E'],
               borderRadius: 4
             }]
           },
@@ -1022,14 +859,18 @@
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-              y: { grid: { color: '#EBCFD7' }, ticks: { color: '#8B7075', font: { size: 9 } }, beginAtZero: true },
-              x: { grid: { color: '#EBCFD7' }, ticks: { color: '#3D2A2E', font: { weight: 'bold', size: 10 } } }
+              y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9 } }, beginAtZero: true },
+              x: { grid: { color: gridColor }, ticks: { color: textColor, font: { weight: 'bold', size: 10 } } }
             },
             plugins: { legend: { display: false } }
           }
         });
       } else {
         chartInstance.data.datasets[0].data = data;
+        chartInstance.options.scales.y.grid.color = gridColor;
+        chartInstance.options.scales.y.ticks.color = textColor;
+        chartInstance.options.scales.x.grid.color = gridColor;
+        chartInstance.options.scales.x.ticks.color = textColor;
         chartInstance.update();
       }
     }
@@ -1040,23 +881,23 @@
       const sinVal = Math.sin(calc.rad).toFixed(4);
 
       container.innerHTML = `
-        <div class="step-box">
-          <div class="step-title">Paso 1: Identificación de Datos</div>
-          <div>Fuerza F = <strong>${force.magnitude} N</strong>, Ángulo θ = <strong>${force.angle}°</strong> (${calc.quad})</div>
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-1">
+          <div class="font-bold text-[var(--primary)] text-[11px]">Paso 1: Identificación de Datos</div>
+          <div class="text-[var(--text)]">Fuerza F = <strong>${force.magnitude} N</strong>, Ángulo θ = <strong>${force.angle}°</strong> (${calc.quad})</div>
         </div>
-        <div class="step-box">
-          <div class="step-title">Paso 2: Cálculo de Componente Horizontal (Fx)</div>
-          <div class="step-calc">Fx = F · cos(θ) = ${force.magnitude} · cos(${force.angle}°)</div>
-          <div class="step-calc">Fx = ${force.magnitude} · (${cosVal}) = <span style="color:var(--color-fx); font-weight:800;">${calc.fx.toFixed(2)} N</span></div>
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-1">
+          <div class="font-bold text-[var(--primary)] text-[11px]">Paso 2: Cálculo de Componente Horizontal (Fx)</div>
+          <div>Fx = F · cos(θ) = ${force.magnitude} · cos(${force.angle}°)</div>
+          <div>Fx = ${force.magnitude} · (${cosVal}) = <span class="font-bold text-[var(--chocolate)]">${calc.fx.toFixed(2)} N</span></div>
         </div>
-        <div class="step-box">
-          <div class="step-title">Paso 3: Cálculo de Componente Vertical (Fy)</div>
-          <div class="step-calc">Fy = F · sin(θ) = ${force.magnitude} · sin(${force.angle}°)</div>
-          <div class="step-calc">Fy = ${force.magnitude} · (${sinVal}) = <span style="color:var(--color-fy); font-weight:800;">${calc.fy.toFixed(2)} N</span></div>
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-1">
+          <div class="font-bold text-[var(--primary)] text-[11px]">Paso 3: Cálculo de Componente Vertical (Fy)</div>
+          <div>Fy = F · sin(θ) = ${force.magnitude} · sin(${force.angle}°)</div>
+          <div>Fy = ${force.magnitude} · (${sinVal}) = <span class="font-bold text-[var(--primary)]">${calc.fy.toFixed(2)} N</span></div>
         </div>
-        <div class="step-box">
-          <div class="step-title">Paso 4: Verificación con Teorema de Pitágoras</div>
-          <div class="step-calc">|F| = √[ (${calc.fx.toFixed(2)})² + (${calc.fy.toFixed(2)})² ] = <strong>${force.magnitude.toFixed(1)} N</strong></div>
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-1">
+          <div class="font-bold text-[var(--primary)] text-[11px]">Paso 4: Verificación con Teorema de Pitágoras</div>
+          <div>|F| = √[ (${calc.fx.toFixed(2)})² + (${calc.fy.toFixed(2)})² ] = <strong>${force.magnitude.toFixed(1)} N</strong></div>
         </div>
       `;
     }
@@ -1123,7 +964,6 @@
     function startAnimation() {
       if (isPlaying) return;
       isPlaying = true;
-      document.getElementById("btn-play").classList.add("active-play");
 
       function animate() {
         if (!isPlaying) return;
@@ -1141,7 +981,6 @@
 
     function pauseAnimation() {
       isPlaying = false;
-      document.getElementById("btn-play").classList.remove("active-play");
       if (animId) cancelAnimationFrame(animId);
     }
 
@@ -1179,36 +1018,34 @@
 
       currentQuizQuestions.forEach((qObj, qIdx) => {
         const qDiv = document.createElement("div");
-        qDiv.style.background = "var(--card-bg-soft)";
-        qDiv.style.padding = "10px";
-        qDiv.style.borderRadius = "8px";
-        qDiv.style.border = "1px solid var(--border)";
+        qDiv.className = "p-4 border border-[var(--border)] rounded-xl bg-[var(--bg)] space-y-3";
         
         const title = document.createElement("h4");
-        title.style.margin = "0 0 8px 0";
-        title.style.fontSize = ".82rem";
-        title.style.color = "var(--chocolate)";
+        title.className = "font-semibold text-[var(--chocolate)] text-xs leading-snug";
         title.textContent = `${qIdx + 1}. ${qObj.q.replace(/^\d+\.\s*/, '')}`;
         qDiv.appendChild(title);
+
+        const optsContainer = document.createElement("div");
+        optsContainer.className = "space-y-2";
 
         qObj.options.forEach((opt, optIdx) => {
           const label = document.createElement("label");
           label.className = "quiz-option";
           label.innerHTML = `
-            <input type="radio" name="q_${qIdx}" value="${optIdx}" style="display:none;">
-            ${opt}
+            <input type="radio" name="q_${qIdx}" value="${optIdx}" class="hidden">
+            <span>${opt}</span>
           `;
 
           label.addEventListener("click", () => {
-            const siblings = qDiv.querySelectorAll(".quiz-option");
-            siblings.forEach(s => s.classList.remove("selected"));
+            qDiv.querySelectorAll(".quiz-option").forEach(s => s.classList.remove("selected"));
             label.classList.add("selected");
             label.querySelector("input").checked = true;
           });
 
-          qDiv.appendChild(label);
+          optsContainer.appendChild(label);
         });
 
+        qDiv.appendChild(optsContainer);
         container.appendChild(qDiv);
       });
 
@@ -1230,27 +1067,16 @@
         const userSelectedIdx = selected ? parseInt(selected.value) : -1;
         const isCorrect = userSelectedIdx === qObj.correct;
 
-        if (isCorrect) {
-          score++;
-        }
+        if (isCorrect) score++;
 
         const feedbackDiv = document.createElement("div");
-        feedbackDiv.className = "quiz-feedback";
-        feedbackDiv.style.marginTop = "10px";
-        feedbackDiv.style.padding = "8px 12px";
-        feedbackDiv.style.borderRadius = "6px";
-        feedbackDiv.style.fontSize = "0.8rem";
+        feedbackDiv.className = "quiz-feedback p-3 rounded-lg text-xs leading-relaxed mt-2";
 
         if (isCorrect) {
-          feedbackDiv.style.background = "rgba(16, 185, 129, 0.15)";
-          feedbackDiv.style.border = "1px solid #10b981";
-          feedbackDiv.style.color = "#047857";
+          feedbackDiv.classList.add("bg-emerald-500/10", "border", "border-emerald-500/30", "text-emerald-700", "dark:text-emerald-300");
           feedbackDiv.innerHTML = `<strong>¡Correcto!</strong> ${qObj.explanation || ""}`;
         } else {
-          feedbackDiv.style.background = "rgba(239, 68, 68, 0.15)";
-          feedbackDiv.style.border = "1px solid #ef4444";
-          feedbackDiv.style.color = "#b91c1c";
-          
+          feedbackDiv.classList.add("bg-red-500/10", "border", "border-red-500/30", "text-red-700", "dark:text-red-300");
           const correctText = qObj.options[qObj.correct];
           feedbackDiv.innerHTML = `
             <strong>Incorrecto.</strong> La respuesta correcta era: <em>"${correctText}"</em>.
@@ -1264,12 +1090,6 @@
       const percentage = (score / currentQuizQuestions.length) * 100;
       const scoreEl = document.getElementById("quiz-score");
       scoreEl.textContent = `Puntaje Obtenido: ${score}/${currentQuizQuestions.length} (${percentage}%)`;
-      
-      if (percentage >= 80) {
-        scoreEl.style.color = "#047857";
-      } else {
-        scoreEl.style.color = "#b91c1c";
-      }
     }
 
     function accordionSetup() {
@@ -1283,18 +1103,19 @@
     }
 
     window.addEventListener("DOMContentLoaded", () => {
+      loadSavedTheme();
       bindInputs();
       setupPanZoom();
       drawGridTicks();
       updateAll();
       generateQuiz();
       accordionSetup();
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
 
       document.getElementById("btn-export-csv").addEventListener("click", exportToCSV);
       document.getElementById("btn-new-quiz").addEventListener("click", generateQuiz);
       document.getElementById("btn-submit-quiz").addEventListener("click", evaluateQuiz);
     });
   </script>
- </body>
+</body>
 </html>
