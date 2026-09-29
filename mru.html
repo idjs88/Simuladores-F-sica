@@ -21,6 +21,18 @@
           fontFamily: {
             sans: ['Inter', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            academic: {
+              lilac: '#9C77B8',
+              lilacSoft: '#F3ECF8',
+              lilacLight: '#E8DDF0',
+              plum: '#3D2540',
+              offwhite: '#FBF9F5',
+              borderLilac: '#E2D5EA',
+              textPlum: '#2A182E',
+              mutedLilac: '#7E6B88'
+            }
           }
         }
       }
@@ -29,31 +41,31 @@
 
   <style>
     :root {
-      --bg: #FFF8F3;               /* Beige Crema */
-      --surface: #FFFFFF;          /* Blanco */
-      --surface-subtle: #FCE7EF;   /* Rosa suave */
-      --border: #EBCFD7;           /* Borde rosa tenue */
-      --text: #3D2A2E;             /* Texto café oscuro */
-      --text-muted: #8B7075;       /* Texto café apagado */
-      --primary: #D95D82;          /* Rosa principal */
-      --primary-hover: #C24B6F;    /* Rosa interactivo */
-      --chocolate: #4A3035;        /* Café profundo */
-      --accent-soft: #F8DCE5;      /* Rosa pastel suave */
-      --grid-color: rgba(74, 48, 53, 0.05);
+      --bg: #FBF9F5;
+      --surface: #FFFFFF; 
+      --surface-subtle: #F3ECF8;
+      --border: #E2D5EA; 
+      --text: #2A182E; 
+      --text-muted: #7E6B88; 
+      --primary: #9C77B8; 
+      --primary-hover: #825A9E;  
+      --chocolate: #3D2540;  
+      --accent-soft: #E8DDF0; 
+      --grid-color: rgba(61, 37, 64, 0.05);
     }
 
     .dark {
-      --bg: #1A1214;               /* Moka / Café negro */
-      --surface: #261B1E;          /* Moka oscuro */
-      --surface-subtle: #362529;   /* Moka intermedio */
-      --border: #4A3035;           /* Borde café */
-      --text: #FCE7EF;             /* Texto crema rosado */
-      --text-muted: #C4A1A8;       /* Texto café claro */
-      --primary: #E98AA8;          /* Rosa claro neón */
-      --primary-hover: #F8DCE5;    /* Rosa claro pastel */
-      --chocolate: #FCE7EF;        /* Reemplazo café en oscuro */
-      --accent-soft: #3D2A2E;      /* Contenedor suave oscuro */
-      --grid-color: rgba(233, 138, 168, 0.05);
+      --bg: #140E17;   
+      --surface: #1E1624;  
+      --surface-subtle: #2C1F35;
+      --border: #422D4F; 
+      --text: #F3ECF8;  
+      --text-muted: #B3A0BF; 
+      --primary: #B892D6; 
+      --primary-hover: #D1B3E8;
+      --chocolate: #F3ECF8;
+      --accent-soft: #2A182E;
+      --grid-color: rgba(184, 146, 214, 0.06);
     }
 
     .bg-grid-pattern {
@@ -94,7 +106,7 @@
       border-radius: 12px;
       border: 1px solid var(--border);
       background: var(--bg);
-      box-shadow: inset 0 0 25px rgba(217, 93, 130, 0.05);
+      box-shadow: inset 0 0 25px rgba(156, 119, 184, 0.05);
       overflow: hidden;
     }
 
@@ -138,13 +150,11 @@
 
     <!-- SIDEBAR LATERAL -->
     <aside class="w-full md:w-80 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col justify-between p-5 shrink-0 z-20 transition-colors duration-300">
-      
       <div class="space-y-6">
-        <!-- Header / Logo -->
         <div class="flex items-center justify-between pb-4 border-b border-[var(--border)]">
           <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center font-mono font-bold text-base shadow-sm">
-              ✦
+              ❀
             </div>
             <div>
               <h1 class="font-semibold text-[var(--chocolate)] tracking-tight text-base leading-snug">Laboratorio Virtual</h1>
@@ -152,18 +162,18 @@
             </div>
           </div>
 
-          <!-- BOTÓN MODO OSCURO / CLARO -->
           <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors" title="Cambiar tema">
             <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
           </button>
         </div>
 
         <div>
-          <a href="index.html" class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] transition-colors">
+          <a href="index.html" class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
             Regresar al Menú Principal
           </a>
         </div>
+      </div>
     </aside>
 
     <!-- ÁREA PRINCIPAL / CONTENIDO -->
@@ -199,7 +209,6 @@
 
         <!-- PESTAÑA 1: SIMULADOR -->
         <div id="tab-simulador" class="tab-pane active space-y-6">
-          
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             <!-- PANEL IZQUIERDO DE SIMULACIÓN (2 COLUMNAS) -->
@@ -250,7 +259,7 @@
 
                     <!-- Vehículo / Carrito -->
                     <g id="mobile-group">
-                      <ellipse id="car-shadow" cx="0" cy="155" rx="28" ry="4" fill="rgba(74, 48, 53, 0.2)"/>
+                      <ellipse id="car-shadow" cx="0" cy="155" rx="28" ry="4" fill="rgba(61, 37, 64, 0.2)"/>
                       <path id="car-body" d="M -24,140 Q -26,126 -12,124 L 4,124 Q 14,124 20,134 L 26,134 Q 28,134 28,140 L 28,148 Q 28,151 24,151 L -20,151 Q -24,151 -24,140 Z" fill="var(--primary)" stroke="var(--chocolate)" stroke-width="1.5"/>
                       <path id="car-window" d="M -10,127 L 2,127 Q 10,127 14,134 L -10,134 Z" fill="var(--surface-subtle)" stroke="var(--chocolate)" stroke-width="1"/>
                       <circle id="car-headlight" cx="26" cy="140" r="2.5" fill="var(--bg)" stroke="var(--chocolate)" stroke-width="0.8"/>
@@ -291,7 +300,6 @@
 
               <!-- CONTENEDOR DE GRÁFICAS -->
               <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-4 shadow-sm">
-                
                 <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
                   <div class="flex items-center gap-2">
                     <i data-lucide="line-chart" class="w-4 h-4 text-[var(--primary)]"></i>
@@ -329,7 +337,6 @@
 
             <!-- PANEL DERECHO DE CONTROLES Y RESULTADOS -->
             <div class="space-y-6">
-              
               <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-5 shadow-sm">
                 
                 <div class="flex items-center gap-2 pb-3 border-b border-[var(--border)]">
@@ -391,13 +398,13 @@
                 </div>
               </div>
             </div>
+
           </div>
         </div>
 
         <!-- PESTAÑA 2: TEORÍA -->
         <div id="tab-teoria" class="tab-pane space-y-6">
           <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 space-y-6 shadow-sm">
-            
             <div class="flex items-center gap-2 pb-3 border-b border-[var(--border)]">
               <i data-lucide="book-open" class="w-5 h-5 text-[var(--primary)]"></i>
               <h2 class="font-semibold text-[var(--chocolate)] text-base">Fundamentos del Movimiento Rectilíneo Uniforme (MRU)</h2>
@@ -463,7 +470,6 @@
         <!-- PESTAÑA 3: EVALUACIÓN -->
         <div id="tab-evaluacion" class="tab-pane space-y-6">
           <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 space-y-6 shadow-sm">
-            
             <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
               <div class="flex items-center gap-2">
                 <i data-lucide="award" class="w-5 h-5 text-[var(--primary)]"></i>
@@ -482,33 +488,13 @@
               </button>
               <span id="quiz-score" class="font-mono text-base font-bold text-[var(--primary)]"></span>
             </div>
-
           </div>
         </div>
 
       </div>
-
     </main>
 
   </div>
-
-  <!-- MASCOTA / ASISTENTE VIRTUAL FIJO -->
-  <aside class="fixed bottom-6 left-6 z-50 pointer-events-auto">
-    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-3 shadow-xl flex items-start gap-3 max-w-xs transition-all duration-300 backdrop-blur-md">
-      <button onclick="meow()" class="w-10 h-10 rounded-xl bg-[var(--surface-subtle)] border border-[var(--border)] flex items-center justify-center shrink-0 hover:scale-105 hover:border-[var(--primary)] transition-all shadow-sm group" title="Haz clic para interactuar">
-        <i data-lucide="cat" class="w-5 h-5 text-[var(--primary)] group-hover:rotate-12 transition-transform"></i>
-      </button>
-      <div class="space-y-1">
-        <div class="text-[10px] font-mono font-semibold text-[var(--text-muted)] uppercase flex items-center justify-between gap-4">
-          <span>Asistente Lab</span>
-          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-        </div>
-        <p id="catText" class="text-xs text-[var(--chocolate)] leading-relaxed italic">
-          "Recuerda que en el MRU la aceleración es siempre cero."
-        </p>
-      </div>
-    </div>
-  </aside>
 
   <!-- JAVASCRIPT CON LÓGICA Y SIMULACIÓN -->
   <script>
@@ -545,21 +531,6 @@
         document.documentElement.classList.remove('dark');
         if (themeIcon) themeIcon.setAttribute('data-lucide', 'moon');
       }
-    }
-
-    // 2. FRASES DEL ASISTENTE VIRTUAL
-    const catPhrases = [
-      "En el MRU, la velocidad es constante y la aceleración es siempre 0 m/s².",
-      "La pendiente en la gráfica de posición contra tiempo representa la velocidad. 📐",
-      "El área bajo la curva de la gráfica v(t) es igual al desplazamiento total. ⚡",
-      "Si la velocidad es negativa, el móvil retrocede en el sistema de referencia.",
-      "Cámara en movimiento: el entorno se desplaza a -v para mantener enfocado al móvil."
-    ];
-    let phraseIndex = 0;
-
-    function meow() {
-      phraseIndex = (phraseIndex + 1) % catPhrases.length;
-      document.getElementById("catText").textContent = `"${catPhrases[phraseIndex]}"`;
     }
 
     // 3. CAMBIO DE PESTAÑAS
@@ -814,8 +785,8 @@
 
     function createChartConfig(label, color, bgColor, yMin, yMax) {
       const isDark = document.documentElement.classList.contains('dark');
-      const gridColor = isDark ? '#4A3035' : '#EBCFD7';
-      const textColor = isDark ? '#C4A1A8' : '#8B7075';
+      const gridColor = isDark ? '#422D4F' : '#E2D5EA';
+      const textColor = isDark ? '#B3A0BF' : '#7E6B88';
 
       return {
         type: 'line',
@@ -876,12 +847,12 @@
       const ctxA = document.getElementById('chartA').getContext('2d');
 
       const isDark = document.documentElement.classList.contains('dark');
-      const primaryColor = isDark ? '#E98AA8' : '#D95D82';
-      const chocolateColor = isDark ? '#FCE7EF' : '#4A3035';
+      const primaryColor = isDark ? '#B892D6' : '#9C77B8';
+      const chocolateColor = isDark ? '#F3ECF8' : '#3D2540';
 
-      chartXInstance = new Chart(ctxX, createChartConfig('x(t) [m]', primaryColor, 'rgba(217, 93, 130, 0.12)'));
-      chartVInstance = new Chart(ctxV, createChartConfig('v(t) [m/s]', chocolateColor, 'rgba(74, 48, 53, 0.12)', -60, 60));
-      chartAInstance = new Chart(ctxA, createChartConfig('a(t) [m/s²]', '#8B7075', 'rgba(139, 112, 117, 0.12)', -5, 5));
+      chartXInstance = new Chart(ctxX, createChartConfig('x(t) [m]', primaryColor, 'rgba(156, 119, 184, 0.12)'));
+      chartVInstance = new Chart(ctxV, createChartConfig('v(t) [m/s]', chocolateColor, 'rgba(61, 37, 64, 0.12)', -60, 60));
+      chartAInstance = new Chart(ctxA, createChartConfig('a(t) [m/s²]', '#7E6B88', 'rgba(126, 107, 136, 0.12)', -5, 5));
 
       chartXInstance.data.labels = labels;
       chartXInstance.data.datasets[0].data = dataX;
@@ -984,7 +955,7 @@
           fb.className = "quiz-feedback mt-3 p-3 rounded-lg text-xs font-mono leading-relaxed";
           qDiv.appendChild(fb);
         }
-        fb.style.background = isCorrect ? "rgba(16, 185, 129, 0.12)" : "rgba(217, 93, 130, 0.12)";
+        fb.style.background = isCorrect ? "rgba(16, 185, 129, 0.12)" : "rgba(156, 119, 184, 0.12)";
         fb.style.color = isCorrect ? "#059669" : "var(--primary)";
         fb.style.border = isCorrect ? "1px solid #a7f3d0" : "1px solid var(--border)";
         fb.innerHTML = `<strong>${isCorrect ? "Correcto" : "Incorrecto"}:</strong> ${qObj.explanation}`;
