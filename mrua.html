@@ -52,6 +52,13 @@
       --chocolate: #3D2540;  
       --accent-soft: #E8DDF0; 
       --grid-color: rgba(61, 37, 64, 0.05);
+
+      --sky-top: #FFE5EC;
+      --sky-mid: #F3ECF8;
+      --sky-bottom: #E8DDF0;
+      --hill-back: #CBB2D9;
+      --hill-front: #A385BD;
+      --road-asphalt: #2A182E;
     }
 
     .dark {
@@ -66,6 +73,13 @@
       --chocolate: #F3ECF8;
       --accent-soft: #2A182E;
       --grid-color: rgba(184, 146, 214, 0.06);
+
+      --sky-top: #221528;
+      --sky-mid: #1A1020;
+      --sky-bottom: #2D1A38;
+      --hill-back: #3D2540;
+      --hill-front: #533357;
+      --road-asphalt: #0D080F;
     }
 
     .bg-grid-pattern {
@@ -102,11 +116,11 @@
     .cartesian-plane {
       position: relative;
       width: 100%;
-      height: 280px;
-      border-radius: 12px;
+      height: 320px;
+      border-radius: 16px;
       border: 1px solid var(--border);
       background: var(--bg);
-      box-shadow: inset 0 0 25px rgba(156, 119, 184, 0.05);
+      box-shadow: inset 0 0 25px rgba(156, 119, 184, 0.08);
       overflow: hidden;
     }
 
@@ -141,6 +155,22 @@
     }
     .tab-pane.active {
       display: block;
+    }
+
+    /* Modal de ampliación de gráficas */
+    .chart-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background-color: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .chart-modal.active {
+      display: flex;
     }
   </style>
 </head>
@@ -179,7 +209,7 @@
     <!-- ÁREA PRINCIPAL / CONTENIDO -->
     <main class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative" id="mainContentScroll">
 
-      <!-- HEADER SUPERIOR DE SIMULADOR -->
+      <!-- HEADER SUPERIOR -->
       <header class="bg-[var(--surface)] border-b border-[var(--border)] p-4 md:px-8 flex flex-col sm:flex-row gap-4 items-center justify-between sticky top-0 z-10 shadow-sm transition-colors duration-300">
         <div>
           <div class="flex items-center gap-2">
@@ -188,10 +218,10 @@
             </span>
             <h1 class="font-semibold text-[var(--chocolate)] text-base">Movimiento Rectilíneo Uniformemente Acelerado (MRUA)</h1>
           </div>
-          <p class="text-xs text-[var(--text-muted)] mt-0.5">Pista extendida con aceleración progresiva y conversor de unidades dinámico.</p>
+          <p class="text-xs text-[var(--text-muted)] mt-0.5">Analiza el comportamiento cinemático con aceleración constante y aceleración progresiva.</p>
         </div>
 
-        <!-- NAVEGACIÓN PESTAÑAS INTERNAS -->
+        <!-- NAVEGACIÓN PESTAÑAS -->
         <div class="flex items-center bg-[var(--bg)] border border-[var(--border)] rounded-lg p-1 gap-1 font-mono text-xs">
           <button onclick="switchTab('simulador')" id="tab-btn-simulador" class="tab-btn px-3 py-1.5 rounded-md font-medium bg-[var(--primary)] text-white transition-all">
             Simulador
@@ -211,16 +241,16 @@
         <div id="tab-simulador" class="tab-pane active space-y-6">
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            <!-- PANEL IZQUIERDO DE SIMULACIÓN (2 COLUMNAS) -->
+            <!-- PANEL IZQUIERDO DE SIMULACIÓN -->
             <div class="lg:col-span-2 space-y-6">
 
-              <!-- CONTENEDOR DE LA PISTA Y ANIMACIÓN -->
+              <!-- CONTENEDOR DE LA CARRETERA Y ANIMACIÓN -->
               <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-4 shadow-sm">
                 
                 <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
                   <div class="flex items-center gap-2">
-                    <i data-lucide="trending-down" class="w-4 h-4 text-[var(--primary)]"></i>
-                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Pista Inclinada Extendida</h2>
+                    <i data-lucide="move-right" class="w-4 h-4 text-[var(--primary)]"></i>
+                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Carretera y Enfoque de Cámara</h2>
                   </div>
                   
                   <div class="flex items-center gap-2 font-mono">
@@ -236,69 +266,143 @@
                   </div>
                 </div>
 
-                <!-- CANVAS SVG -->
+                <!-- CANVAS SVG AMPLIO CON ESCENARIO MULTICOLOR -->
                 <div class="cartesian-plane">
-                  <svg id="cartesian-svg" viewBox="0 0 600 280" class="w-full h-full">
+                  <svg id="cartesian-svg" viewBox="0 0 800 320" class="w-full h-full preserve-3d">
                     <defs>
-                      <marker id="arrow-v" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                      <marker id="arrow-v" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--chocolate)"/>
                       </marker>
-                      <marker id="arrow-a" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                      <marker id="arrow-a" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary)"/>
                       </marker>
+
+                      <!-- Gradiente Atardecer / Paisaje Multicolor -->
+                      <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="var(--sky-top)"/>
+                        <stop offset="50%" stop-color="var(--sky-mid)"/>
+                        <stop offset="100%" stop-color="var(--sky-bottom)"/>
+                      </linearGradient>
+
+                      <!-- Gradiente Sol de Atardecer -->
+                      <radialGradient id="sunGradient" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#FFD166"/>
+                        <stop offset="60%" stop-color="#F78C6B" stop-opacity="0.8"/>
+                        <stop offset="100%" stop-color="#E85D04" stop-opacity="0"/>
+                      </radialGradient>
+
+                      <!-- Gradiente Carrocería Morada Premium -->
+                      <linearGradient id="carBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#B892D6"/>
+                        <stop offset="50%" stop-color="#9C77B8"/>
+                        <stop offset="100%" stop-color="#5A3860"/>
+                      </linearGradient>
+
+                      <!-- Gradiente Ventanas reflejantes -->
+                      <linearGradient id="carGlassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#F3ECF8" stop-opacity="0.9"/>
+                        <stop offset="100%" stop-color="#CBB2D9" stop-opacity="0.6"/>
+                      </linearGradient>
+
+                      <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                      </filter>
                     </defs>
 
-                    <!-- Triángulo del Plano Inclinado Extendido -->
-                    <polygon id="ramp-triangle" points="30,40 570,240 30,240" fill="var(--surface-subtle)" stroke="var(--border)" stroke-width="2"/>
-                    <line id="ramp-surface" x1="30" y1="40" x2="570" y2="240" stroke="var(--chocolate)" stroke-width="4" stroke-linecap="round"/>
+                    <!-- CAPA DE FONDO 1: CIELO MULTICOLOR -->
+                    <rect x="0" y="0" width="800" height="200" fill="url(#skyGradient)"/>
 
-                    <!-- Poste indicador de Final de Rampa -->
-                    <line x1="570" y1="190" x2="570" y2="240" stroke="var(--text-muted)" stroke-width="2" stroke-dasharray="3,3"/>
-                    <text x="570" y="182" fill="var(--text-muted)" font-size="10" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">Límite de Rampa</text>
+                    <!-- Sol/Astro al fondo -->
+                    <circle cx="680" cy="80" r="45" fill="url(#sunGradient)"/>
+                    <circle cx="680" cy="80" r="22" fill="#FFE5EC" opacity="0.9"/>
 
-                    <!-- Marcador de ángulo θ -->
-                    <path id="angle-arc" d="M 520,240 A 50,50 0 0,0 525,220" fill="none" stroke="var(--primary)" stroke-width="2"/>
-                    <text id="angle-text" x="500" y="232" fill="var(--primary)" font-size="11" font-weight="700" font-family="JetBrains Mono">θ</text>
+                    <!-- Nubes estéticas de fondo -->
+                    <g opacity="0.6">
+                      <path d="M 50,70 Q 65,50 85,60 Q 105,45 130,60 Q 145,60 150,75 Z" fill="#FFFFFF"/>
+                      <path d="M 320,50 Q 335,35 355,45 Q 375,30 395,45 Q 410,45 420,60 Z" fill="#FFFFFF"/>
+                      <path d="M 580,80 Q 595,65 615,75 Q 630,65 650,80 Z" fill="#FFFFFF"/>
+                    </g>
 
-                    <!-- Marcas de posición -->
+                    <!-- CAPA DE FONDO 2: MONTAÑAS/COLINAS MULTICOLORES -->
+                    <path d="M 0,180 Q 120,110 260,165 T 520,150 T 800,175 L 800,200 L 0,200 Z" fill="var(--hill-back)" opacity="0.7"/>
+                    <path d="M 0,190 Q 180,140 380,185 T 720,160 T 800,180 L 800,200 L 0,200 Z" fill="var(--hill-front)"/>
+
+                    <!-- Árboles lejanos -->
+                    <g opacity="0.7">
+                      <path d="M 90,175 L 96,160 L 102,175 Z" fill="#3D2540"/>
+                      <path d="M 230,170 L 237,152 L 244,170 Z" fill="#3D2540"/>
+                      <path d="M 450,178 L 456,162 L 462,178 Z" fill="#3D2540"/>
+                      <path d="M 610,168 L 618,148 L 626,168 Z" fill="#3D2540"/>
+                    </g>
+
+                    <!-- PISTA Y ASFALTO AMPLIO -->
+                    <rect x="0" y="200" width="800" height="90" fill="var(--road-asphalt)"/>
+                    <rect x="0" y="196" width="800" height="4" fill="#E8DDF0"/>
+                    <line x1="0" y1="290" x2="800" y2="290" stroke="var(--border)" stroke-width="2"/>
+
+                    <!-- Líneas dinámicas de la carretera -->
+                    <g id="road-lines-group"></g>
+                    
+                    <!-- Eje graduado de la regla -->
+                    <g id="grid-axis">
+                      <line x1="0" y1="290" x2="800" y2="290" stroke="var(--primary)" stroke-width="2"/>
+                    </g>
                     <g id="ticks-group"></g>
+
+                    <!-- VEHÍCULO / CARRITO MORADITO Y ESTILIZADO -->
+                    <g id="mobile-group">
+                      <ellipse id="car-shadow" cx="0" cy="272" rx="42" ry="6" fill="rgba(20, 14, 23, 0.45)"/>
+                      <path id="car-body" d="M -36,252 C -38,232 -22,224 -8,222 L 10,222 C 24,222 34,232 40,242 L 44,244 C 47,246 48,252 46,260 L 44,264 C 44,267 40,268 36,268 L -32,268 C -36,268 -38,264 -38,258 Z" fill="url(#carBodyGrad)" stroke="#3D2540" stroke-width="2"/>
+                      <path d="M -10,223 Q 12,223 28,236 L 38,244 L -28,244 Z" fill="rgba(255, 255, 255, 0.15)"/>
+                      <path id="car-window" d="M -16,226 L 6,226 C 18,226 26,233 30,241 L -16,241 Z" fill="url(#carGlassGrad)" stroke="#3D2540" stroke-width="1.2"/>
+                      <line x1="-2" y1="226" x2="-6" y2="241" stroke="#3D2540" stroke-width="1" opacity="0.6"/>
+
+                      <path d="M 41,248 L 47,250 L 41,254 Z" fill="#FFE5EC" filter="url(#glow)"/>
+                      <circle id="car-headlight" cx="42" cy="251" r="3.5" fill="#FFF8F3" stroke="#3D2540" stroke-width="1"/>
+                      <rect id="car-taillight" x="-37" y="247" width="3" height="9" rx="1.5" fill="#E63946" stroke="#3D2540" stroke-width="0.8"/>
+                      <rect x="-4" y="246" width="6" height="2" rx="1" fill="#3D2540"/>
+
+                      <!-- RUEDA DELANTERA -->
+                      <g id="wheel-front">
+                        <circle cx="22" cy="268" r="9.5" fill="#140E17" stroke="#3D2540" stroke-width="1.5"/>
+                        <circle cx="22" cy="268" r="5.5" fill="#E8DDF0"/>
+                        <circle cx="22" cy="268" r="2.5" fill="#3D2540"/>
+                        <g id="spoke-front">
+                          <line x1="22" y1="259" x2="22" y2="277" stroke="#3D2540" stroke-width="1.2"/>
+                          <line x1="13" y1="268" x2="31" y2="268" stroke="#3D2540" stroke-width="1.2"/>
+                        </g>
+                      </g>
+
+                      <!-- RUEDA TRASERA -->
+                      <g id="wheel-back">
+                        <circle cx="-20" cy="268" r="9.5" fill="#140E17" stroke="#3D2540" stroke-width="1.5"/>
+                        <circle cx="-20" cy="268" r="5.5" fill="#E8DDF0"/>
+                        <circle cx="-20" cy="268" r="2.5" fill="#3D2540"/>
+                        <g id="spoke-back">
+                          <line x1="-20" y1="259" x2="-20" y2="277" stroke="#3D2540" stroke-width="1.2"/>
+                          <line x1="-29" y1="268" x2="-11" y2="268" stroke="#3D2540" stroke-width="1.2"/>
+                        </g>
+                      </g>
+                    </g>
 
                     <!-- Vector Aceleración -->
                     <line id="vec-a" x1="0" y1="0" x2="0" y2="0" stroke="var(--primary)" stroke-width="3.5" marker-end="url(#arrow-a)"/>
 
-                    <!-- Vector Velocidad v(t) -->
-                    <line id="vec-v" x1="0" y1="0" x2="0" y2="0" stroke="var(--chocolate)" stroke-width="3" marker-end="url(#arrow-v)"/>
+                    <!-- Vector Velocidad -->
+                    <line id="vec-v" x1="0" y1="0" x2="0" y2="0" stroke="var(--chocolate)" stroke-width="3.5" marker-end="url(#arrow-v)"/>
 
-                    <!-- Móvil / Carrito -->
-                    <g id="mobile-group">
-                      <g id="speed-lines" opacity="0">
-                        <line x1="-32" y1="-12" x2="-45" y2="-12" stroke="var(--primary)" stroke-width="2" stroke-dasharray="3,2"/>
-                        <line x1="-30" y1="-20" x2="-48" y2="-20" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="4,2"/>
-                        <line x1="-28" y1="-4" x2="-40" y2="-4" stroke="var(--primary)" stroke-width="1.5"/>
-                      </g>
-
-                      <ellipse id="car-shadow" cx="0" cy="4" rx="26" ry="3" fill="rgba(61, 37, 64, 0.15)"/>
-                      <path id="car-body" d="M -24,-11 Q -26,-25 -12,-27 L 4,-27 Q 14,-27 20,-17 L 26,-17 Q 28,-17 28,-11 L 28,-3 Q 28,0 24,0 L -20,0 Q -24,0 -24,-11 Z" fill="var(--primary)" stroke="var(--chocolate)" stroke-width="1.5"/>
-                      <path id="car-window" d="M -10,-24 L 2,-24 Q 10,-24 14,-17 L -10,-17 Z" fill="var(--surface-subtle)" stroke="var(--chocolate)" stroke-width="1"/>
-                      <circle id="car-headlight" cx="26" cy="-11" r="2.5" fill="var(--bg)" stroke="var(--chocolate)" stroke-width="0.8"/>
-                      <rect id="car-taillight" x="-24" y="-14" width="2" height="5" rx="1" fill="var(--chocolate)"/>
-                      
-                      <g id="wheel-front">
-                        <circle cx="14" cy="0" r="6" fill="var(--chocolate)"/>
-                        <line id="spoke-front" x1="14" y1="-5" x2="14" y2="5" stroke="var(--bg)" stroke-width="1.5"/>
-                      </g>
-                      <g id="wheel-back">
-                        <circle cx="-14" cy="0" r="6" fill="var(--chocolate)"/>
-                        <line id="spoke-back" x1="-14" y1="-5" x2="-14" y2="5" stroke="var(--bg)" stroke-width="1.5"/>
-                      </g>
-                    </g>
+                    <!-- Eje de Enfoque Fijo -->
+                    <line x1="300" y1="20" x2="300" y2="185" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="4,4"/>
+                    <rect x="210" y="10" width="180" height="22" rx="6" fill="var(--surface)" stroke="var(--border)" opacity="0.9"/>
+                    <text x="300" y="25" fill="var(--primary)" font-size="10" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">s(t)</text>
                   </svg>
                 </div>
 
                 <div class="flex items-center justify-between bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl font-mono text-xs">
                   <div class="flex items-center gap-4">
                     <span class="text-[var(--primary)] font-semibold flex items-center gap-1.5">
-                      <span class="w-2 h-2 rounded-full bg-[var(--primary)]"></span> Aceleración a = g·sin(θ)
+                      <span class="w-2 h-2 rounded-full bg-[var(--primary)]"></span> Aceleración a(t)
                     </span>
                     <span class="text-[var(--chocolate)] font-semibold flex items-center gap-1.5">
                       <span class="w-2 h-2 rounded-full bg-[var(--chocolate)]"></span> Velocidad v(t)
@@ -309,36 +413,41 @@
 
               </div>
 
-              <!-- CONTENEDOR DE GRÁFICAS -->
+              <!-- CONTENEDOR DE GRÁFICAS CINEMÁTICAS DINÁMICAS (AMPLIABLES) -->
               <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-4 shadow-sm">
                 <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
                   <div class="flex items-center gap-2">
                     <i data-lucide="line-chart" class="w-4 h-4 text-[var(--primary)]"></i>
-                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Gráficas Cinemáticas Dinámicas</h2>
+                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Gráficas Cinemáticas en Tiempo Real</h2>
                   </div>
-                  <button id="btn-export-csv" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white font-mono text-xs font-semibold hover:bg-[var(--primary-hover)] transition-colors">
-                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar CSV
-                  </button>
+                  <div class="flex items-center gap-2">
+                    <button onclick="openChartModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] transition-colors" title="Ampliar gráficas">
+                      <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> Ampliar
+                    </button>
+                    <button id="btn-export-csv" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white font-mono text-xs font-semibold hover:bg-[var(--primary-hover)] transition-colors">
+                      <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar CSV
+                    </button>
+                  </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="charts-inline-container">
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
-                    <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Posición en Rampa s(t)</h3>
-                    <div class="h-36 relative">
+                    <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Posición s(t)</h3>
+                    <div class="h-40 relative">
                       <canvas id="chartX"></canvas>
                     </div>
                   </div>
 
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
                     <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Velocidad v(t)</h3>
-                    <div class="h-36 relative">
+                    <div class="h-40 relative">
                       <canvas id="chartV"></canvas>
                     </div>
                   </div>
 
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
-                    <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Aceleración a_||(t)</h3>
-                    <div class="h-36 relative">
+                    <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Aceleración a(t)</h3>
+                    <div class="h-40 relative">
                       <canvas id="chartA"></canvas>
                     </div>
                   </div>
@@ -358,18 +467,18 @@
                 <div class="space-y-4 font-mono text-xs">
                   <div class="space-y-1.5">
                     <div class="flex justify-between">
-                      <label class="text-[var(--text-muted)] font-medium">Inclinación (θ):</label>
-                      <span id="lbl-theta" class="font-bold text-[var(--primary)]">15°</span>
+                      <label class="text-[var(--text-muted)] font-medium">Aceleración (a):</label>
+                      <span id="lbl-a" class="font-bold text-[var(--primary)]">2.00 m/s²</span>
                     </div>
-                    <input id="slider-theta" type="range" min="5" max="45" value="15" step="1">
+                    <input id="slider-a" type="range" min="-10" max="10" value="2" step="0.5">
                   </div>
 
                   <div class="space-y-1.5">
                     <div class="flex justify-between">
-                      <label class="text-[var(--text-muted)] font-medium">Posición Inicial en Rampa (s₀):</label>
+                      <label class="text-[var(--text-muted)] font-medium">Posición Inicial (s₀):</label>
                       <span id="lbl-s0" class="font-bold text-[var(--chocolate)]">0 m</span>
                     </div>
-                    <input id="slider-s0" type="range" min="0" max="80" value="0" step="5">
+                    <input id="slider-s0" type="range" min="-50" max="50" value="0" step="5">
                   </div>
 
                   <div class="space-y-1.5">
@@ -377,7 +486,7 @@
                       <label class="text-[var(--text-muted)] font-medium">Velocidad Inicial (v₀):</label>
                       <span id="lbl-v0" class="font-bold text-[var(--chocolate)]">0 m/s</span>
                     </div>
-                    <input id="slider-v0" type="range" min="-10" max="20" value="0" step="1">
+                    <input id="slider-v0" type="range" min="-20" max="20" value="0" step="1">
                   </div>
 
                   <div class="space-y-1.5">
@@ -426,18 +535,18 @@
 
                 <div class="grid grid-cols-2 gap-3 font-mono">
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
-                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Posición Rampa (s)</span>
+                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Posición Actual (s)</span>
                     <span id="res-s" class="text-base font-bold text-[var(--primary)]">0.00 m</span>
                   </div>
 
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
-                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Límite Rampa (s máx)</span>
-                    <span id="res-smax" class="text-base font-bold text-[var(--chocolate)]">127.05 m</span>
+                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Posición Máx (s máx)</span>
+                    <span id="res-smax" class="text-base font-bold text-[var(--chocolate)]">100.00 m</span>
                   </div>
 
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
-                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Aceleración (a_||)</span>
-                    <span id="res-a" class="text-base font-bold text-[var(--primary)]">2.54 m/s²</span>
+                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Aceleración (a)</span>
+                    <span id="res-a" class="text-base font-bold text-[var(--primary)]">2.00 m/s²</span>
                   </div>
 
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
@@ -456,7 +565,7 @@
           <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 space-y-6 shadow-sm">
             <div class="flex items-center gap-2 pb-3 border-b border-[var(--border)]">
               <i data-lucide="book-open" class="w-5 h-5 text-[var(--primary)]"></i>
-              <h2 class="font-semibold text-[var(--chocolate)] text-base">Teoría y Fundamentos del MRUA en Plano Inclinado</h2>
+              <h2 class="font-semibold text-[var(--chocolate)] text-base">Teoría y Fundamentos del MRUA</h2>
             </div>
 
             <p class="leading-relaxed text-[var(--text)]">
@@ -476,23 +585,23 @@
               F_neta = m · a_∥  ⇒  m · g · sin(θ) = m · a_∥  ⇒  a_∥ = g · sin(θ)
             </div>
 
-            <h3 class="font-bold text-[var(--chocolate)] text-sm">2. Ecuaciones Cinemáticas de la Rampa</h3>
+            <h3 class="font-bold text-[var(--chocolate)] text-sm">2. Ecuaciones Cinemáticas</h3>
             <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl font-mono text-center grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div class="space-y-1 border-r border-[var(--border)] pr-2">
-                <span class="font-bold text-[var(--chocolate)] block">Posición en Rampa s(t)</span>
-                <span class="text-[var(--primary)] font-bold">s(t) = s₀ + v₀·t + ½·a_∥·t²</span>
+                <span class="font-bold text-[var(--chocolate)] block">Posición s(t)</span>
+                <span class="text-[var(--primary)] font-bold">s(t) = s₀ + v₀·t + ½·a·t²</span>
               </div>
               <div class="space-y-1">
                 <span class="font-bold text-[var(--chocolate)] block">Velocidad Instantánea v(t)</span>
-                <span class="text-[var(--primary)] font-bold">v(t) = v₀ + a_∥·t</span>
+                <span class="text-[var(--primary)] font-bold">v(t) = v₀ + a·t</span>
               </div>
               <div class="space-y-1 border-r border-[var(--border)] pr-2">
                 <span class="font-bold text-[var(--chocolate)] block">Ecuación de Torricelli</span>
-                <span class="text-[var(--primary)] font-bold">v² = v₀² + 2·a_∥·Δs</span>
+                <span class="text-[var(--primary)] font-bold">v² = v₀² + 2·a·Δs</span>
               </div>
               <div class="space-y-1">
-                <span class="font-bold text-[var(--chocolate)] block">Límite de Rampa s máx</span>
-                <span class="text-[var(--primary)] font-bold">s máx = s₀ + v₀·t máx + ½·a_∥·(t máx)²</span>
+                <span class="font-bold text-[var(--chocolate)] block">Límite de Posición s máx</span>
+                <span class="text-[var(--primary)] font-bold">s máx = s₀ + v₀·t máx + ½·a·(t máx)²</span>
               </div>
             </div>
 
@@ -534,10 +643,47 @@
 
   </div>
 
+  <!-- MODAL DE PANTALLA COMPLETA PARA AMPLIAR GRÁFICAS -->
+  <div id="chartModal" class="chart-modal">
+    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 w-full max-w-5xl space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+        <div class="flex items-center gap-2">
+          <i data-lucide="line-chart" class="w-5 h-5 text-[var(--primary)]"></i>
+          <h2 class="font-semibold text-[var(--chocolate)] text-base">Gráficas Cinemáticas Ampliadas (Tiempo Real)</h2>
+        </div>
+        <button onclick="closeChartModal()" class="p-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] hover:border-[var(--primary)] transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3" id="modal-charts-container">
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+          <h3 class="font-mono text-xs font-bold text-[var(--chocolate)] text-center">Posición s(t)</h3>
+          <div class="h-64 relative">
+            <canvas id="chartXModal"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+          <h3 class="font-mono text-xs font-bold text-[var(--chocolate)] text-center">Velocidad v(t)</h3>
+          <div class="h-64 relative">
+            <canvas id="chartVModal"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+          <h3 class="font-mono text-xs font-bold text-[var(--chocolate)] text-center">Aceleración a(t)</h3>
+          <div class="h-64 relative">
+            <canvas id="chartAModal"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- JAVASCRIPT CON LÓGICA Y SIMULACIÓN -->
   <script>
-    const G = 9.81;
-    let thetaDeg = 15;
+    let accelVal = 2;
     let s0 = 0;
     let v0 = 0;
     let tMax = 10;
@@ -551,6 +697,10 @@
     let chartVInstance = null;
     let chartAInstance = null;
 
+    let chartXModalInstance = null;
+    let chartVModalInstance = null;
+    let chartAModalInstance = null;
+
     const questionBank = [
       {
         q: "¿Qué componente de la fuerza de gravedad acelera al objeto a lo largo de un plano inclinado sin fricción?",
@@ -562,41 +712,41 @@
         q: "Si se triplica el ángulo de inclinación θ dentro del rango de 0° a 30°, ¿qué le sucede a la aceleración paralela?",
         options: ["Permanece constante", "Aumenta debido al incremento del valor de sin(θ)", "Disminuye a cero", "Se vuelve negativa"],
         correct: 1,
-        explanation: "La función seno es strictly creciente en el intervalo [0°, 90°], por lo que al elevar el ángulo aumenta la aceleración."
+        explanation: "La función seno es estrictamente creciente en el intervalo [0°, 90°], por lo que al elevar el ángulo aumenta la aceleración."
       },
       {
-        q: "Para θ = 30° sin fricción y g = 9.81 m/s², ¿cuál es la aceleración paralela a la rampa?",
+        q: "Para θ = 30° sin fricción y g = 9.81 m/s², ¿cuál es la aceleración paralela?",
         options: ["9.81 m/s²", "4.905 m/s²", "8.50 m/s²", "0 m/s²"],
         correct: 1,
         explanation: "a = 9.81 · sin(30°) = 9.81 · 0.5 = 4.905 m/s²."
       },
       {
-        q: "En una rampa inclinada 90° respecto a la horizontal, el movimiento se convierte en:",
+        q: "En un movimiento inclinado 90° respecto a la horizontal, el movimiento se convierte en:",
         options: ["Movimiento Rectilíneo Uniforme", "Caída Libre vertical", "Movimiento Parabólico perfecto", "Repaso estático"],
         correct: 1,
         explanation: "Para θ = 90°, sin(90°) = 1, obteniéndose a = g (Caída libre)."
       },
       {
-        q: "¿Qué gráfica representa la velocidad respecto al tiempo v(t) en un MRUA sobre un plano inclinado?",
-        options: ["Una parábola cóncava", "Una línea recta con pendiente igual a a_||", "Una curva logarítmica", "Una recta horizontal fija"],
+        q: "¿Qué gráfica representa la velocidad respecto al tiempo v(t) en un MRUA?",
+        options: ["Una parábola cóncava", "Una línea recta con pendiente igual a la aceleración", "Una curva logarítmica", "Una recta horizontal fija"],
         correct: 1,
-        explanation: "v(t) = v0 + a·t es una función lineal cuya pendiente representa la aceleración paralela."
+        explanation: "v(t) = v0 + a·t es una función lineal cuya pendiente representa la aceleración."
       },
       {
-        q: "Si la velocidad inicial en la rampa es v0 = 0 m/s (parte del reposo), ¿cuál es la ecuación de la posición s(t)?",
-        options: ["s(t) = s0 + v0 · t", "s(t) = s0 + ½ · (g · sin θ) · t²", "s(t) = (g · cos θ) · t", "s(t) = s0 + g · t"],
+        q: "Si la velocidad inicial es v0 = 0 m/s (parte del reposo), ¿cuál es la ecuación de la posición s(t)?",
+        options: ["s(t) = s0 + v0 · t", "s(t) = s0 + ½ · a · t²", "s(t) = a · t", "s(t) = s0 + g · t"],
         correct: 1,
         explanation: "Al ser v0 = 0, el término lineal de velocidad se anula, resultando s(t) = s0 + ½·a·t²."
       },
       {
-        q: "¿Qué sucede con la componente normal de la fuerza (perpendicular a la rampa) al aumentar el ángulo θ?",
+        q: "¿Qué sucede con la componente normal de la fuerza al aumentar el ángulo θ respecto a la horizontal?",
         options: ["Aumenta proporcionalmente", "Disminuye porque cos(θ) se reduce", "Permanece igual a la masa", "Se duplica"],
         correct: 1,
         explanation: "La fuerza normal depende de cos(θ), función que disminuye a medida que θ crece entre 0° y 90°."
       },
       {
         q: "¿Qué representa la pendiente de la gráfica Posición vs Tiempo s(t) en cualquier instante?",
-        options: ["La aceleración instantánea", "La velocidad instantánea v(t)", "El ángulo del plano", "La fuerza neta aplicable"],
+        options: ["La aceleración instantánea", "La velocidad instantánea v(t)", "El ángulo de inclinación", "La fuerza neta aplicable"],
         correct: 1,
         explanation: "La derivada de la posición respecto al tiempo (o pendiente de la curva s-t) es la velocidad instantánea."
       },
@@ -619,16 +769,16 @@
         explanation: "Δs = ½ · a · t² = 0.5 · 3 · (2)² = 6 m."
       },
       {
-        q: "La aceleración ejercida sobre el cuerpo en un plano inclinado depende de la masa del móvil:",
+        q: "La aceleración ejercida sobre el cuerpo depende de la masa del móvil:",
         options: ["Sí, a mayor masa mayor aceleración", "No, se cancela la masa en la ecuación F = m·a", "Sólo si la velocidad es negativa", "Sí, pero sólo en ángulos menores a 10°"],
         correct: 1,
-        explanation: "m · a = m · g · sin(θ) -> la masa 'm' se cancela en ambos lados, por lo que 'a' no depende de la masa."
+        explanation: "m · a = F_neta -> la masa 'm' se cancela en ambos lados, por lo que 'a' no depende de la masa."
       },
       {
-        q: "En una gráfica a(t) de un MRUA en el plano inclinado, la curva es:",
+        q: "En una gráfica a(t) de un MRUA, la curva es:",
         options: ["Una recta inclinada a 45°", "Una parábola vertical", "Una línea horizontal constante paralela al eje t", "Una curva senoidal"],
         correct: 2,
-        explanation: "Como la aceleración a = g·sin(θ) es constante, su gráfica a-t es una recta horizontal."
+        explanation: "Como la aceleración es constante, su gráfica a-t es una recta horizontal."
       },
       {
         q: "¿Qué unidad de medida se utiliza en el Sistema Internacional (SI) para expresar la aceleración?",
@@ -637,22 +787,22 @@
         explanation: "La aceleración indica la variación de la velocidad por unidad de tiempo: (m/s)/s = m/s²."
       },
       {
-        q: "En una rampa con ángulo θ = 0°, ¿cuál es la aceleración producida por la gravedad?",
+        q: "En una superficie horizontal sin aceleración, ¿cuál es el valor de 'a'?",
         options: ["9.81 m/s²", "4.9 m/s²", "0 m/s²", "1 m/s²"],
         correct: 2,
-        explanation: "sin(0°) = 0, por lo tanto a = 9.81 · 0 = 0 m/s²."
+        explanation: "Sin fuerza aceleradora, a = 0 m/s²."
       },
       {
-        q: "La velocidad final de un móvil en una rampa de longitud 's' que parte del reposo se calcula mediante:",
+        q: "La velocidad final de un móvil en una distancia 's' que parte del reposo se calcula mediante:",
         options: ["v = √(2 · a · s)", "v = 2 · a · s", "v = a · s²", "v = √(a / s)"],
         correct: 0,
         explanation: "De la ecuación de Torricelli (v² = v0² + 2·a·s), para v0 = 0 se obtiene v = √(2·a·s)."
       },
       {
-        q: "Si lanzamos un vehículo rampa arriba con v0 positiva, su aceleración por gravedad será:",
-        options: ["En la misma dirección de v0", "En sentido contrario a v0 (frenado)", "Cero", "Perpendicular a la superficie"],
+        q: "Si lanzamos un vehículo hacia adelante con v0 positiva y la aceleración es negativa, el móvil va a:",
+        options: ["Acelerando más rápido", "Desacelerar (frenar)", "Mantener velocidad constante", "Perpendicular a la superficie"],
         correct: 1,
-        explanation: "La fuerza de gravedad siempre tira hacia la base de la rampa, actuando como desaceleración cuando el móvil sube."
+        explanation: "Una aceleración de signo contrario a la velocidad actúa como desaceleración."
       },
       {
         q: "El área delimitada bajo la recta de la gráfica v(t) respecto al eje del tiempo representa:",
@@ -661,10 +811,10 @@
         explanation: "El área bajo la curva del gráfico velocidad-tiempo es equivalente al desplazamiento realizado por el objeto."
       },
       {
-        q: "Si la rampa es de longitud adaptable, la extensión máxima depende directamente de:",
+        q: "La extensión máxima recorrida depende directamente de:",
         options: ["El color del vehículo", "El tiempo límite t_máx seleccionado y la aceleración", "El ancho del neumático", "La presión atmosférica"],
         correct: 1,
-        explanation: "A mayor tiempo t_máx o mayor aceleración, la distancia s_máx recorrida al final de la rampa crece."
+        explanation: "A mayor tiempo t_máx o mayor aceleración, la distancia s_máx recorrida crece."
       },
       {
         q: "¿Cuántos m/s equivalen a 1 km/s?",
@@ -724,24 +874,25 @@
       }
     }
 
-    function getAccel() {
-      const thetaRad = (thetaDeg * Math.PI) / 180;
-      return G * Math.sin(thetaRad);
+    function openChartModal() {
+      document.getElementById('chartModal').classList.add('active');
+      setTimeout(() => updateCharts(), 100);
     }
 
-    function getRampMaxS() {
-      const accel = getAccel();
-      const sCalculated = s0 + (v0 * tMax) + (0.5 * accel * Math.pow(tMax, 2));
+    function closeChartModal() {
+      document.getElementById('chartModal').classList.remove('active');
+    }
+
+    function getMaxS() {
+      const sCalculated = s0 + (v0 * tMax) + (0.5 * accelVal * Math.pow(tMax, 2));
       return Math.max(50, Math.ceil(sCalculated));
     }
 
     function getCalculations() {
-      const sMaxRamp = getRampMaxS();
-      const accel = getAccel();
-      
+      const sMaxRamp = getMaxS();
       const tClamped = Math.min(currentTime, tMax);
-      let curS = s0 + (v0 * tClamped) + (0.5 * accel * Math.pow(tClamped, 2));
-      let curV = v0 + (accel * tClamped);
+      let curS = s0 + (v0 * tClamped) + (0.5 * accelVal * Math.pow(tClamped, 2));
+      let curV = v0 + (accelVal * tClamped);
       let isAtEnd = false;
 
       if (curS >= sMaxRamp) {
@@ -749,7 +900,7 @@
         isAtEnd = true;
       }
 
-      return { tClamped, curS, curV, accel, sMaxRamp, isAtEnd };
+      return { tClamped, curS, curV, accel: accelVal, sMaxRamp, isAtEnd };
     }
 
     function drawSVG(calc) {
@@ -757,86 +908,89 @@
       const mobileGroup = document.getElementById("mobile-group");
       const vecV = document.getElementById("vec-v");
       const vecA = document.getElementById("vec-a");
-      const rampTriangle = document.getElementById("ramp-triangle");
-      const rampSurface = document.getElementById("ramp-surface");
-      const angleArc = document.getElementById("angle-arc");
-      const angleText = document.getElementById("angle-text");
-      const speedLines = document.getElementById("speed-lines");
+      const roadLinesGroup = document.getElementById("road-lines-group");
       const spokeFront = document.getElementById("spoke-front");
       const spokeBack = document.getElementById("spoke-back");
 
-      const x1 = 30, y1 = 40;
-      const xRampEnd = 570, yRampEnd = 240;
-
-      rampTriangle.setAttribute("points", `${x1},${y1} ${xRampEnd},${yRampEnd} ${x1},${yRampEnd}`);
-      rampSurface.setAttribute("x1", x1); rampSurface.setAttribute("y1", y1);
-      rampSurface.setAttribute("x2", xRampEnd); rampSurface.setAttribute("y2", yRampEnd);
-
-      const rampLengthPx = Math.hypot(xRampEnd - x1, yRampEnd - y1);
-      const angleRad = Math.atan2(yRampEnd - y1, xRampEnd - x1);
-      const angleDegVisual = (angleRad * 180) / Math.PI;
-
-      angleArc.setAttribute("d", `M ${xRampEnd - 40},${yRampEnd} A 40,40 0 0,0 ${xRampEnd - 40 * Math.cos(angleRad)},${yRampEnd - 40 * Math.sin(angleRad)}`);
-      angleText.setAttribute("x", xRampEnd - 55);
-      angleText.setAttribute("y", yRampEnd - 10);
-
-      const scaleS = rampLengthPx / calc.sMaxRamp;
+      const scaleX = 12;
+      const cameraCenterPx = 300;
 
       ticksGroup.innerHTML = "";
-      const step = Math.max(10, Math.floor(calc.sMaxRamp / 6));
-      for (let sMark = 0; sMark <= calc.sMaxRamp; sMark += step) {
-        const distPx = sMark * scaleS;
-        const tx = x1 + distPx * Math.cos(angleRad);
-        const ty = y1 + distPx * Math.sin(angleRad);
+      roadLinesGroup.innerHTML = "";
 
-        if (distPx <= rampLengthPx) {
-          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-          const nx = -Math.sin(angleRad) * 6;
-          const ny = Math.cos(angleRad) * 6;
-          line.setAttribute("x1", tx - nx); line.setAttribute("y1", ty - ny);
-          line.setAttribute("x2", tx + nx); line.setAttribute("y2", ty + ny);
-          line.setAttribute("stroke", "var(--border)");
-          line.setAttribute("stroke-width", "1.5");
+      const startMark = Math.floor((calc.curS - 40));
+      const endMark = Math.ceil((calc.curS + 60));
 
-          const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
-          text.setAttribute("x", tx - nx * 2.5);
-          text.setAttribute("y", ty - ny * 2.5);
-          text.setAttribute("fill", "var(--text-muted)");
-          text.setAttribute("font-size", "9");
-          text.setAttribute("font-family", "JetBrains Mono");
-          text.setAttribute("text-anchor", "middle");
-          text.textContent = `${sMark}m`;
+      for (let xMark = startMark; xMark <= endMark; xMark++) {
+        const screenPx = cameraCenterPx + (xMark - calc.curS) * scaleX;
 
-          ticksGroup.appendChild(line);
-          ticksGroup.appendChild(text);
+        if (screenPx >= -20 && screenPx <= 820) {
+          if (xMark % 3 === 0) {
+            const dash = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            dash.setAttribute("x1", screenPx); dash.setAttribute("y1", 245);
+            dash.setAttribute("x2", screenPx + 24); dash.setAttribute("y2", 245);
+            dash.setAttribute("stroke", "#FFF8F3");
+            dash.setAttribute("stroke-width", "3.5");
+            dash.setAttribute("stroke-dasharray", "12,6");
+            roadLinesGroup.appendChild(dash);
+          }
+
+          if (xMark % 5 === 0) {
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", screenPx); line.setAttribute("y1", 285);
+            line.setAttribute("x2", screenPx); line.setAttribute("y2", 295);
+            line.setAttribute("stroke", "var(--primary)");
+            line.setAttribute("stroke-width", "2");
+
+            const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            text.setAttribute("x", screenPx);
+            text.setAttribute("y", 312);
+            text.setAttribute("fill", "var(--text-muted)");
+            text.setAttribute("font-size", "10");
+            text.setAttribute("font-weight", "600");
+            text.setAttribute("font-family", "JetBrains Mono");
+            text.setAttribute("text-anchor", "middle");
+            text.textContent = `${xMark}m`;
+
+            ticksGroup.appendChild(line);
+            ticksGroup.appendChild(text);
+          }
         }
       }
 
-      const objDistPx = calc.curS * scaleS;
-      const objX = x1 + objDistPx * Math.cos(angleRad);
-      const objY = y1 + objDistPx * Math.sin(angleRad);
-
-      mobileGroup.setAttribute("transform", `translate(${objX}, ${objY}) rotate(${angleDegVisual})`);
+      const flipScale = calc.curV < 0 ? -1 : 1;
+      mobileGroup.setAttribute("transform", `translate(${cameraCenterPx}, 0) scale(${flipScale}, 1)`);
 
       wheelRotationAngle += calc.curV * 0.8;
-      spokeFront.setAttribute("transform", `rotate(${wheelRotationAngle}, 14, 0)`);
-      spokeBack.setAttribute("transform", `rotate(${wheelRotationAngle}, -14, 0)`);
+      spokeFront.setAttribute("transform", `rotate(${wheelRotationAngle}, 22, 268)`);
+      spokeBack.setAttribute("transform", `rotate(${wheelRotationAngle}, -20, 268)`);
 
-      const speedOpacity = Math.min(1, Math.max(0, (calc.curV - 2) / 15));
-      speedLines.setAttribute("opacity", speedOpacity.toFixed(2));
+      const vecVLen = calc.curV * 2.5;
+      vecV.setAttribute("x1", cameraCenterPx);
+      vecV.setAttribute("y1", 210);
+      vecV.setAttribute("x2", cameraCenterPx + vecVLen);
+      vecV.setAttribute("y2", 210);
 
-      const rotRad = (angleDegVisual * Math.PI) / 180;
-      const vecALen = calc.accel * 8;
-      vecA.setAttribute("x1", objX);
-      vecA.setAttribute("y1", objY - 18);
-      vecA.setAttribute("x2", objX + vecALen * Math.cos(rotRad));
-      vecA.setAttribute("y2", objY - 18 + vecALen * Math.sin(rotRad));
+      const vecALen = calc.accel * 12;
+      vecA.setAttribute("x1", cameraCenterPx);
+      vecA.setAttribute("y1", 195);
+      vecA.setAttribute("x2", cameraCenterPx + vecALen);
+      vecA.setAttribute("y2", 195);
+    }
 
-      const vecVLen = calc.curV * 2.2;
-      vecV.setAttribute("x1", objX);
-      vecV.setAttribute("y1", objY - 32);
-      vecV.setAttribute("x2", objX + vecVLen * Math.cos(rotRad));
-      vecV.setAttribute("y2", objY - 32 + vecVLen * Math.sin(rotRad));
+    function updateLiveChartPointers() {
+      const idx = Math.min(Math.floor((currentTime / tMax) * 40), 40);
+
+      [chartXInstance, chartVInstance, chartAInstance, chartXModalInstance, chartVModalInstance, chartAModalInstance].forEach(inst => {
+        if (!inst) return;
+        const radii = new Array(41).fill(0);
+        radii[idx] = 6;
+        inst.data.datasets[0].pointRadius = radii;
+        inst.data.datasets[0].pointBackgroundColor = '#3D2540';
+        inst.data.datasets[0].pointBorderColor = '#FFFFFF';
+        inst.data.datasets[0].pointBorderWidth = 2;
+        inst.update('none');
+      });
     }
 
     function updatePhysicsAnimation() {
@@ -846,6 +1000,7 @@
       const calc = getCalculations();
 
       if (calc.isAtEnd || currentTime >= tMax) {
+        currentTime = Math.min(currentTime, tMax);
         isRunning = false;
         if (animFrameId) cancelAnimationFrame(animFrameId);
       }
@@ -855,6 +1010,7 @@
       document.getElementById("res-v").textContent = `${calc.curV.toFixed(2)} m/s`;
 
       drawSVG(calc);
+      updateLiveChartPointers();
 
       if (isRunning) {
         animFrameId = requestAnimationFrame(updatePhysicsAnimation);
@@ -875,7 +1031,7 @@
             data: [],
             borderColor: color,
             backgroundColor: bgColor,
-            borderWidth: 2,
+            borderWidth: 2.5,
             fill: true,
             tension: 0.2,
             pointRadius: 0
@@ -884,6 +1040,7 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: false,
           scales: {
             y: {
               grid: { color: gridColor },
@@ -906,21 +1063,18 @@
       const dataX = [];
       const dataV = [];
       const dataA = [];
-      const steps = 30;
-      const accel = getAccel();
-      const sMaxRamp = getRampMaxS();
+      const steps = 40;
+      const sMaxRamp = getMaxS();
 
       for (let i = 0; i <= steps; i++) {
         const t = (tMax / steps) * i;
         labels.push(t.toFixed(1));
 
-        let posS = s0 + (v0 * t) + (0.5 * accel * t * t);
-        let velV = v0 + (accel * t);
-        let curA = accel;
+        let posS = s0 + (v0 * t) + (0.5 * accelVal * t * t);
+        let velV = v0 + (accelVal * t);
+        let curA = accelVal;
 
-        if (posS >= sMaxRamp) {
-          posS = sMaxRamp;
-        }
+        if (posS >= sMaxRamp) posS = sMaxRamp;
 
         dataX.push(posS.toFixed(2));
         dataV.push(velV.toFixed(2));
@@ -931,29 +1085,31 @@
       if (chartVInstance) chartVInstance.destroy();
       if (chartAInstance) chartAInstance.destroy();
 
-      const ctxX = document.getElementById('chartX').getContext('2d');
-      const ctxV = document.getElementById('chartV').getContext('2d');
-      const ctxA = document.getElementById('chartA').getContext('2d');
+      if (chartXModalInstance) chartXModalInstance.destroy();
+      if (chartVModalInstance) chartVModalInstance.destroy();
+      if (chartAModalInstance) chartAModalInstance.destroy();
 
       const isDark = document.documentElement.classList.contains('dark');
       const primaryColor = isDark ? '#B892D6' : '#9C77B8';
       const chocolateColor = isDark ? '#F3ECF8' : '#3D2540';
 
-      chartXInstance = new Chart(ctxX, createChartConfig('s(t) [m]', primaryColor, 'rgba(156, 119, 184, 0.12)'));
-      chartVInstance = new Chart(ctxV, createChartConfig('v(t) [m/s]', chocolateColor, 'rgba(61, 37, 64, 0.12)'));
-      chartAInstance = new Chart(ctxA, createChartConfig('a(t) [m/s²]', primaryColor, 'rgba(156, 119, 184, 0.12)', 0, 10));
+      chartXInstance = new Chart(document.getElementById('chartX').getContext('2d'), createChartConfig('s(t) [m]', primaryColor, 'rgba(156, 119, 184, 0.15)'));
+      chartVInstance = new Chart(document.getElementById('chartV').getContext('2d'), createChartConfig('v(t) [m/s]', chocolateColor, 'rgba(61, 37, 64, 0.15)'));
+      chartAInstance = new Chart(document.getElementById('chartA').getContext('2d'), createChartConfig('a(t) [m/s²]', primaryColor, 'rgba(156, 119, 184, 0.15)', -10, 10));
 
-      chartXInstance.data.labels = labels;
-      chartXInstance.data.datasets[0].data = dataX;
-      chartXInstance.update();
+      chartXModalInstance = new Chart(document.getElementById('chartXModal').getContext('2d'), createChartConfig('s(t) [m]', primaryColor, 'rgba(156, 119, 184, 0.15)'));
+      chartVModalInstance = new Chart(document.getElementById('chartVModal').getContext('2d'), createChartConfig('v(t) [m/s]', chocolateColor, 'rgba(61, 37, 64, 0.15)'));
+      chartAModalInstance = new Chart(document.getElementById('chartAModal').getContext('2d'), createChartConfig('a(t) [m/s²]', primaryColor, 'rgba(156, 119, 184, 0.15)', -10, 10));
 
-      chartVInstance.data.labels = labels;
-      chartVInstance.data.datasets[0].data = dataV;
-      chartVInstance.update();
+      [chartXInstance, chartVInstance, chartAInstance, chartXModalInstance, chartVModalInstance, chartAModalInstance].forEach((inst, idx) => {
+        inst.data.labels = labels;
+        if (idx % 3 === 0) inst.data.datasets[0].data = dataX;
+        else if (idx % 3 === 1) inst.data.datasets[0].data = dataV;
+        else inst.data.datasets[0].data = dataA;
+        inst.update();
+      });
 
-      chartAInstance.data.labels = labels;
-      chartAInstance.data.datasets[0].data = dataA;
-      chartAInstance.update();
+      updateLiveChartPointers();
     }
 
     function convertUnits() {
@@ -974,20 +1130,19 @@
     }
 
     function update() {
-      thetaDeg = parseFloat(document.getElementById("slider-theta").value);
+      accelVal = parseFloat(document.getElementById("slider-a").value);
       s0 = parseFloat(document.getElementById("slider-s0").value);
       v0 = parseFloat(document.getElementById("slider-v0").value);
       tMax = parseFloat(document.getElementById("slider-tmax").value);
 
-      document.getElementById("lbl-theta").textContent = `${thetaDeg}°`;
+      document.getElementById("lbl-a").textContent = `${accelVal} m/s²`;
       document.getElementById("lbl-s0").textContent = `${s0} m`;
       document.getElementById("lbl-v0").textContent = `${v0} m/s`;
       document.getElementById("lbl-tmax").textContent = `${tMax} s`;
 
-      const accel = getAccel();
-      const sMaxRamp = getRampMaxS();
+      const sMaxRamp = getMaxS();
 
-      document.getElementById("res-a").textContent = `${accel.toFixed(2)} m/s²`;
+      document.getElementById("res-a").textContent = `${accelVal.toFixed(2)} m/s²`;
       document.getElementById("res-smax").textContent = `${sMaxRamp.toFixed(2)} m`;
 
       const calc = getCalculations();
@@ -999,20 +1154,17 @@
     }
 
     function exportToCSV() {
-      let csv = "data:text/csv;charset=utf-8,Tiempo(s),Posicion_Rampa(m),Velocidad(m/s),Aceleracion_Paralela(m/s2)\n";
+      let csv = "data:text/csv;charset=utf-8,Tiempo(s),Posicion(m),Velocidad(m/s),Aceleracion(m/s2)\n";
       const steps = 50;
-      const accel = getAccel();
-      const sMaxRamp = getRampMaxS();
+      const sMaxRamp = getMaxS();
 
       for (let i = 0; i <= steps; i++) {
         const t = (tMax / steps) * i;
-        let s = s0 + (v0 * t) + (0.5 * accel * t * t);
-        let v = v0 + (accel * t);
-        let a = accel;
+        let s = s0 + (v0 * t) + (0.5 * accelVal * t * t);
+        let v = v0 + (accelVal * t);
+        let a = accelVal;
 
-        if (s >= sMaxRamp) {
-          s = sMaxRamp;
-        }
+        if (s >= sMaxRamp) s = sMaxRamp;
 
         csv += `${t.toFixed(2)},${s.toFixed(2)},${v.toFixed(2)},${a.toFixed(2)}\n`;
       }
@@ -1020,7 +1172,7 @@
       const encodedUri = encodeURI(csv);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "reporte_plano_inclinado.csv");
+      link.setAttribute("download", "reporte_mrua_tecnm.csv");
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -1110,7 +1262,7 @@
       update();
     });
 
-    ["slider-theta", "slider-s0", "slider-v0", "slider-tmax"].forEach(id => {
+    ["slider-a", "slider-s0", "slider-v0", "slider-tmax"].forEach(id => {
       document.getElementById(id).addEventListener("input", () => {
         currentTime = 0;
         wheelRotationAngle = 0;
