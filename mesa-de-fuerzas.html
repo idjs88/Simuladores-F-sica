@@ -52,6 +52,10 @@
       --chocolate: #3D2540;  
       --accent-soft: #E8DDF0; 
       --grid-color: rgba(61, 37, 64, 0.05);
+
+      --color-fx: #3D2540;
+      --color-fy: #825A9E;
+      --color-f: #9C77B8;
     }
 
     .dark {
@@ -66,6 +70,10 @@
       --chocolate: #F3ECF8;
       --accent-soft: #2A182E;
       --grid-color: rgba(184, 146, 214, 0.06);
+
+      --color-fx: #D1B3E8;
+      --color-fy: #9C77B8;
+      --color-f: #B892D6;
     }
 
     .bg-grid-pattern {
@@ -102,13 +110,14 @@
     .force-table-container {
       position: relative;
       width: 100%;
-      max-width: 380px;
+      max-width: 580px;
       margin: 0 auto;
       aspect-ratio: 1;
       border-radius: 50%;
       border: 6px solid var(--border);
       background: var(--bg);
       box-shadow: inset 0 0 25px rgba(156, 119, 184, 0.08);
+      touch-action: none;
     }
 
     #force-svg {
@@ -118,7 +127,7 @@
 
     .svg-label {
       fill: var(--text-muted);
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 700;
       font-family: 'JetBrains Mono', monospace;
     }
@@ -154,6 +163,15 @@
     }
     .tab-pane.active {
       display: block;
+    }
+
+    .vector-handle {
+      cursor: grab;
+      transition: r 0.15s ease;
+    }
+    .vector-handle:hover, .vector-handle:active {
+      cursor: grabbing;
+      r: 10;
     }
   </style>
 </head>
@@ -235,43 +253,33 @@
                     <i data-lucide="disc" class="w-4 h-4 text-[var(--primary)]"></i>
                     <h2 class="font-semibold text-[var(--chocolate)] text-sm">Mesa de Fuerzas</h2>
                   </div>
-                  
-                  <div class="flex items-center gap-2 font-mono">
-                    <button id="btn-play" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white text-xs font-medium hover:bg-[var(--primary-hover)] transition-colors">
-                      <i data-lucide="play" class="w-3.5 h-3.5"></i> Correr
-                    </button>
-                    <button id="btn-pause" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] text-xs font-medium hover:border-[var(--primary)] transition-colors">
-                      <i data-lucide="pause" class="w-3.5 h-3.5"></i> Pausar
-                    </button>
-                    <button id="btn-stop" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] text-xs font-medium hover:border-[var(--primary)] transition-colors">
-                      <i data-lucide="square" class="w-3.5 h-3.5"></i> Detener
-                    </button>
-                  </div>
+                  <span class="text-xs text-[var(--text-muted)] font-mono">Arrastra las flechas para ajustar cada fuerza F</span>
                 </div>
 
                 <!-- MESA SVG -->
                 <div class="force-table-container">
-                  <svg id="force-svg" viewBox="0 0 500 500">
+                  <svg id="force-svg" viewBox="0 0 600 600">
                     <defs>
                       <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary)"/>
                       </marker>
                     </defs>
                     <g opacity=".4">
-                      <circle cx="250" cy="250" r="180" fill="none" stroke="var(--primary)"></circle>
-                      <circle cx="250" cy="250" r="120" fill="none" stroke="var(--primary)"></circle>
-                      <line x1="250" y1="20" x2="250" y2="480" stroke="var(--border)"></line>
-                      <line x1="20" y1="250" x2="480" y2="250" stroke="var(--border)"></line>
+                      <circle cx="300" cy="300" r="240" fill="none" stroke="var(--primary)"></circle>
+                      <circle cx="300" cy="300" r="160" fill="none" stroke="var(--primary)"></circle>
+                      <circle cx="300" cy="300" r="80" fill="none" stroke="var(--primary)"></circle>
+                      <line x1="300" y1="20" x2="300" y2="580" stroke="var(--border)"></line>
+                      <line x1="20" y1="300" x2="580" y2="300" stroke="var(--border)"></line>
                     </g>
-                    <text class="svg-label" x="460" y="245">0°</text>
-                    <text class="svg-label" x="242" y="35">90°</text>
-                    <text class="svg-label" x="15" y="245">180°</text>
-                    <text class="svg-label" x="235" y="475">270°</text>
+                    <text class="svg-label" x="555" y="295">0°</text>
+                    <text class="svg-label" x="290" y="38">90°</text>
+                    <text class="svg-label" x="18" y="295">180°</text>
+                    <text class="svg-label" x="282" y="575">270°</text>
                     
                     <g id="force-lines"></g>
 
-                    <circle id="ring-center" cx="250" cy="250" r="10" fill="none" stroke="var(--primary)" stroke-width="4"></circle>
-                    <circle cx="250" cy="250" r="2" fill="var(--chocolate)"></circle>
+                    <circle id="ring-center" cx="300" cy="300" r="12" fill="none" stroke="var(--primary)" stroke-width="4"></circle>
+                    <circle cx="300" cy="300" r="3" fill="var(--chocolate)"></circle>
                   </svg>
                 </div>
 
@@ -557,12 +565,8 @@
       { id: 2, magnitude: 60, angle: 180 }
     ];
     let nextId = 3;
-
-    let isRunning = false;
-    let animFrameId = null;
-    let ringPos = { x: 250, y: 250 };
-    let ringVel = { x: 0, y: 0 };
     let chartInstance = null;
+    let activeDragForceIndex = null;
 
     const questionBank = [
       { 
@@ -628,7 +632,7 @@
       { q: "Si la resultante R de un sistema es 12 N, ¿cuál debe ser la magnitud de la equilibrante E?", options: ["6 N", "12 N", "24 N", "0 N"], correct: 1, explanation: "Respuesta correcta: La equilibrante requiere la misma magnitud numérica para contrarrestar exactamente a la resultante." },
       { q: "¿Cuál es el valor trigonométrico de cos(180°)?", options: ["1", "0", "-1", "0.5"], correct: 2, explanation: "Respuesta correcta: El coseno de 180° se ubica sobre el semieje X negativo, valiendo -1." },
       { q: "¿Cuál es el valor del seno de 90°?", options: ["0", "1", "-1", "0.5"], correct: 1, explanation: "Respuesta correcta: El seno de 90° se alinea verticalmente de forma positiva con valor 1." },
-      { q: "Si un sistema de fuerzas se halla en equilibrio estático, la aceleración lineal del cuerpo es:", options: ["Constante y positiva", "Nula (a = 0)", "Máxima", "Proporcional al tiempo"], correct: 1, explanation: "Respuesta correcta: Al no haber fuerza neta, la aceleración es estrictamente cero conforme a la dinámica de Newton." },
+      { q: "Si un sistema de fuerzas se halla en equilibrio estático, la aceleración lineal del cuerpo es:", options: ["Constante y positiva", "Nula (a = 0)", "Máxima", "Proporcional al tiempo"], correct: 1, explanation: "Respuesta correcta: Al no haber fuerza neta, la aceleración es strictly cero conforme a la dinámica de Newton." },
       { q: "¿Qué instrumento físico comprueba experimentalmente la primera condición de equilibrio analizada?", options: ["Dinamómetro de torsión", "Mesa de fuerzas circular", "Plano inclinado con fricción", "Péndulo balístico"], correct: 1, explanation: "Respuesta correcta: La mesa de fuerzas permite componer y equilibrar vectores mediante poleas y pesas concurrentes." },
       { q: "Si las componentes rectangulares suman ΣFₓ = -4 N y ΣFᵧ = -4 N, ¿en qué cuadrante se encuentra la resultante?", options: ["Primer Cuadrante", "Segundo Cuadrante", "Tercer Cuadrante", "Cuarto Cuadrante"], correct: 2, explanation: "Respuesta correcta: Ambas componentes negativas sitúan al vector en el tercer cuadrante (180° < θ < 270°)." },
       { q: "¿Qué unidad dimensional se emplea para cuantificar las fuerzas en el Sistema Internacional (SI)?", options: ["Joule", "Watt", "Newton", "Pascal"], correct: 2, explanation: "Respuesta correcta: El Newton (N) equivale a kg·m/s² como unidad de fuerza." },
@@ -657,6 +661,63 @@
       let angleE = (angleR + 180) % 360;
 
       return { rows, sumX, sumY, resultant, angleR, angleE };
+    }
+
+    function setupDragSupport() {
+      const svg = document.getElementById("force-svg");
+
+      const updateForceFromMouse = (e, forceIdx) => {
+        const rect = svg.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+
+        // Escena SVG es 600x600 con origen en (300, 300)
+        const svgX = (mouseX / rect.width) * 600;
+        const svgY = (mouseY / rect.height) * 600;
+
+        const dx = svgX - 300;
+        const dy = 300 - svgY; // Invertido para que Y crezca hacia arriba
+
+        const scale = 1.25; // Escala 1.25px por cada Newton (200N = 250px)
+        let mag = Math.round(Math.sqrt(dx * dx + dy * dy) / scale);
+        mag = Math.max(0, Math.min(200, mag));
+
+        let rad = Math.atan2(dy, dx);
+        let deg = Math.round((rad * 180) / Math.PI);
+        if (deg < 0) deg += 360;
+
+        forces[forceIdx].magnitude = mag;
+        forces[forceIdx].angle = deg;
+
+        renderCards();
+        update();
+      };
+
+      svg.addEventListener("pointerdown", (e) => {
+        const handle = e.target.closest(".vector-handle");
+        if (handle) {
+          activeDragForceIndex = parseInt(handle.getAttribute("data-index"));
+          svg.setPointerCapture(e.pointerId);
+          updateForceFromMouse(e, activeDragForceIndex);
+        }
+      });
+
+      svg.addEventListener("pointermove", (e) => {
+        if (activeDragForceIndex !== null && activeDragForceIndex < forces.length) {
+          updateForceFromMouse(e, activeDragForceIndex);
+        }
+      });
+
+      svg.addEventListener("pointerup", (e) => {
+        if (activeDragForceIndex !== null) {
+          activeDragForceIndex = null;
+          try { svg.releasePointerCapture(e.pointerId); } catch(err){}
+        }
+      });
+
+      svg.addEventListener("pointercancel", () => {
+        activeDragForceIndex = null;
+      });
     }
 
     function renderCards() {
@@ -722,87 +783,66 @@
     function drawSVG(calc) {
       const container = document.getElementById("force-lines");
       container.innerHTML = "";
-      const scale = 0.95;
+      const scale = 1.25;
 
       calc.rows.forEach((f, i) => {
         const rad = (f.angle * Math.PI) / 180;
-        const x2 = 250 + f.magnitude * scale * Math.cos(rad);
-        const y2 = 250 - f.magnitude * scale * Math.sin(rad);
+        const x2 = 300 + f.magnitude * scale * Math.cos(rad);
+        const y2 = 300 - f.magnitude * scale * Math.sin(rad);
         const color = palette[i % palette.length];
 
         const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        line.setAttribute("x1", 250);
-        line.setAttribute("y1", 250);
+        line.setAttribute("x1", 300);
+        line.setAttribute("y1", 300);
         line.setAttribute("x2", x2);
         line.setAttribute("y2", y2);
         line.setAttribute("stroke", color);
-        line.setAttribute("stroke-width", "3");
+        line.setAttribute("stroke-width", "3.5");
         line.setAttribute("stroke-linecap", "round");
+        line.setAttribute("marker-end", "url(#arrow)");
         container.appendChild(line);
 
-        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-        circle.setAttribute("cx", x2);
-        circle.setAttribute("cy", y2);
-        circle.setAttribute("r", "3.5");
-        circle.setAttribute("fill", color);
-        container.appendChild(circle);
+        const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        const offX = Math.cos(rad) * 16;
+        const offY = -Math.sin(rad) * 16;
+        txt.setAttribute("x", x2 + offX);
+        txt.setAttribute("y", y2 + offY);
+        txt.setAttribute("fill", color);
+        txt.setAttribute("font-size", "11px");
+        txt.setAttribute("font-weight", "800");
+        txt.setAttribute("font-family", "JetBrains Mono");
+        txt.setAttribute("text-anchor", "middle");
+        txt.textContent = `F${i+1} (${f.magnitude}N)`;
+        container.appendChild(txt);
+
+        // Tirador de arrastre interactivo en el extremo del vector
+        const handle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        handle.setAttribute("cx", x2);
+        handle.setAttribute("cy", y2);
+        handle.setAttribute("r", "7");
+        handle.setAttribute("fill", color);
+        handle.setAttribute("stroke", "#FFFFFF");
+        handle.setAttribute("stroke-width", "2");
+        handle.setAttribute("class", "vector-handle");
+        handle.setAttribute("data-index", i);
+        container.appendChild(handle);
       });
 
       if (calc.resultant > 0.1) {
         const radR = (calc.angleR * Math.PI) / 180;
-        const rx = 250 + calc.resultant * scale * Math.cos(radR);
-        const ry = 250 - calc.resultant * scale * Math.sin(radR);
+        const rx = 300 + calc.resultant * scale * Math.cos(radR);
+        const ry = 300 - calc.resultant * scale * Math.sin(radR);
 
         const rLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-        rLine.setAttribute("x1", 250);
-        rLine.setAttribute("y1", 250);
+        rLine.setAttribute("x1", 300);
+        rLine.setAttribute("y1", 300);
         rLine.setAttribute("x2", rx);
         rLine.setAttribute("y2", ry);
         rLine.setAttribute("stroke", "var(--chocolate)");
         rLine.setAttribute("stroke-width", "2");
-        rLine.setAttribute("stroke-dasharray", "3 3");
+        rLine.setAttribute("stroke-dasharray", "4 4");
         container.appendChild(rLine);
       }
-    }
-
-    function updatePhysicsAnimation() {
-      if (!isRunning) return;
-
-      const calc = getCalculations();
-      
-      if (calc.resultant > 0.5) {
-        const rad = (calc.angleR * Math.PI) / 180;
-        const ax = Math.cos(rad) * (calc.resultant * 0.002);
-        const ay = -Math.sin(rad) * (calc.resultant * 0.002);
-
-        ringVel.x += ax;
-        ringVel.y += ay;
-
-        ringPos.x += ringVel.x;
-        ringPos.y += ringVel.y;
-
-        ringVel.x *= 0.95;
-        ringVel.y *= 0.95;
-
-        const dx = ringPos.x - 250;
-        const dy = ringPos.y - 250;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist > 140) {
-          ringPos.x = 250 + (dx / dist) * 140;
-          ringPos.y = 250 + (dy / dist) * 140;
-          ringVel.x = 0;
-          ringVel.y = 0;
-        }
-      } else {
-        ringPos.x += (250 - ringPos.x) * 0.1;
-        ringPos.y += (250 - ringPos.y) * 0.1;
-      }
-
-      const ring = document.getElementById("ring-center");
-      ring.setAttribute("cx", ringPos.x);
-      ring.setAttribute("cy", ringPos.y);
-
-      animFrameId = requestAnimationFrame(updatePhysicsAnimation);
     }
 
     function updateChart(calc) {
@@ -858,7 +898,6 @@
       document.getElementById("resultant-angle").textContent = `${calc.angleR.toFixed(1)}°`;
       document.getElementById("equilibrant-val").textContent = `${calc.resultant.toFixed(2)} N @ ${calc.angleE.toFixed(1)}°`;
 
-      const statusCard = document.getElementById("status-card");
       const statusOrb = document.getElementById("status-orb");
       if (calc.resultant <= 0.1) {
         statusOrb.className = "w-3 h-3 rounded-full bg-emerald-500 shadow-sm shrink-0";
@@ -993,28 +1032,6 @@
       scoreEl.textContent = `Calificación: ${score}/${currentQuizQuestions.length} (${percentage}%)`;
     }
 
-    document.getElementById("btn-play").addEventListener("click", () => {
-      if (!isRunning) {
-        isRunning = true;
-        updatePhysicsAnimation();
-      }
-    });
-
-    document.getElementById("btn-pause").addEventListener("click", () => {
-      isRunning = false;
-      if (animFrameId) cancelAnimationFrame(animFrameId);
-    });
-
-    document.getElementById("btn-stop").addEventListener("click", () => {
-      isRunning = false;
-      if (animFrameId) cancelAnimationFrame(animFrameId);
-      ringPos = { x: 250, y: 250 };
-      ringVel = { x: 0, y: 0 };
-      const ring = document.getElementById("ring-center");
-      ring.setAttribute("cx", 250);
-      ring.setAttribute("cy", 250);
-    });
-
     document.getElementById("add-force").addEventListener("click", () => {
       forces.push({ id: nextId++, magnitude: 60, angle: 120 });
       renderCards();
@@ -1033,6 +1050,7 @@
     window.addEventListener("DOMContentLoaded", () => {
       loadSavedTheme();
       renderCards();
+      setupDragSupport();
       update();
       generateQuiz();
       if (window.lucide) lucide.createIcons();
