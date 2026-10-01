@@ -52,6 +52,13 @@
       --chocolate: #3D2540;  
       --accent-soft: #E8DDF0; 
       --grid-color: rgba(61, 37, 64, 0.05);
+
+      --sky-top: #FFE5EC;
+      --sky-mid: #F3ECF8;
+      --sky-bottom: #E8DDF0;
+      --hill-back: #CBB2D9;
+      --hill-front: #A385BD;
+      --road-asphalt: #2A182E;
     }
 
     .dark {
@@ -66,6 +73,13 @@
       --chocolate: #F3ECF8;
       --accent-soft: #2A182E;
       --grid-color: rgba(184, 146, 214, 0.06);
+
+      --sky-top: #221528;
+      --sky-mid: #1A1020;
+      --sky-bottom: #2D1A38;
+      --hill-back: #3D2540;
+      --hill-front: #533357;
+      --road-asphalt: #0D080F;
     }
 
     .bg-grid-pattern {
@@ -102,11 +116,11 @@
     .cartesian-plane {
       position: relative;
       width: 100%;
-      height: 220px;
-      border-radius: 12px;
+      height: 320px;
+      border-radius: 16px;
       border: 1px solid var(--border);
       background: var(--bg);
-      box-shadow: inset 0 0 25px rgba(156, 119, 184, 0.05);
+      box-shadow: inset 0 0 25px rgba(156, 119, 184, 0.08);
       overflow: hidden;
     }
 
@@ -141,6 +155,22 @@
     }
     .tab-pane.active {
       display: block;
+    }
+
+    /* Estilos del Modal para expandir gráficas */
+    .chart-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background-color: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .chart-modal.active {
+      display: flex;
     }
   </style>
 </head>
@@ -236,51 +266,146 @@
                   </div>
                 </div>
 
-                <!-- CANVAS SVG -->
+                <!-- CANVAS SVG AMPLIO CON ESCENARIO MULTICOLOR -->
                 <div class="cartesian-plane">
-                  <svg id="cartesian-svg" viewBox="0 0 600 220" class="w-full h-full">
+                  <svg id="cartesian-svg" viewBox="0 0 800 320" class="w-full h-full preserve-3d">
                     <defs>
-                      <marker id="arrow-v" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                      <marker id="arrow-v" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--chocolate)"/>
                       </marker>
+
+                      <!-- Gradiente Atardecer / Paisaje Multicolor -->
+                      <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="var(--sky-top)"/>
+                        <stop offset="50%" stop-color="var(--sky-mid)"/>
+                        <stop offset="100%" stop-color="var(--sky-bottom)"/>
+                      </linearGradient>
+
+                      <!-- Gradiente Sol de Atardecer -->
+                      <radialGradient id="sunGradient" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stop-color="#FFD166"/>
+                        <stop offset="60%" stop-color="#F78C6B" stop-opacity="0.8"/>
+                        <stop offset="100%" stop-color="#E85D04" stop-opacity="0"/>
+                      </radialGradient>
+
+                      <!-- Gradiente Carrocería Morada Premium -->
+                      <linearGradient id="carBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#B892D6"/>
+                        <stop offset="50%" stop-color="#9C77B8"/>
+                        <stop offset="100%" stop-color="#5A3860"/>
+                      </linearGradient>
+
+                      <!-- Gradiente Ventanas reflejantes -->
+                      <linearGradient id="carGlassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#F3ECF8" stop-opacity="0.9"/>
+                        <stop offset="100%" stop-color="#CBB2D9" stop-opacity="0.6"/>
+                      </linearGradient>
+
+                      <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                      </filter>
                     </defs>
 
-                    <!-- Pista y Asfalto -->
-                    <rect x="0" y="100" width="600" height="70" fill="var(--chocolate)" opacity="0.1"/>
-                    <line x1="0" y1="100" x2="600" y2="100" stroke="var(--border)" stroke-width="2"/>
-                    <line x1="0" y1="170" x2="600" y2="170" stroke="var(--border)" stroke-width="2"/>
+                    <!-- CADA DE FONDO 1: CIELO MULTICOLOR -->
+                    <rect x="0" y="0" width="800" height="200" fill="url(#skyGradient)"/>
 
-                    <!-- Líneas dinámicas -->
+                    <!-- Sol/Astro al fondo -->
+                    <circle cx="680" cy="80" r="45" fill="url(#sunGradient)"/>
+                    <circle cx="680" cy="80" r="22" fill="#FFE5EC" opacity="0.9"/>
+
+                    <!-- Nubes estéticas de fondo -->
+                    <g opacity="0.6">
+                      <path d="M 50,70 Q 65,50 85,60 Q 105,45 130,60 Q 145,60 150,75 Z" fill="#FFFFFF"/>
+                      <path d="M 320,50 Q 335,35 355,45 Q 375,30 395,45 Q 410,45 420,60 Z" fill="#FFFFFF"/>
+                      <path d="M 580,80 Q 595,65 615,75 Q 630,65 650,80 Z" fill="#FFFFFF"/>
+                    </g>
+
+                    <!-- CAPA DE FONDO 2: MONTAÑAS/COLINAS MULTICOLORES -->
+                    <!-- Colinas lejanas -->
+                    <path d="M 0,180 Q 120,110 260,165 T 520,150 T 800,175 L 800,200 L 0,200 Z" fill="var(--hill-back)" opacity="0.7"/>
+                    <!-- Colinas cercanas -->
+                    <path d="M 0,190 Q 180,140 380,185 T 720,160 T 800,180 L 800,200 L 0,200 Z" fill="var(--hill-front)"/>
+
+                    <!-- Árboles y Vegetación lejana -->
+                    <g opacity="0.7">
+                      <path d="M 90,175 L 96,160 L 102,175 Z" fill="#3D2540"/>
+                      <path d="M 230,170 L 237,152 L 244,170 Z" fill="#3D2540"/>
+                      <path d="M 450,178 L 456,162 L 462,178 Z" fill="#3D2540"/>
+                      <path d="M 610,168 L 618,148 L 626,168 Z" fill="#3D2540"/>
+                    </g>
+
+                    <!-- PISTA Y ASFALTO MÁS AMPLIO -->
+                    <rect x="0" y="200" width="800" height="90" fill="var(--road-asphalt)"/>
+                    <!-- Borde superior de acera -->
+                    <rect x="0" y="196" width="800" height="4" fill="#E8DDF0"/>
+                    <!-- Borde inferior de carretera -->
+                    <line x1="0" y1="290" x2="800" y2="290" stroke="var(--border)" stroke-width="2"/>
+
+                    <!-- Líneas dinámicas de la carretera -->
                     <g id="road-lines-group"></g>
+                    
+                    <!-- Eje graduado de la regla -->
                     <g id="grid-axis">
-                      <line x1="0" y1="170" x2="600" y2="170" stroke="var(--primary)" stroke-width="2"/>
+                      <line x1="0" y1="290" x2="800" y2="290" stroke="var(--primary)" stroke-width="2"/>
                     </g>
                     <g id="ticks-group"></g>
 
-                    <!-- Vehículo / Carrito -->
+                    <!-- VEHÍCULO / CARRITO MORADITO Y ESTILIZADO -->
                     <g id="mobile-group">
-                      <ellipse id="car-shadow" cx="0" cy="155" rx="28" ry="4" fill="rgba(61, 37, 64, 0.2)"/>
-                      <path id="car-body" d="M -24,140 Q -26,126 -12,124 L 4,124 Q 14,124 20,134 L 26,134 Q 28,134 28,140 L 28,148 Q 28,151 24,151 L -20,151 Q -24,151 -24,140 Z" fill="var(--primary)" stroke="var(--chocolate)" stroke-width="1.5"/>
-                      <path id="car-window" d="M -10,127 L 2,127 Q 10,127 14,134 L -10,134 Z" fill="var(--surface-subtle)" stroke="var(--chocolate)" stroke-width="1"/>
-                      <circle id="car-headlight" cx="26" cy="140" r="2.5" fill="var(--bg)" stroke="var(--chocolate)" stroke-width="0.8"/>
-                      <rect id="car-taillight" x="-24" y="137" width="2" height="5" rx="1" fill="var(--chocolate)"/>
+                      <!-- Sombra proyectada del auto -->
+                      <ellipse id="car-shadow" cx="0" cy="272" rx="42" ry="6" fill="rgba(20, 14, 23, 0.45)"/>
+                      
+                      <!-- Carrocería Principal estilizada -->
+                      <path id="car-body" d="M -36,252 C -38,232 -22,224 -8,222 L 10,222 C 24,222 34,232 40,242 L 44,244 C 47,246 48,252 46,260 L 44,264 C 44,267 40,268 36,268 L -32,268 C -36,268 -38,264 -38,258 Z" fill="url(#carBodyGrad)" stroke="#3D2540" stroke-width="2"/>
+                      
+                      <!-- Detalle de corte aerodinámico superior -->
+                      <path d="M -10,223 Q 12,223 28,236 L 38,244 L -28,244 Z" fill="rgba(255, 255, 255, 0.15)"/>
 
+                      <!-- Ventana cristalina estilizada -->
+                      <path id="car-window" d="M -16,226 L 6,226 C 18,226 26,233 30,241 L -16,241 Z" fill="url(#carGlassGrad)" stroke="#3D2540" stroke-width="1.2"/>
+                      <line x1="-2" y1="226" x2="-6" y2="241" stroke="#3D2540" stroke-width="1" opacity="0.6"/>
+
+                      <!-- Faro Frontal Brillante con Destello -->
+                      <path d="M 41,248 L 47,250 L 41,254 Z" fill="#FFE5EC" filter="url(#glow)"/>
+                      <circle id="car-headlight" cx="42" cy="251" r="3.5" fill="#FFF8F3" stroke="#3D2540" stroke-width="1"/>
+
+                      <!-- Luz Trasera Rubí con resplandor -->
+                      <rect id="car-taillight" x="-37" y="247" width="3" height="9" rx="1.5" fill="#E63946" stroke="#3D2540" stroke-width="0.8"/>
+
+                      <!-- Manija de la puerta -->
+                      <rect x="-4" y="246" width="6" height="2" rx="1" fill="#3D2540"/>
+
+                      <!-- RUEDA DELANTERA ESTILIZADA -->
                       <g id="wheel-front">
-                        <circle cx="14" cy="151" r="6" fill="var(--chocolate)"/>
-                        <line id="spoke-front" x1="14" y1="145" x2="14" y2="157" stroke="var(--bg)" stroke-width="1.5"/>
+                        <circle cx="22" cy="268" r="9.5" fill="#140E17" stroke="#3D2540" stroke-width="1.5"/>
+                        <circle cx="22" cy="268" r="5.5" fill="#E8DDF0"/>
+                        <circle cx="22" cy="268" r="2.5" fill="#3D2540"/>
+                        <g id="spoke-front">
+                          <line x1="22" y1="259" x2="22" y2="277" stroke="#3D2540" stroke-width="1.2"/>
+                          <line x1="13" y1="268" x2="31" y2="268" stroke="#3D2540" stroke-width="1.2"/>
+                        </g>
                       </g>
+
+                      <!-- RUEDA TRASERA ESTILIZADA -->
                       <g id="wheel-back">
-                        <circle cx="-14" cy="151" r="6" fill="var(--chocolate)"/>
-                        <line id="spoke-back" x1="-14" y1="145" x2="-14" y2="157" stroke="var(--bg)" stroke-width="1.5"/>
+                        <circle cx="-20" cy="268" r="9.5" fill="#140E17" stroke="#3D2540" stroke-width="1.5"/>
+                        <circle cx="-20" cy="268" r="5.5" fill="#E8DDF0"/>
+                        <circle cx="-20" cy="268" r="2.5" fill="#3D2540"/>
+                        <g id="spoke-back">
+                          <line x1="-20" y1="259" x2="-20" y2="277" stroke="#3D2540" stroke-width="1.2"/>
+                          <line x1="-29" y1="268" x2="-11" y2="268" stroke="#3D2540" stroke-width="1.2"/>
+                        </g>
                       </g>
                     </g>
 
                     <!-- Vector Velocidad -->
-                    <line id="vec-v" x1="0" y1="0" x2="0" y2="0" stroke="var(--chocolate)" stroke-width="3" marker-end="url(#arrow-v)"/>
+                    <line id="vec-v" x1="0" y1="0" x2="0" y2="0" stroke="var(--chocolate)" stroke-width="3.5" marker-end="url(#arrow-v)"/>
 
                     <!-- Eje de Enfoque Fijo -->
-                    <line x1="200" y1="20" x2="200" y2="90" stroke="var(--primary)" stroke-width="1" stroke-dasharray="3,3"/>
-                    <text x="200" y="15" fill="var(--primary)" font-size="10" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">Cámara en Movimiento [x(t)]</text>
+                    <line x1="300" y1="20" x2="300" y2="185" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="4,4"/>
+                    <rect x="210" y="10" width="180" height="22" rx="6" fill="var(--surface)" stroke="var(--border)" opacity="0.9"/>
+                    <text x="300" y="25" fill="var(--primary)" font-size="10" font-weight="700" text-anchor="middle" font-family="JetBrains Mono">x(t)</text>
                   </svg>
                 </div>
 
@@ -298,36 +423,41 @@
 
               </div>
 
-              <!-- CONTENEDOR DE GRÁFICAS -->
+              <!-- CONTENEDOR DE GRÁFICAS CINEMÁTICAS (INICIALIZADAS AL MISMO TIEMPO Y EXPANDIBLES) -->
               <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-4 shadow-sm">
                 <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
                   <div class="flex items-center gap-2">
                     <i data-lucide="line-chart" class="w-4 h-4 text-[var(--primary)]"></i>
                     <h2 class="font-semibold text-[var(--chocolate)] text-sm">Gráficas Cinemáticas en Tiempo Real</h2>
                   </div>
-                  <button id="btn-export-csv" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white font-mono text-xs font-semibold hover:bg-[var(--primary-hover)] transition-colors">
-                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar CSV
-                  </button>
+                  <div class="flex items-center gap-2">
+                    <button onclick="openChartModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] transition-colors" title="Ampliar gráficas">
+                      <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> Ampliar
+                    </button>
+                    <button id="btn-export-csv" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white font-mono text-xs font-semibold hover:bg-[var(--primary-hover)] transition-colors">
+                      <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar CSV
+                    </button>
+                  </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="charts-inline-container">
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
                     <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Posición vs Tiempo x(t)</h3>
-                    <div class="h-36 relative">
+                    <div class="h-40 relative">
                       <canvas id="chartX"></canvas>
                     </div>
                   </div>
 
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
                     <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Velocidad vs Tiempo v(t)</h3>
-                    <div class="h-36 relative">
+                    <div class="h-40 relative">
                       <canvas id="chartV"></canvas>
                     </div>
                   </div>
 
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
                     <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Aceleración vs Tiempo a(t)</h3>
-                    <div class="h-36 relative">
+                    <div class="h-40 relative">
                       <canvas id="chartA"></canvas>
                     </div>
                   </div>
@@ -496,6 +626,44 @@
 
   </div>
 
+  <!-- MODAL DE PANTALLA COMPLETA PARA AMPLIAR GRÁFICAS -->
+  <div id="chartModal" class="chart-modal">
+    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 w-full max-w-5xl space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+        <div class="flex items-center gap-2">
+          <i data-lucide="line-chart" class="w-5 h-5 text-[var(--primary)]"></i>
+          <h2 class="font-semibold text-[var(--chocolate)] text-base">Gráficas Cinemáticas Ampliadas (Tiempo Real)</h2>
+        </div>
+        <button onclick="closeChartModal()" class="p-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] hover:border-[var(--primary)] transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3" id="modal-charts-container">
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+          <h3 class="font-mono text-xs font-bold text-[var(--chocolate)] text-center">Posición vs Tiempo x(t)</h3>
+          <div class="h-64 relative">
+            <canvas id="chartXModal"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+          <h3 class="font-mono text-xs font-bold text-[var(--chocolate)] text-center">Velocidad vs Tiempo v(t)</h3>
+          <div class="h-64 relative">
+            <canvas id="chartVModal"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+          <h3 class="font-mono text-xs font-bold text-[var(--chocolate)] text-center">Aceleración vs Tiempo a(t)</h3>
+          <div class="h-64 relative">
+            <canvas id="chartAModal"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- JAVASCRIPT CON LÓGICA Y SIMULACIÓN -->
   <script>
     // 1. MODO OSCURO / CLARO
@@ -547,6 +715,16 @@
       }
     }
 
+    // Modal de Gráficas
+    function openChartModal() {
+      document.getElementById('chartModal').classList.add('active');
+      setTimeout(() => updateCharts(), 100);
+    }
+
+    function closeChartModal() {
+      document.getElementById('chartModal').classList.remove('active');
+    }
+
     // 4. LÓGICA DE FÍSICA Y SIMULADOR
     let x0 = 0;
     let v = 15;
@@ -560,6 +738,10 @@
     let chartXInstance = null;
     let chartVInstance = null;
     let chartAInstance = null;
+
+    let chartXModalInstance = null;
+    let chartVModalInstance = null;
+    let chartAModalInstance = null;
 
     const questionBank = [
       {
@@ -701,39 +883,39 @@
       const spokeFront = document.getElementById("spoke-front");
       const spokeBack = document.getElementById("spoke-back");
 
-      const scaleX = 10;
-      const cameraCenterPx = 200;
+      const scaleX = 12;
+      const cameraCenterPx = 300;
 
       ticksGroup.innerHTML = "";
       roadLinesGroup.innerHTML = "";
 
-      const startMark = Math.floor((calc.curX - 30));
-      const endMark = Math.ceil((calc.curX + 50));
+      const startMark = Math.floor((calc.curX - 40));
+      const endMark = Math.ceil((calc.curX + 60));
 
       for (let xMark = startMark; xMark <= endMark; xMark++) {
         const screenPx = cameraCenterPx + (xMark - calc.curX) * scaleX;
 
-        if (screenPx >= -20 && screenPx <= 620) {
-          if (xMark % 4 === 0) {
+        if (screenPx >= -20 && screenPx <= 820) {
+          if (xMark % 3 === 0) {
             const dash = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            dash.setAttribute("x1", screenPx); dash.setAttribute("y1", 135);
-            dash.setAttribute("x2", screenPx + 20); dash.setAttribute("y2", 135);
-            dash.setAttribute("stroke", "var(--bg)");
-            dash.setAttribute("stroke-width", "3");
-            dash.setAttribute("stroke-dasharray", "10,5");
+            dash.setAttribute("x1", screenPx); dash.setAttribute("y1", 245);
+            dash.setAttribute("x2", screenPx + 24); dash.setAttribute("y2", 245);
+            dash.setAttribute("stroke", "#FFF8F3");
+            dash.setAttribute("stroke-width", "3.5");
+            dash.setAttribute("stroke-dasharray", "12,6");
             roadLinesGroup.appendChild(dash);
           }
 
           if (xMark % 5 === 0) {
             const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            line.setAttribute("x1", screenPx); line.setAttribute("y1", 165);
-            line.setAttribute("x2", screenPx); line.setAttribute("y2", 175);
+            line.setAttribute("x1", screenPx); line.setAttribute("y1", 285);
+            line.setAttribute("x2", screenPx); line.setAttribute("y2", 295);
             line.setAttribute("stroke", "var(--primary)");
             line.setAttribute("stroke-width", "2");
 
             const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
             text.setAttribute("x", screenPx);
-            text.setAttribute("y", 192);
+            text.setAttribute("y", 312);
             text.setAttribute("fill", "var(--text-muted)");
             text.setAttribute("font-size", "10");
             text.setAttribute("font-weight", "600");
@@ -751,14 +933,29 @@
       mobileGroup.setAttribute("transform", `translate(${cameraCenterPx}, 0) scale(${flipScale}, 1)`);
 
       wheelAngle += v * 0.8;
-      spokeFront.setAttribute("transform", `rotate(${wheelAngle}, 14, 151)`);
-      spokeBack.setAttribute("transform", `rotate(${wheelAngle}, -14, 151)`);
+      spokeFront.setAttribute("transform", `rotate(${wheelAngle}, 22, 268)`);
+      spokeBack.setAttribute("transform", `rotate(${wheelAngle}, -20, 268)`);
 
-      const vecLength = v * 2;
+      const vecLength = v * 2.5;
       vecV.setAttribute("x1", cameraCenterPx);
-      vecV.setAttribute("y1", 110);
+      vecV.setAttribute("y1", 210);
       vecV.setAttribute("x2", cameraCenterPx + vecLength);
-      vecV.setAttribute("y2", 110);
+      vecV.setAttribute("y2", 210);
+    }
+
+    function updateLiveChartPointers() {
+      const idx = Math.min(Math.floor((currentTime / tMax) * 40), 40);
+
+      [chartXInstance, chartVInstance, chartAInstance, chartXModalInstance, chartVModalInstance, chartAModalInstance].forEach(inst => {
+        if (!inst) return;
+        const radii = new Array(41).fill(0);
+        radii[idx] = 6;
+        inst.data.datasets[0].pointRadius = radii;
+        inst.data.datasets[0].pointBackgroundColor = '#3D2540';
+        inst.data.datasets[0].pointBorderColor = '#FFFFFF';
+        inst.data.datasets[0].pointBorderWidth = 2;
+        inst.update('none');
+      });
     }
 
     function updatePhysicsAnimation() {
@@ -777,6 +974,7 @@
       document.getElementById("res-dx").textContent = `${calc.deltaX.toFixed(2)} m`;
 
       drawSVG(calc);
+      updateLiveChartPointers();
 
       if (isRunning) {
         animFrameId = requestAnimationFrame(updatePhysicsAnimation);
@@ -797,15 +995,16 @@
             data: [],
             borderColor: color,
             backgroundColor: bgColor,
-            borderWidth: 2,
+            borderWidth: 2.5,
             fill: true,
-            tension: 0.1,
+            tension: 0,
             pointRadius: 0
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: false,
           scales: {
             y: {
               grid: { color: gridColor },
@@ -828,7 +1027,7 @@
       const dataX = [];
       const dataV = [];
       const dataA = [];
-      const steps = 30;
+      const steps = 40;
 
       for (let i = 0; i <= steps; i++) {
         const t = (tMax / steps) * i;
@@ -842,29 +1041,33 @@
       if (chartVInstance) chartVInstance.destroy();
       if (chartAInstance) chartAInstance.destroy();
 
-      const ctxX = document.getElementById('chartX').getContext('2d');
-      const ctxV = document.getElementById('chartV').getContext('2d');
-      const ctxA = document.getElementById('chartA').getContext('2d');
+      if (chartXModalInstance) chartXModalInstance.destroy();
+      if (chartVModalInstance) chartVModalInstance.destroy();
+      if (chartAModalInstance) chartAModalInstance.destroy();
 
       const isDark = document.documentElement.classList.contains('dark');
       const primaryColor = isDark ? '#B892D6' : '#9C77B8';
       const chocolateColor = isDark ? '#F3ECF8' : '#3D2540';
 
-      chartXInstance = new Chart(ctxX, createChartConfig('x(t) [m]', primaryColor, 'rgba(156, 119, 184, 0.12)'));
-      chartVInstance = new Chart(ctxV, createChartConfig('v(t) [m/s]', chocolateColor, 'rgba(61, 37, 64, 0.12)', -60, 60));
-      chartAInstance = new Chart(ctxA, createChartConfig('a(t) [m/s²]', '#7E6B88', 'rgba(126, 107, 136, 0.12)', -5, 5));
+      // Instancias estándar
+      chartXInstance = new Chart(document.getElementById('chartX').getContext('2d'), createChartConfig('x(t) [m]', primaryColor, 'rgba(156, 119, 184, 0.15)'));
+      chartVInstance = new Chart(document.getElementById('chartV').getContext('2d'), createChartConfig('v(t) [m/s]', chocolateColor, 'rgba(61, 37, 64, 0.15)', -60, 60));
+      chartAInstance = new Chart(document.getElementById('chartA').getContext('2d'), createChartConfig('a(t) [m/s²]', '#7E6B88', 'rgba(126, 107, 136, 0.15)', -5, 5));
 
-      chartXInstance.data.labels = labels;
-      chartXInstance.data.datasets[0].data = dataX;
-      chartXInstance.update();
+      // Instancias modal ampliadas
+      chartXModalInstance = new Chart(document.getElementById('chartXModal').getContext('2d'), createChartConfig('x(t) [m]', primaryColor, 'rgba(156, 119, 184, 0.15)'));
+      chartVModalInstance = new Chart(document.getElementById('chartVModal').getContext('2d'), createChartConfig('v(t) [m/s]', chocolateColor, 'rgba(61, 37, 64, 0.15)', -60, 60));
+      chartAModalInstance = new Chart(document.getElementById('chartAModal').getContext('2d'), createChartConfig('a(t) [m/s²]', '#7E6B88', 'rgba(126, 107, 136, 0.15)', -5, 5));
 
-      chartVInstance.data.labels = labels;
-      chartVInstance.data.datasets[0].data = dataV;
-      chartVInstance.update();
+      [chartXInstance, chartVInstance, chartAInstance, chartXModalInstance, chartVModalInstance, chartAModalInstance].forEach((inst, idx) => {
+        inst.data.labels = labels;
+        if (idx % 3 === 0) inst.data.datasets[0].data = dataX;
+        else if (idx % 3 === 1) inst.data.datasets[0].data = dataV;
+        else inst.data.datasets[0].data = dataA;
+        inst.update();
+      });
 
-      chartAInstance.data.labels = labels;
-      chartAInstance.data.datasets[0].data = dataA;
-      chartAInstance.update();
+      updateLiveChartPointers();
     }
 
     function update() {
