@@ -9,6 +9,11 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+  <!-- KaTeX para renderizado matemático elegante en la teoría -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -146,47 +151,34 @@
 </head>
 <body class="h-full bg-grid-pattern font-sans text-sm selection:bg-[var(--surface-subtle)] selection:text-[var(--primary)]">
 
-  <div class="min-h-screen flex flex-col md:flex-row">
+<div class="min-h-screen flex flex-col w-full bg-grid-pattern">
 
-    <!-- SIDEBAR LATERAL -->
-    <aside class="w-full md:w-80 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col justify-between p-5 shrink-0 z-20 transition-colors duration-300">
-      <div class="space-y-6">
-        <div class="flex items-center justify-between pb-4 border-b border-[var(--border)]">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center font-mono font-bold text-base shadow-sm">
-              ❀
-            </div>
-            <div>
-              <h1 class="font-semibold text-[var(--chocolate)] tracking-tight text-base leading-snug">Laboratorio Virtual</h1>
-              <p class="text-xs text-[var(--text-muted)] font-mono">Física General</p>
-            </div>
-          </div>
+<!-- BARRA SUPERIOR COMPACTA -->
+  <header class="w-full bg-[var(--surface)] border-b border-[var(--border)] px-4 py-3 md:px-8 flex items-center justify-between z-20 transition-colors duration-300 shadow-sm shrink-0">
 
-          <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors" title="Cambiar tema">
-            <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
-          </button>
-        </div>
+    <div class="flex items-center gap-2 md:gap-3">
+      <a href="index.html" class="flex items-center gap-2 py-1.5 px-3 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <span class="hidden sm:inline">Regresar al Menú Principal</span>
+        <span class="sm:hidden">Menú</span>
+      </a>
 
-        <div>
-          <a href="index.html" class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i>
-            Regresar al Menú Principal
-          </a>
-        </div>
-      </div>
-    </aside>
+      <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors" title="Cambiar tema">
+        <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+  </header>
 
     <!-- ÁREA PRINCIPAL / CONTENIDO -->
-    <main class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative" id="mainContentScroll">
-
-      <!-- HEADER SUPERIOR DE SIMULADOR -->
-      <header class="bg-[var(--surface)] border-b border-[var(--border)] p-4 md:px-8 flex flex-col sm:flex-row gap-4 items-center justify-between sticky top-0 z-10 shadow-sm transition-colors duration-300">
+      <!-- HEADER SUPERIOR -->
+      <div class="bg-[var(--surface)] border-b border-[var(--border)] p-4 md:px-8 flex flex-col sm:flex-row gap-4 items-center justify-between sticky top-0 z-10 shadow-sm transition-colors duration-300">
         <div>
           <div class="flex items-center gap-2">
             <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--surface-subtle)] text-[var(--primary)] border border-[var(--border)]">
-              Unidad 3
+              Tema 3.1
             </span>
-            <h1 class="font-semibold text-[var(--chocolate)] text-base">Óptica Geométrica</h1>
+            <h1 class="font-semibold text-[var(--chocolate)] text-base">Óptica Geométrica </h1>
           </div>
           <p class="text-xs text-[var(--text-muted)] mt-0.5">Modelado interactivo de reflexión, refracción, espejos, lentes, fibra óptica y telescopios.</p>
         </div>
@@ -203,7 +195,7 @@
             Evaluación
           </button>
         </div>
-      </header>
+      </div>
 
       <div class="p-4 md:p-8 space-y-6 flex-1">
 
@@ -249,8 +241,11 @@
                   </div>
                 </div>
 
-                <!-- CANVAS SVG -->
-                <div class="optics-plane">
+                <!-- CANVAS SVG CON RASTREADOR DE COORDENADAS DE ALTA PRECISIÓN -->
+                <div class="optics-plane relative group">
+                  <div id="cursor-coords" class="absolute top-2 right-2 bg-[var(--surface)]/90 backdrop-blur border border-[var(--border)] px-2.5 py-1 rounded-md text-[10px] font-mono text-[var(--text-muted)] pointer-events-none z-10 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm">
+                    X: <span id="coord-x" class="text-[var(--primary)] font-bold">0</span>px | Y: <span id="coord-y" class="text-[var(--primary)] font-bold">0</span>px
+                  </div>
                   <svg id="optics-svg" viewBox="0 0 600 380" class="w-full h-full">
                     <defs>
                       <marker id="arrow-ray" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
@@ -294,9 +289,14 @@
                     <i data-lucide="line-chart" class="w-4 h-4 text-[var(--primary)]"></i>
                     <h2 class="font-semibold text-[var(--chocolate)] text-sm">Análisis Gráfico y Métricas de Desempeño</h2>
                   </div>
-                  <button id="btn-export-csv" onclick="exportCSV()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white font-mono text-xs font-semibold hover:bg-[var(--primary-hover)] transition-colors">
-                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar CSV
-                  </button>
+                  <div class="flex items-center gap-2">
+                    <button id="btn-reset-params" onclick="resetDefaults()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] transition-colors" title="Restablecer Parámetros Predeterminados">
+                      <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Restablecer
+                    </button>
+                    <button id="btn-export-csv" onclick="exportCSV()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white font-mono text-xs font-semibold hover:bg-[var(--primary-hover)] transition-colors">
+                      <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar CSV
+                    </button>
+                  </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -328,7 +328,6 @@
 
                 <!-- CONTROLES DINÁMICOS SEGÚN MODO -->
                 <div id="controls-container" class="space-y-4 font-mono text-xs">
-                  <!-- Inyectado dinámicamente mediante JS -->
                 </div>
 
                 <div class="flex items-center gap-2 pt-2 border-t border-[var(--border)]">
@@ -492,7 +491,7 @@
 
     // 3. ESTADO GLOBAL DE SIMULACIÓN Y VARIABLES
     let currentMode = 'snell';
-    let isRunning = false;
+  isRunning = false;
     let animTime = 0;
     let animFrameId = null;
 
@@ -519,127 +518,147 @@
       teleFe: 45
     };
 
+    function resetDefaults() {
+      state = {
+        theta1: 45,
+        n1: 1.00,
+        n2: 1.50,
+        fiberCoreN: 1.60,
+        fiberCladN: 1.40,
+        launchAngle: 25,
+        mirrorF: 120,
+        mirrorObjS: 240,
+        mirrorObjH: 60,
+        lensF: 100,
+        lensObjS: 220,
+        lensObjH: 50,
+        teleFo: 180,
+        teleFe: 45
+      };
+      updateSim();
+    }
+
     let chart1Instance = null;
     let chart2Instance = null;
 
     // BANCO DE 20 PREGUNTAS SOBRE ÓPTICA GEOMÉTRICA
     const questionBank = [
       {
-        q: "1. ¿Cuál es el valor de la velocidad de la luz en el vacío?",
+        q: "¿Cuál es el valor de la velocidad de la luz en el vacío?",
         options: ["300,000 km/s", "150,000 km/s", "3,000,000 km/s", "300 m/s"],
         correct: 0,
         explanation: "La velocidad de la luz en el vacío es de aproximadamente 299,792 km/s (~300,000 km/s o 3x10^8 m/s)."
       },
       {
-        q: "2. Según la Ley de Snell, cuando un rayo pasa de un medio de menor índice a uno de mayor índice (n1 < n2):",
+        q: "Según la Ley de Snell, cuando un rayo pasa de un medio de menor índice a uno de mayor índice (n1 < n2):",
         options: ["El rayo refractado se acerca a la normal", "El rayo refractado se aleja de la normal", "El rayo mantiene su ángulo original", "Ocurre reflexión total interna"],
         correct: 0,
         explanation: "Al aumentar el índice de refracción, el ángulo respecto a la normal disminuye (sin θ2 = n1/n2 sin θ1)."
       },
       {
-        q: "3. La Reflexión Total Interna únicamente puede ocurrir cuando la luz viaja desde:",
+        q: "La Reflexión Total Interna únicamente puede ocurrir cuando la luz viaja desde:",
         options: ["Un medio más denso a uno menos denso (n1 > n2)", "Un medio menos denso a uno más denso (n1 < n2)", "Medios con índices idénticos (n1 = n2)", "Cualquier combinación de medios"],
         correct: 0,
         explanation: "Para que exista un ángulo crítico θc = arcsin(n2/n1), es condición indispensable que n1 > n2."
       },
       {
-        q: "4. En una fibra óptica, la luz se propaga confinada en el núcleo debido a:",
+        q: "En una fibra óptica, la luz se propaga confinada en el núcleo debido a:",
         options: ["Reflexión total interna continua", "Difracción en las paredes", "Dispersión cromática", "Absorción cuántica"],
         correct: 0,
         explanation: "El núcleo posee un índice de refracción mayor que el revestimiento, atrapando la luz por reflexión total interna."
       },
       {
-        q: "5. Para un espejo plano, la imagen formada es siempre:",
+        q: "Para un espejo plano, la imagen formada es siempre:",
         options: ["Virtual, derecha y del mismo tamaño", "Real, invertida y mayor", "Virtual, invertida y menor", "Real, derecha y menor"],
         correct: 0,
         explanation: "Un espejo plano refleja los rayos de modo que divergen pareciendo provenir de una imagen virtual symmetrically situada detrás."
       },
       {
-        q: "6. La ecuación cartesiana de Gauss para lentes delgados es:",
+        q: "La ecuación cartesiana de Gauss para lentes delgados es:",
         options: ["(1/s) + (1/s') = 1/f", "s + s' = f", "1/s - 1/s' = 1/f", "f = s · s'"],
         correct: 0,
         explanation: "La fórmula relaciona la distancia del objeto s, la distancia de la imagen s' y la distancia focal f."
       },
       {
-        q: "7. Un objeto se coloca sobre el centro de curvatura (s = 2f) de un espejo cóncavo. Su imagen será:",
+        q: "Un objeto se coloca sobre el centro de curvatura (s = 2f) de un espejo cóncavo. Su imagen será:",
         options: ["Real, invertida y de igual tamaño", "Virtual, derecha y mayor", "Real, invertida y mayor", "No se forma imagen"],
         correct: 0,
         explanation: "Si s = 2f, resolviendo 1/s' = 1/f - 1/2f da s' = 2f, produciendo un aumento M = -s'/s = -1 (igual tamaño e invertida)."
       },
       {
-        q: "8. Una lente convergente actúa como lupa produciendo una imagen virtual y amplificada cuando:",
+        q: "Una lente convergente actúa como lupa produciendo una imagen virtual y amplificada cuando:",
         options: ["El objeto está ubicado entre el foco y la lente (s < f)", "El objeto está más allá del doble del foco (s > 2f)", "El objeto está exactamente en el foco (s = f)", "Se sumerge en agua"],
         correct: 0,
         explanation: "Cuando s < f, los rayos refractados divergen al salir y sus prolongaciones forman una imagen virtual virtual y magnificada."
       },
       {
-        q: "9. La potencia de una lente se mide en Dioptrías (D), la cual equivale a:",
+        q: "La potencia de una lente se mide en Dioptrías (D), la cual equivale a:",
         options: ["1 / f (con la focal expresada en metros)", "f / 100", "n1 · n2", "f²"],
         correct: 0,
         explanation: "La potencia óptica P es la recíproca de la focal en metros: P = 1 / f(m)."
       },
       {
-        q: "10. El aumento angular angular M de un telescopio refractor Kepleriano estándar es:",
+        q: "El aumento angular angular M de un telescopio refractor Kepleriano estándar es:",
         options: ["M = - fo / fe", "M = fe / fo", "M = fo + fe", "M = fo · fe"],
         correct: 0,
         explanation: "El aumento depende directamente de la focal del objetivo dividida entre la focal del ocular: M = - fo/fe."
       },
       {
-        q: "11. ¿Qué ocurre con la frecuencia de una onda luminosa al pasar del aire al vidrio?",
+        q: "¿Qué ocurre con la frecuencia de una onda luminosa al pasar del aire al vidrio?",
         options: ["Permanece constante", "Aumenta", "Disminuye a la mitad", "Se vuelve cero"],
         correct: 0,
         explanation: "La frecuencia depende únicamente de la fuente emisora; al cambiar de medio cambian la velocidad y la longitud de onda, pero no la frecuencia."
       },
       {
-        q: "12. El índice de refracción absoluto de un medio se define como:",
+        q: "El índice de refracción absoluto de un medio se define como:",
         options: ["n = c / v", "n = v / c", "n = c · v", "n = sin(θ) / c"],
         correct: 0,
         explanation: "Es la Razón entre la velocidad de la luz en el vacío (c) y la velocidad de la luz en dicho medio (v)."
       },
       {
-        q: "13. Un espejo convexo siempre genera imágenes de tipo:",
+        q: "Un espejo convexo siempre genera imágenes de tipo:",
         options: ["Virtuales, derechas y de menor tamaño", "Reales, invertidas y mayores", "Reales, derechas y mayores", "Virtuales, invertidas y de igual tamaño"],
         correct: 0,
         explanation: "Los espejos divergentes (convexos) ofrecen un amplio campo de visión con imágenes virtuales y reducidas."
       },
       {
-        q: "14. La aberración cromática en una lente se produce debido a que:",
+        q: "La aberración cromática en una lente se produce debido a que:",
         options: ["El índice de refracción varía ligeramente según la longitud de onda (color)", "La lente no es perfectamente esférica", "Los rayos marginales enfofan antes que los centrales", "El cristal absorbe luz fotónica"],
         correct: 0,
         explanation: "La dispersión hace que el color azul se refracte más intensamente que el rojo, enfocando en planos distintos."
       },
       {
-        q: "15. ¿Cuál es el ángulo crítico para dos medios con n1 = 2.0 y n2 = 1.0?",
+        q: "¿Cuál es el ángulo crítico para dos medios con n1 = 2.0 y n2 = 1.0?",
         options: ["30°", "45°", "60°", "90°"],
         correct: 0,
         explanation: "sin(θc) = n2 / n1 = 1.0 / 2.0 = 0.5. Por ende, θc = arcsin(0.5) = 30°."
       },
       {
-        q: "16. La longitud total del tubo de un telescopio refractor Kepleriano enfocado al infinito es:",
+        q: "La longitud total del tubo de un telescopio refractor Kepleriano enfocado al infinito es:",
         options: ["L = fo + fe", "L = fo - fe", "L = fo / fe", "L = 2 · fo"],
         correct: 0,
         explanation: "Los focos del objetivo y del ocular coinciden internamente, por lo que la distancia entre lentes es L = fo + fe."
       },
       {
-        q: "17. Un rayo de luz que pasa por el centro óptico de una lente delgada:",
+        q: "Un rayo de luz que pasa por el centro óptico de una lente delgada:",
         options: ["No sufre desviación en su trayectoria", "Se refleja a 180°", "Pasa por el foco primario", "Se refracta en 90°"],
         correct: 0,
         explanation: "Las caras de la lente cerca del eje central son casi paralelas, por lo que el rayo central atraviesa sin desviarse."
       },
       {
-        q: "18. La ley de la reflexión establece que el ángulo incidente y el reflejado se miden respecto a:",
+        q: "La ley de la reflexión establece que el ángulo incidente y el reflejado se miden respecto a:",
         options: ["La línea Normal perpendicular a la superficie", "La superficie plana del espejo", "El rayo refractado", "El foco del sistema"],
         correct: 0,
         explanation: "Todos los ángulos en óptica geométrica se miden convencionalmente contra la Normal a la interfaz."
       },
       {
-        q: "19. En un telescopio astronómico, la función principal del objetivo es:",
+        q: "En un telescopio astronómico, la función principal del objetivo es:",
         options: ["Colectar la mayor cantidad de luz posible y formar la imagen primaria", "Amplificar la imagen como si fuera una lupa", "Corregir el color de la luz", "Invertir la imagen para verla al derecho"],
         correct: 0,
         explanation: "El objetivo actúa como recolector primario de fotones de fuentes lejanas."
       },
       {
-        q: "20. Si la velocidad de la luz en un medio es de 200,000 km/s, su índice de refracción es:",
+        q: "Si la velocidad de la luz en un medio es de 200,000 km/s, su índice de refracción es:",
         options: ["1.50", "1.33", "2.00", "1.00"],
         correct: 0,
         explanation: "n = c / v = 300,000 / 200,000 = 1.50."
@@ -1272,6 +1291,23 @@
       document.getElementById("quiz-score").textContent = `Calificación Final: ${score} / ${currentQuizQuestions.length} (${(score/currentQuizQuestions.length*100).toFixed(0)}%)`;
     }
 
+    // SEGUIMIENTO DE COORDENADAS EN TIEMPO REAL
+    function initCoordTracker() {
+      const svgPlane = document.getElementById("optics-svg");
+      const coordX = document.getElementById("coord-x");
+      const coordY = document.getElementById("coord-y");
+
+      if (svgPlane && coordX && coordY) {
+        svgPlane.addEventListener("mousemove", (e) => {
+          const rect = svgPlane.getBoundingClientRect();
+          const x = Math.round((e.clientX - rect.left) * (600 / rect.width));
+          const y = Math.round((e.clientY - rect.top) * (380 / rect.height));
+          coordX.textContent = Math.max(0, Math.min(600, x));
+          coordY.textContent = Math.max(0, Math.min(380, y));
+        });
+      }
+    }
+
     // INICIALIZACIÓN GENERAL EN DOMCONTENTLOADED
     window.addEventListener("DOMContentLoaded", () => {
       loadSavedTheme();
@@ -1279,6 +1315,7 @@
       renderSimulation();
       updateCharts();
       generateQuiz();
+      initCoordTracker();
 
       document.getElementById("btn-play").addEventListener("click", startAnimation);
       document.getElementById("btn-pause").addEventListener("click", pauseAnimation);
