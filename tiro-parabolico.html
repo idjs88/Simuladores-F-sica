@@ -53,6 +53,12 @@
       --accent-soft: #E8DDF0; 
       --grid-color: rgba(61, 37, 64, 0.05);
 
+      --sky-top: #FFE5EC;
+      --sky-mid: #F3ECF8;
+      --sky-bottom: #E8DDF0;
+      --hill-back: #CBB2D9;
+      --hill-front: #A385BD;
+      --court-floor: #3D2540;
       --accent-cyan: #3A86FF;
       --accent-purple: #8338EC;
       --volley-yellow: #FFD166;
@@ -71,6 +77,12 @@
       --accent-soft: #2A182E;
       --grid-color: rgba(184, 146, 214, 0.06);
 
+      --sky-top: #221528;
+      --sky-mid: #1A1020;
+      --sky-bottom: #2D1A38;
+      --hill-back: #3D2540;
+      --hill-front: #533357;
+      --court-floor: #0D080F;
       --accent-cyan: #60A5FA;
       --accent-purple: #A78BFA;
       --volley-yellow: #FDE047;
@@ -110,11 +122,11 @@
     .cartesian-plane {
       position: relative;
       width: 100%;
-      height: 380px;
-      border-radius: 12px;
+      height: 420px;
+      border-radius: 16px;
       border: 1px solid var(--border);
-      background: linear-gradient(180deg, var(--bg) 0%, var(--surface-subtle) 75%, rgba(156, 119, 184, 0.15) 100%);
-      box-shadow: inset 0 0 25px rgba(156, 119, 184, 0.05);
+      background: var(--bg);
+      box-shadow: inset 0 0 25px rgba(156, 119, 184, 0.08);
       overflow: hidden;
     }
 
@@ -150,51 +162,72 @@
     .tab-pane.active {
       display: block;
     }
+
+    /* Modal de ampliación de gráficas */
+    .chart-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      background-color: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .chart-modal.active {
+      display: flex;
+    }
+
+    .preset-btn {
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .preset-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--surface-subtle);
+    }
   </style>
 </head>
 <body class="h-full bg-grid-pattern font-sans text-sm selection:bg-[var(--surface-subtle)] selection:text-[var(--primary)]">
 
-  <div class="min-h-screen flex flex-col md:flex-row">
+  <div class="min-h-screen flex flex-col w-full bg-grid-pattern">
 
-    <!-- SIDEBAR LATERAL -->
-    <aside class="w-full md:w-80 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col justify-between p-5 shrink-0 z-20 transition-colors duration-300">
-      <div class="space-y-6">
-        <div class="flex items-center justify-between pb-4 border-b border-[var(--border)]">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center font-mono font-bold text-base shadow-sm">
-              ❀
-            </div>
-            <div>
-              <h1 class="font-semibold text-[var(--chocolate)] tracking-tight text-base leading-snug">Laboratorio Virtual</h1>
-              <p class="text-xs text-[var(--text-muted)] font-mono">Física General</p>
-            </div>
-          </div>
+    <!-- BARRA SUPERIOR COMPACTA -->
+    <header class="w-full bg-[var(--surface)] border-b border-[var(--border)] px-4 py-3 md:px-8 flex items-center justify-between z-20 transition-colors duration-300 shadow-sm shrink-0">
 
-          <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors" title="Cambiar tema">
-            <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
-          </button>
-        </div>
+      <div class="flex items-center gap-2 md:gap-3">
+        <a href="index.html" class="flex items-center gap-2 py-1.5 px-3 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
+          <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">Regresar al Menú Principal</span>
+          <span class="sm:hidden">Menú</span>
+        </a>
 
-        <div>
-          <a href="index.html" class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i>
-            Regresar al Menú Principal
-          </a>
-        </div>
+        <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors" title="Cambiar tema">
+          <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
+        </button>
       </div>
-    </aside>
+
+    </header>
 
     <!-- ÁREA PRINCIPAL / CONTENIDO -->
-    <main class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative" id="mainContentScroll">
-
-      <!-- HEADER SUPERIOR DE SIMULADOR -->
-      <header class="bg-[var(--surface)] border-b border-[var(--border)] p-4 md:px-8 flex flex-col sm:flex-row gap-4 items-center justify-between sticky top-0 z-10 shadow-sm transition-colors duration-300">
+    <main class="flex-1 flex flex-col">
+      <!-- HEADER SUPERIOR -->
+      <div class="bg-[var(--surface)] border-b border-[var(--border)] p-4 md:px-8 flex flex-col sm:flex-row gap-4 items-center justify-between sticky top-0 z-10 shadow-sm transition-colors duration-300">
         <div>
           <div class="flex items-center gap-2">
             <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--surface-subtle)] text-[var(--primary)] border border-[var(--border)]">
               Tema 2.2.1
             </span>
-            <h1 class="font-semibold text-[var(--chocolate)] text-base">Movimiento en Dos Dimensiones: Tiro Parabólico</h1>
+            <h1 class="font-semibold text-[var(--chocolate)] text-base">Tiro Parabólico</h1>
           </div>
           <p class="text-xs text-[var(--text-muted)] mt-0.5">Modelado interactivo basado en la trayectoria parabólica cinemática bidimensional.</p>
         </div>
@@ -211,7 +244,7 @@
             Evaluación
           </button>
         </div>
-      </header>
+      </div>
 
       <div class="p-4 md:p-8 space-y-6 flex-1">
 
@@ -219,19 +252,26 @@
         <div id="tab-simulador" class="tab-pane active space-y-6">
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            <!-- PANEL IZQUIERDO DE SIMULACIÓN (2 COLUMNAS) -->
+            <!-- PANEL IZQUIERDO DE SIMULACIÓN -->
             <div class="lg:col-span-2 space-y-6">
 
               <!-- CONTENEDOR DE LA CANCHA Y ANIMACIÓN SVG -->
               <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-4 shadow-sm">
                 
-                <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
                   <div class="flex items-center gap-2">
                     <i data-lucide="redo" class="w-4 h-4 text-[var(--primary)]"></i>
                     <h2 class="font-semibold text-[var(--chocolate)] text-sm">Representación del Fenómeno</h2>
                   </div>
                   
                   <div class="flex items-center gap-2 font-mono">
+                    <!-- Selector de Velocidad -->
+                    <div class="flex items-center bg-[var(--bg)] border border-[var(--border)] rounded-lg p-0.5 text-[11px]">
+                      <button onclick="setSimSpeed(0.5)" id="spd-05" class="px-2 py-1 rounded text-[var(--text-muted)] hover:text-[var(--primary)]">0.5x</button>
+                      <button onclick="setSimSpeed(1.0)" id="spd-10" class="px-2 py-1 rounded bg-[var(--primary)] text-white font-bold">1x</button>
+                      <button onclick="setSimSpeed(2.0)" id="spd-20" class="px-2 py-1 rounded text-[var(--text-muted)] hover:text-[var(--primary)]">2x</button>
+                    </div>
+
                     <button id="btn-play" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white text-xs font-medium hover:bg-[var(--primary-hover)] transition-colors">
                       <i data-lucide="play" class="w-3.5 h-3.5"></i> Iniciar
                     </button>
@@ -244,95 +284,101 @@
                   </div>
                 </div>
 
-                <!-- CANVAS SVG -->
+                <!-- CANVAS SVG AMPLIO CON ESCENARIO MULTICOLOR -->
                 <div class="cartesian-plane">
-                  <svg id="cartesian-svg" viewBox="0 0 600 400" class="w-full h-full">
+                  <svg id="cartesian-svg" viewBox="0 0 800 420" class="w-full h-full preserve-3d">
                     <defs>
-                      <marker id="arrow-v" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+                      <marker id="arrow-v" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary)"/>
                       </marker>
-                      <marker id="arrow-vx" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+                      <marker id="arrow-vx" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-cyan)"/>
                       </marker>
-                      <marker id="arrow-vy" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+                      <marker id="arrow-vy" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--accent-purple)"/>
                       </marker>
+
+                      <!-- Gradientes Estéticos de Fondo -->
+                      <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="var(--sky-top)"/>
+                        <stop offset="50%" stop-color="var(--sky-mid)"/>
+                        <stop offset="100%" stop-color="var(--sky-bottom)"/>
+                      </linearGradient>
 
                       <filter id="anime-glow" x="-20%" y="-20%" width="140%" height="140%">
                         <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="var(--primary)" flood-opacity="0.5"/>
                       </filter>
                     </defs>
 
-                    <!-- Cancha de Voleibol - Detalles visuales estilo Haikyuu -->
-                    <g opacity="0.15">
-                      <line x1="0" y1="360" x2="600" y2="360" stroke="var(--chocolate)" stroke-width="1"/>
-                      <line x1="0" y1="375" x2="600" y2="375" stroke="var(--chocolate)" stroke-width="1"/>
-                      <line x1="0" y1="390" x2="600" y2="390" stroke="var(--chocolate)" stroke-width="1"/>
+                    <!-- FONDO MULTICOLOR -->
+                    <rect x="0" y="0" width="800" height="340" fill="url(#skyGradient)"/>
+
+                    <circle cx="720" cy="80" r="45" fill="url(#sunGradient)"/>
+                    <circle cx="720" cy="80" r="22" fill="#FFE5EC" opacity="0.9"/>
+
+                    <g opacity="0.6">
+                      <path d="M 60,80 Q 75,60 95,70 Q 115,55 140,70 Q 155,70 160,85 Z" fill="#FFFFFF"/>
+                      <path d="M 360,60 Q 375,45 395,55 Q 415,40 435,55 Q 450,55 460,70 Z" fill="#FFFFFF"/>
+                      <path d="M 620,90 Q 635,75 655,85 Q 670,75 690,90 Z" fill="#FFFFFF"/>
                     </g>
 
-                    <!-- Líneas del campo y Red de Voleibol -->
-                    <line x1="50" y1="350" x2="50" y2="0" stroke="var(--border)" stroke-width="3" opacity="0.6"/>
-                    <line x1="200" y1="350" x2="200" y2="250" stroke="var(--border)" stroke-dasharray="6,6" stroke-width="2" opacity="0.7"/>
+                    <path d="M 0,310 Q 150,220 320,290 T 640,270 T 800,300 L 800,340 L 0,340 Z" fill="var(--hill-back)" opacity="0.7"/>
+                    <path d="M 0,325 Q 220,260 480,315 T 800,310 L 800,340 L 0,340 Z" fill="var(--hill-front)"/>
+
+                    <!-- SUELO DE LA CANCHA -->
+                    <rect x="0" y="340" width="800" height="80" fill="var(--court-floor)"/>
+                    <rect x="0" y="336" width="800" height="4" fill="#E8DDF0"/>
                     
-                    <!-- Red Central -->
-                    <g id="volleyball-net">
-                      <rect x="318" y="160" width="4" height="190" fill="var(--text-muted)"/>
-                      <rect x="318" y="160" width="8" height="100" fill="none" stroke="var(--surface)" stroke-width="1.5" opacity="0.8"/>
-                      <path d="M 318 160 L 326 260 M 318 180 L 326 180 M 318 200 L 326 200 M 318 220 L 326 220 M 318 240 L 326 240" stroke="var(--text)" stroke-width="1" opacity="0.4"/>
-                      <rect x="316" y="156" width="12" height="6" fill="var(--surface)" stroke="var(--primary)" stroke-width="1"/>
-                      <rect x="321" y="80" width="2" height="80" fill="var(--primary)"/>
-                    </g>
+                    <!-- Marcadores de distancia en la cancha -->
+                    <g id="court-ticks-group"></g>
 
-                    <g opacity="0.25">
-                      <line x1="0" y1="350" x2="600" y2="350" stroke="var(--primary)" stroke-width="2"/>
-                    </g>
-
-                    <!-- Trayectoria previa estilizada -->
+                    <!-- Trayectoria teórica completa -->
                     <path id="path-parabola" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-dasharray="6,4"/>
 
-                    <!-- Rastro dinámico de velocidad del balón (Aura Anime) -->
+                    <!-- Rastro dinámico de velocidad del balón -->
                     <path id="ball-trail" fill="none" stroke="var(--primary)" stroke-width="6" stroke-linecap="round" opacity="0.65" filter="url(#anime-glow)"/>
 
-                    <!-- Marcador de Punto Máximo (Apex) -->
+                    <!-- Marcador de Altura Máxima (Apex) -->
                     <g id="apex-group" style="display:none;">
+                      <line id="apex-line-v" x1="0" y1="0" x2="0" y2="336" stroke="var(--accent-cyan)" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>
                       <circle id="apex-point" cx="0" cy="0" r="5" fill="var(--accent-cyan)" stroke="var(--surface)" stroke-width="2"/>
-                      <text id="apex-text" x="0" y="0" fill="var(--chocolate)" font-size="11" font-weight="800" font-family="JetBrains Mono">Hmax</text>
+                      <text id="apex-text" x="0" y="0" fill="var(--chocolate)" font-size="11" font-weight="800" font-family="JetBrains Mono">Ymax</text>
                     </g>
 
-                    <!-- Pelota de Voleibol Tricolor Mikasa (Rosa, Amarillo y Blanco) -->
+                    <!-- Pelota de Voleibol Tricolor Mikasa -->
                     <g id="projectile-group">
                       <line id="vec-vx" x1="0" y1="0" x2="0" y2="0" stroke="var(--accent-cyan)" stroke-width="2.5" marker-end="url(#arrow-vx)"/>
                       <line id="vec-vy" x1="0" y1="0" x2="0" y2="0" stroke="var(--accent-purple)" stroke-width="2.5" marker-end="url(#arrow-vy)"/>
                       <line id="vec-v" x1="0" y1="0" x2="0" y2="0" stroke="var(--primary)" stroke-width="3" marker-end="url(#arrow-v)"/>
                       
-                      <g id="ball-element" transform="translate(50, 350)">
-                        <ellipse cx="0" cy="12" rx="10" ry="3" fill="var(--chocolate)" opacity="0.2"/>
+                      <g id="ball-element" transform="translate(60, 336)">
+                        <ellipse cx="0" cy="14" rx="12" ry="4" fill="var(--chocolate)" opacity="0.25"/>
                         
                         <!-- Esfera base -->
-                        <circle cx="0" cy="0" r="12" fill="#FFFFFF" stroke="var(--text)" stroke-width="1.8"/>
+                        <circle cx="0" cy="0" r="13" fill="#FFFFFF" stroke="var(--text)" stroke-width="1.8"/>
 
-                        <!-- Franjas curvas Mikasa (Rosa / Amarillo) -->
-                        <path d="M -11 -4 C -6 -12 6 -12 11 -4 C 5 -2 -5 -2 -11 -4 Z" fill="var(--primary)" />
-                        <path d="M -11 4 C -6 12 6 12 11 4 C 5 2 -5 2 -11 4 Z" fill="var(--primary)" />
-                        <path d="M -12 0 C -4 -7 4 -7 12 0 C 4 7 -4 7 -12 0 Z" fill="var(--volley-yellow)" />
+                        <!-- Franjas Mikasa (Rosa / Amarillo) -->
+                        <path d="M -12 -4 C -6 -13 6 -13 12 -4 C 5 -2 -5 -2 -12 -4 Z" fill="var(--primary)" />
+                        <path d="M -12 4 C -6 13 6 13 12 4 C 5 2 -5 2 -12 4 Z" fill="var(--primary)" />
+                        <path d="M -13 0 C -4 -7 4 -7 13 0 C 4 7 -4 7 -13 0 Z" fill="var(--volley-yellow)" />
                         
                         <!-- Costuras -->
-                        <circle cx="0" cy="0" r="12" fill="none" stroke="var(--text)" stroke-width="1.5"/>
-                        <path d="M -11 -4 C -5 -2 5 -2 11 -4" fill="none" stroke="var(--text)" stroke-width="1.2"/>
-                        <path d="M -11 4 C -5 2 5 2 11 4" fill="none" stroke="var(--text)" stroke-width="1.2"/>
-                        <path d="M -12 0 C -4 -7 4 -7 12 0" fill="none" stroke="var(--text)" stroke-width="1.2"/>
-                        <path d="M -12 0 C -4 7 4 7 12 0" fill="none" stroke="var(--text)" stroke-width="1.2"/>
+                        <circle cx="0" cy="0" r="13" fill="none" stroke="var(--text)" stroke-width="1.5"/>
+                        <path d="M -12 -4 C -5 -2 5 -2 12 -4" fill="none" stroke="var(--text)" stroke-width="1.2"/>
+                        <path d="M -12 4 C -5 2 5 2 12 4" fill="none" stroke="var(--text)" stroke-width="1.2"/>
+                        <path d="M -13 0 C -4 -7 4 -7 13 0" fill="none" stroke="var(--text)" stroke-width="1.2"/>
+                        <path d="M -13 0 C -4 7 4 7 13 0" fill="none" stroke="var(--text)" stroke-width="1.2"/>
 
-                        <!-- Destello de brillo -->
+                        <!-- Destello -->
                         <circle cx="-4" cy="-5" r="2.5" fill="#FFFFFF" opacity="0.8"/>
                       </g>
                     </g>
                   </svg>
                 </div>
 
-                <!-- Leyenda de Vectores de Velocidad -->
-                <div class="flex items-center justify-between bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl font-mono text-xs">
-                  <div class="flex items-center gap-4">
+                <!-- Leyenda de Vectores -->
+                <div class="flex flex-wrap items-center justify-between bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl font-mono text-xs gap-2">
+                  <div class="flex items-center gap-4 flex-wrap">
                     <span class="text-[var(--primary)] font-semibold flex items-center gap-1.5">
                       <span class="w-2.5 h-2.5 rounded-full bg-[var(--primary)]"></span> Resultante (V)
                     </span>
@@ -348,21 +394,43 @@
 
               </div>
 
-              <!-- CONTENEDOR DE GRÁFICA Y EXPORTACIÓN -->
+              <!-- CONTENEDOR DE GRÁFICAS CINEMÁTICAS DINÁMICAS (AMPLIABLES) -->
               <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-4 shadow-sm">
                 <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
                   <div class="flex items-center gap-2">
-                    <i data-lucide="bar-chart-2" class="w-4 h-4 text-[var(--primary)]"></i>
-                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Graficación Cinemática y(t)</h2>
+                    <i data-lucide="line-chart" class="w-4 h-4 text-[var(--primary)]"></i>
+                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Gráficas Cinemáticas en Tiempo Real</h2>
                   </div>
-                  <button id="btn-export-csv" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white font-mono text-xs font-semibold hover:bg-[var(--primary-hover)] transition-colors">
-                    <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar CSV
-                  </button>
+                  <div class="flex items-center gap-2">
+                    <button onclick="openChartModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-subtle)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] transition-colors" title="Ampliar gráficas">
+                      <i data-lucide="maximize-2" class="w-3.5 h-3.5"></i> Ampliar
+                    </button>
+                    <button id="btn-export-csv" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white font-mono text-xs font-semibold hover:bg-[var(--primary-hover)] transition-colors">
+                      <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar CSV
+                    </button>
+                  </div>
                 </div>
 
-                <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
-                  <div class="h-36 relative">
-                    <canvas id="kinematicsChart"></canvas>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="charts-inline-container">
+                  <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
+                    <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Posición Vertical y(t)</h3>
+                    <div class="h-40 relative">
+                      <canvas id="chartY"></canvas>
+                    </div>
+                  </div>
+
+                  <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
+                    <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Velocidad Vertical vy(t)</h3>
+                    <div class="h-40 relative">
+                      <canvas id="chartVy"></canvas>
+                    </div>
+                  </div>
+
+                  <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
+                    <h3 class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Velocidad Horizontal vx(t)</h3>
+                    <div class="h-40 relative">
+                      <canvas id="chartVx"></canvas>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -372,12 +440,25 @@
             <div class="space-y-6">
               <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-5 shadow-sm">
                 
-                <div class="flex items-center gap-2 pb-3 border-b border-[var(--border)]">
-                  <i data-lucide="sliders" class="w-4 h-4 text-[var(--primary)]"></i>
-                  <h2 class="font-semibold text-[var(--chocolate)] text-sm">Tablero de Control e Interacción</h2>
+                <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="sliders" class="w-4 h-4 text-[var(--primary)]"></i>
+                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Tablero de Control e Interacción</h2>
+                  </div>
                 </div>
 
-                <div class="space-y-4 font-mono text-xs">
+                <!-- PRESETS RÁPIDOS -->
+                <div class="space-y-2">
+                  <span class="text-[11px] font-mono text-[var(--text-muted)] font-medium">Escenarios Preestablecidos:</span>
+                  <div class="grid grid-cols-2 gap-1.5">
+                    <button onclick="applyPreset(30, 45, 0, 9.81)" class="preset-btn">Estándar (45°)</button>
+                    <button onclick="applyPreset(30, 80, 0, 9.81)" class="preset-btn">Casi Vertical</button>
+                    <button onclick="applyPreset(25, 0, 30, 9.81)" class="preset-btn">Tiro Horizontal</button>
+                    <button onclick="applyPreset(30, 45, 0, 1.62)" class="preset-btn">Gravedad Lunar</button>
+                  </div>
+                </div>
+
+                <div class="space-y-4 font-mono text-xs pt-2 border-t border-[var(--border)]">
                   <div class="space-y-1.5">
                     <div class="flex justify-between">
                       <label class="text-[var(--text-muted)] font-medium">Velocidad Inicial (v₀):</label>
@@ -391,12 +472,12 @@
                       <label class="text-[var(--text-muted)] font-medium">Ángulo de Lanzamiento (θ):</label>
                       <span id="lbl-angle" class="font-bold text-[var(--primary)]">45°</span>
                     </div>
-                    <input id="slider-angle" type="range" min="5" max="85" value="45" step="1">
+                    <input id="slider-angle" type="range" min="0" max="85" value="45" step="1">
                   </div>
 
                   <div class="space-y-1.5">
                     <div class="flex justify-between">
-                      <label class="text-[var(--text-muted)] font-medium">Altura Inicial (h₀):</label>
+                      <label class="text-[var(--text-muted)] font-medium">Altura Inicial (y₀):</label>
                       <span id="lbl-h0" class="font-bold text-[var(--chocolate)]">0 m</span>
                     </div>
                     <input id="slider-h0" type="range" min="0" max="50" value="0" step="1">
@@ -423,18 +504,36 @@
                   </div>
 
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
-                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Alcance Máx (Xmax)</span>
+                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Alcance Máx (X_máx)</span>
                     <span id="res-xmax" class="text-base font-bold text-[var(--accent-cyan)]">0.00 m</span>
                   </div>
 
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
-                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Altura Máx (Ymax)</span>
+                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Altura Máx (Y_máx)</span>
                     <span id="res-ymax" class="text-base font-bold text-[var(--primary)]">0.00 m</span>
                   </div>
 
                   <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
-                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Vx (Constante)</span>
+                    <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">v_x (Constante)</span>
                     <span id="res-vx" class="text-base font-bold text-[var(--text)]">0.00 m/s</span>
+                  </div>
+                </div>
+
+                <!-- MÉTRICAS EN TIEMPO REAL -->
+                <div class="p-3 bg-[var(--surface-subtle)] border border-[var(--border)] rounded-xl space-y-2 font-mono text-xs">
+                  <span class="font-bold text-[var(--chocolate)] block border-b border-[var(--border)] pb-1 text-[11px] flex items-center justify-between">
+                    <span>Estado Instantáneo</span>
+                    <i data-lucide="activity" class="w-3.5 h-3.5 text-[var(--primary)]"></i>
+                  </span>
+                  <div class="grid grid-cols-2 gap-2 text-[11px]">
+                    <div>
+                      <span class="text-[var(--text-muted)] block">Rapidez |V|:</span>
+                      <span id="live-v" class="font-bold text-[var(--chocolate)]">0.00 m/s</span>
+                    </div>
+                    <div>
+                      <span class="text-[var(--text-muted)] block">Ángulo Actual:</span>
+                      <span id="live-angle" class="font-bold text-[var(--chocolate)]">0.0°</span>
+                    </div>
                   </div>
                 </div>
 
@@ -453,13 +552,13 @@
             </div>
 
             <p class="leading-relaxed text-[var(--text)]">
-              El movimiento de un proyectil o <strong>tiro parabólico</strong> es un fenómeno cinemático en dos dimensiones compuestas simultáneamente en un plano vertical bajo la acción única de la aceleración de la gravedad (g).
+              El movimiento de un proyectil o <strong class="text-[var(--chocolate)]">tiro parabólico</strong> es un fenómeno cinemático en dos dimensiones compuestas simultáneamente en un plano vertical bajo la acción única de la aceleración de la gravedad (g).
             </p>
 
             <h3 class="font-bold text-[var(--chocolate)] text-sm">1. Descomposición de Movimientos Independientes</h3>
             <ul class="list-disc list-inside space-y-1 text-xs text-[var(--text-muted)]">
-              <li><strong class="text-[var(--text)]">Eje Horizontal (X):</strong> Movimiento Rectilíneo Uniforme (MRU) a velocidad constante: vₓ = v₀ · cos(θ).</li>
-              <li><strong class="text-[var(--text)]">Eje Vertical (Y):</strong> Movimiento Rectilíneo Uniformemente Variado (MRUV) bajo gravedad: aᵧ = -g.</li>
+              <li><strong class="text-[var(--text)]">Eje Horizontal (X):</strong> Movimiento Rectilíneo Uniforme (MRU) a velocidad constante: v_x = v₀ · cos(θ).</li>
+              <li><strong class="text-[var(--text)]">Eje Vertical (Y):</strong> Movimiento Rectilíneo Uniformemente Variado (MRUV) bajo gravedad: a_y = -g.</li>
             </ul>
 
             <h3 class="font-bold text-[var(--chocolate)] text-sm">2. Ecuaciones Cinemáticas Principales</h3>
@@ -467,19 +566,19 @@
               <div class="space-y-1 border-r border-[var(--border)] pr-2">
                 <span class="font-bold text-[var(--chocolate)] block">Posición en X e Y</span>
                 <span class="text-[var(--primary)] font-bold">x(t) = v₀ · cos(θ) · t</span>
-                <span class="text-[var(--primary)] font-bold block">y(t) = h₀ + v₀ · sen(θ) · t - ½g·t²</span>
+                <span class="text-[var(--primary)] font-bold block">y(t) = h₀ + v₀ · sin(θ) · t - ½ · g · t²</span>
               </div>
               <div class="space-y-1">
                 <span class="font-bold text-[var(--chocolate)] block">Componentes de Velocidad</span>
-                <span class="text-[var(--primary)] font-bold">vₓ(t) = v₀ · cos(θ)</span>
-                <span class="text-[var(--primary)] font-bold block">vᵧ(t) = v₀ · sen(θ) - g·t</span>
+                <span class="text-[var(--primary)] font-bold">v_x(t) = v₀ · cos(θ)</span>
+                <span class="text-[var(--primary)] font-bold block">v_y(t) = v₀ · sin(θ) - g · t</span>
               </div>
             </div>
 
             <h3 class="font-bold text-[var(--chocolate)] text-sm">3. Puntos Notables de la Parábola</h3>
             <div class="bg-[var(--surface-subtle)] border border-[var(--border)] p-4 rounded-xl space-y-2 text-xs text-[var(--text-muted)]">
-              <p><strong class="text-[var(--chocolate)]">• Altura Máxima (Y máx):</strong> Ocurre cuando la componente vertical de la velocidad se vuelve instantáneamente nula (vᵧ = 0).</p>
-              <p><strong class="text-[var(--chocolate)]">• Alcance Horizontal (X máx):</strong> Distancia recorrida cuando el cuerpo regresa al nivel y = 0.</p>
+              <p><strong class="text-[var(--chocolate)]">• Altura Máxima (Y_máx):</strong> Ocurre cuando la componente vertical de la velocidad se vuelve instantáneamente nula (v_y = 0).</p>
+              <p><strong class="text-[var(--chocolate)]">• Alcance Horizontal (X_máx):</strong> Distancia recorrida cuando el cuerpo regresa al nivel y = 0.</p>
             </div>
           </div>
         </div>
@@ -513,6 +612,44 @@
 
   </div>
 
+  <!-- MODAL DE PANTALLA COMPLETA PARA AMPLIAR GRÁFICAS -->
+  <div id="chartModal" class="chart-modal">
+    <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 w-full max-w-5xl space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+        <div class="flex items-center gap-2">
+          <i data-lucide="line-chart" class="w-5 h-5 text-[var(--primary)]"></i>
+          <h2 class="font-semibold text-[var(--chocolate)] text-base">Gráficas Cinemáticas Ampliadas (Tiempo Real)</h2>
+        </div>
+        <button onclick="closeChartModal()" class="p-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] hover:border-[var(--primary)] transition-colors">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3" id="modal-charts-container">
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+          <h3 class="font-mono text-xs font-bold text-[var(--chocolate)] text-center">Posición Vertical y(t)</h3>
+          <div class="h-64 relative">
+            <canvas id="chartYModal"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+          <h3 class="font-mono text-xs font-bold text-[var(--chocolate)] text-center">Velocidad Vertical vy(t)</h3>
+          <div class="h-64 relative">
+            <canvas id="chartVyModal"></canvas>
+          </div>
+        </div>
+
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+          <h3 class="font-mono text-xs font-bold text-[var(--chocolate)] text-center">Velocidad Horizontal vx(t)</h3>
+          <div class="h-64 relative">
+            <canvas id="chartVxModal"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- JAVASCRIPT CON LÓGICA Y SIMULACIÓN -->
   <script>
     let v0 = 30;
@@ -520,36 +657,45 @@
     let h0 = 0;
     let g = 9.81;
 
+    let simSpeedMultiplier = 1.0;
+
     let isRunning = false;
     let currentTime = 0;
     let animFrameId = null;
-    let chartInstance = null;
 
-    // BANCO EXTENSO DE 20 PREGUNTAS SOBRE TIRO PARABÓLICO
+    let chartYInstance = null;
+    let chartVyInstance = null;
+    let chartVxInstance = null;
+
+    let chartYModalInstance = null;
+    let chartVyModalInstance = null;
+    let chartVxModalInstance = null;
+
+    // BANCO EXTENSO DE 20 PREGUNTAS
     const questionBank = [
       {
-        q: "En ausencia de fricción con el aire, ¿qué sucede con la componente horizontal de la velocidad (Vx) durante el tiro?",
+        q: "En ausencia de fricción con el aire, ¿qué sucede con la componente horizontal de la velocidad (v_x) durante el tiro?",
         options: ["Permanece constante durante todo el recorrido", "Aumenta linealmente con el tiempo", "Se reduce a cero en la altura máxima", "Disminuye constantemente"],
         correct: 0,
-        explanation: "En la dirección horizontal no existe aceleración (ax = 0), por lo que se comporta como un MRU con Vx constante."
+        explanation: "En la dirección horizontal no existe aceleración (a_x = 0), por lo que se comporta como un MRU con v_x constante."
       },
       {
-        q: "¿Cuál es el valor de la componente vertical de la velocidad (Vy) exactamente en el punto más alto de la trayectoria?",
-        options: ["Igual a V0", "Exactamente 0 m/s", "Igual a g * t", "Máxima e igual a Vx"],
+        q: "¿Cuál es el valor de la componente vertical de la velocidad (v_y) exactamente en el punto más alto de la trayectoria?",
+        options: ["Igual a v0", "Exactamente 0 m/s", "Igual a g · t", "Máxima e igual a v_x"],
         correct: 1,
-        explanation: "En el ápice de la parábola, el proyectil cambia de sentido ascendente a descendente, por lo cual Vy = 0 m/s."
+        explanation: "En el ápice de la parábola, el proyectil cambia de sentido ascendente a descendente, por lo cual v_y = 0 m/s."
       },
       {
-        q: "¿Qué ángulo de disparo produce el mayor alcance horizontal (Xmax) sobre un terreno plano?",
+        q: "¿Qué ángulo de disparo produce el mayor alcance horizontal (X_máx) sobre un terreno plano?",
         options: ["30°", "45°", "60°", "90°"],
         correct: 1,
-        explanation: "La función del alcance depende de sen(2θ), la cual alcanza su valor máximo de 1 cuando 2θ = 90°, es decir θ = 45°."
+        explanation: "La función del alcance depende de sin(2θ), la cual alcanza su valor máximo de 1 cuando 2θ = 90°, es decir θ = 45°."
       },
       {
-        q: "Si duplicamos la velocidad inicial (V0) manteniendo el ángulo igual, ¿qué pasa con el alcance máximo (Xmax)?",
+        q: "Si duplicamos la velocidad inicial (v0) manteniendo el ángulo igual, ¿qué pasa con el alcance máximo (X_máx)?",
         options: ["Se duplica", "Se triplica", "Se cuadruplica (multiplica por 4)", "No se altera"],
         correct: 2,
-        explanation: "El alcance horizontal es proporcional al cuadrado de la velocidad inicial (Xmax ∝ V0²)."
+        explanation: "El alcance horizontal es proporcional al cuadrado de la velocidad inicial (X_máx ∝ v0²)."
       },
       {
         q: "¿Cómo se comporta la aceleración del proyectil durante todo su trayecto en el aire?",
@@ -559,7 +705,7 @@
       },
       {
         q: "En un tiro parabólico, ¿cuál de los siguientes factores NO afecta el tiempo total de vuelo?",
-        options: ["La aceleración de la gravedad", "La componente vertical V0y", "La masa del proyectil", "La altura inicial h0"],
+        options: ["La aceleración de la gravedad", "La componente vertical v_0y", "La masa del proyectil", "La altura inicial h0"],
         correct: 2,
         explanation: "En la física clásica del tiro parabólico sin resistencia del aire, la masa no influye en las ecuaciones cinemáticas."
       },
@@ -577,15 +723,15 @@
       },
       {
         q: "Al disparar un objeto verticalmente hacia arriba (θ = 90°), ¿cuál es el valor del alcance horizontal?",
-        options: ["Máximo", "Igual a Ymax", "Cero (0 m)", "Depende de la masa"],
+        options: ["Máximo", "Igual a Y_máx", "Cero (0 m)", "Depende de la masa"],
         correct: 2,
-        explanation: "Dado que cos(90°) = 0, la velocidad horizontal Vx es 0 y el objeto se mueve únicamente en el eje vertical."
+        explanation: "Dado que cos(90°) = 0, la velocidad horizontal v_x es 0 y el objeto se mueve únicamente en el eje vertical."
       },
       {
         q: "¿Qué representa la norma o magnitud del vector velocidad resultante V en cualquier instante?",
-        options: ["V = Vx + Vy", "V = √(Vx² + Vy²)", "V = Vx * Vy", "V = V0 - g*t"],
+        options: ["V = v_x + v_y", "V = √(v_x² + v_y²)", "V = v_x · v_y", "V = v0 - g·t"],
         correct: 1,
-        explanation: "Por el teorema de Pitágoras entre componentes ortogonales: V = √(Vx² + Vy²)."
+        explanation: "Por el teorema de Pitágoras entre componentes ortogonales: V = √(v_x² + v_y²)."
       },
       {
         q: "Al aumentar la altura inicial (h0), ¿qué ocurre con el tiempo total de vuelo?",
@@ -594,16 +740,16 @@
         explanation: "Al comenzar desde una mayor altura, el proyectil requiere más tiempo para caer de nuevo al suelo."
       },
       {
-        q: "¿Qué ocurre con la componente vertical Vy durante la fase descendente del movimiento?",
-        options: ["Es positiva y aumenta", "Es negativa y su magnitud aumenta hacia abajo", "Se mantiene en cero", "Se vuelve igual a Vx"],
+        q: "¿Qué ocurre con la componente vertical v_y durante la fase descendente del movimiento?",
+        options: ["Es positiva y aumenta", "Es negativa y su magnitud aumenta hacia abajo", "Se mantiene en cero", "Se vuelve igual a v_x"],
         correct: 1,
-        explanation: "Durante el descenso, Vy apunta hacia abajo (signo negativo) e incrementa su magnitud por la gravedad."
+        explanation: "Durante el descenso, v_y apunta hacia abajo (signo negativo) e incrementa su magnitud por la gravedad."
       },
       {
-        q: "¿Cuál es el valor del ángulo θ que maximiza la altura máxima Ymax alcanzada?",
+        q: "¿Cuál es el valor del ángulo θ que maximiza la altura máxima Y_máx alcanzada?",
         options: ["0°", "45°", "60°", "90°"],
         correct: 3,
-        explanation: "A 90°, toda la velocidad inicial se transfiere a la componente vertical (V0y = V0), alcanzando la máxima altura posible."
+        explanation: "A 90°, toda la velocidad inicial se transfiere a la componente vertical (v_0y = v0), alcanzando la máxima altura posible."
       },
       {
         q: "¿Qué combinación de movimientos define al tiro parabólico?",
@@ -618,28 +764,28 @@
         explanation: "El roce con el aire reduce la velocidad continuamente, acortando el alcance y haciendo el descenso más empinado."
       },
       {
-        q: "¿Con qué ángulo debe golpearse un balón desde el suelo para que V0x y V0y sean iguales en magnitud?",
+        q: "¿Con qué ángulo debe golpearse un balón desde el suelo para que v_0x y v_0y sean iguales en magnitud?",
         options: ["30°", "45°", "60°", "75°"],
         correct: 1,
-        explanation: "A 45°, cos(45°) = sen(45°) = √2/2, haciendo que ambas componentes iniciales sean exactamente iguales."
+        explanation: "A 45°, cos(45°) = sin(45°) = √2/2, haciendo que ambas componentes iniciales sean exactamente iguales."
       },
       {
         q: "¿A qué se debe que el tiempo de subida sea igual al tiempo de bajada en un terreno nivelado?",
         options: ["A la simetría de la aceleración constante de la gravedad", "A la masa del objeto", "Al aire", "A la velocidad horizontal"],
         correct: 0,
-        explanation: "Como la aceleración es constante (-g), desacelerar de V0y a 0 toma el mismo tiempo que acelerar de 0 a -V0y."
+        explanation: "Como la aceleración es constante (-g), desacelerar de v_0y a 0 toma el mismo tiempo que acelerar de 0 a -v_0y."
       },
       {
-        q: "¿Cuál es la velocidad Resultante V en el punto más alto del tiro si V0 = 20 m/s y θ = 60°?",
+        q: "¿Cuál es la velocidad Resultante V en el punto más alto del tiro si v0 = 20 m/s y θ = 60°?",
         options: ["0 m/s", "10 m/s", "17.3 m/s", "20 m/s"],
         correct: 1,
-        explanation: "En el ápice Vy = 0, así que V = Vx = V0 * cos(60°) = 20 * 0.5 = 10 m/s."
+        explanation: "En el ápice v_y = 0, así que V = v_x = v0 · cos(60°) = 20 · 0.5 = 10 m/s."
       },
       {
         q: "¿En qué punto de la trayectoria plana la rapidez (magnitud de V) es mínima?",
         options: ["En el instante del lanzamiento", "En la altura máxima (Apex)", "Justo antes del impacto", "En la mitad del descenso"],
         correct: 1,
-        explanation: "En la altura máxima Vy = 0, por lo que la rapidez total es solo Vx (su valor mínimo durante el vuelo)."
+        explanation: "En la altura máxima v_y = 0, por lo que la rapidez total es solo v_x (su valor mínimo durante el vuelo)."
       },
       {
         q: "Si lanzamos dos balones con el mismo ángulo y velocidad, pero uno en la Luna (g = 1.62 m/s²), ¿qué ocurre en la Luna?",
@@ -650,6 +796,30 @@
     ];
 
     let currentQuizQuestions = [];
+
+    function setSimSpeed(spd) {
+      simSpeedMultiplier = spd;
+      ['spd-05', 'spd-10', 'spd-20'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.className = "px-2 py-1 rounded text-[var(--text-muted)] hover:text-[var(--primary)]";
+        }
+      });
+      const activeBtnId = spd === 0.5 ? 'spd-05' : (spd === 2.0 ? 'spd-20' : 'spd-10');
+      const activeBtn = document.getElementById(activeBtnId);
+      if (activeBtn) {
+        activeBtn.className = "px-2 py-1 rounded bg-[var(--primary)] text-white font-bold";
+      }
+    }
+
+    function applyPreset(pv0, pAngle, ph0, pg) {
+      document.getElementById("slider-v0").value = pv0;
+      document.getElementById("slider-angle").value = pAngle;
+      document.getElementById("slider-h0").value = ph0;
+      document.getElementById("slider-g").value = pg;
+      currentTime = 0;
+      update();
+    }
 
     // MODO OSCURO / CLARO
     function toggleDarkMode() {
@@ -670,7 +840,7 @@
       if (window.lucide) {
         lucide.createIcons();
       }
-      updateChart(getCalculations());
+      updateCharts();
     }
 
     function loadSavedTheme() {
@@ -699,6 +869,15 @@
       }
     }
 
+    function openChartModal() {
+      document.getElementById('chartModal').classList.add('active');
+      setTimeout(() => updateCharts(), 100);
+    }
+
+    function closeChartModal() {
+      document.getElementById('chartModal').classList.remove('active');
+    }
+
     function getCalculations() {
       const rad = (angle * Math.PI) / 180;
       const v0x = v0 * Math.cos(rad);
@@ -720,8 +899,9 @@
       const curVx = v0x;
       const curVy = v0y - g * tClamped;
       const curV = Math.sqrt(curVx * curVx + curVy * curVy);
+      const curAngle = Math.atan2(curVy, curVx) * (180 / Math.PI);
 
-      return { v0x, v0y, tVuelo, tApex, yMax, xMax, tClamped, curX, curY, curVx, curVy, curV };
+      return { v0x, v0y, tVuelo, tApex, yMax, xMax, tClamped, curX, curY, curVx, curVy, curV, curAngle };
     }
 
     function drawSVG(calc) {
@@ -732,15 +912,42 @@
       const vecVx = document.getElementById("vec-vx");
       const vecVy = document.getElementById("vec-vy");
       const apexGroup = document.getElementById("apex-group");
+      const ticksGroup = document.getElementById("court-ticks-group");
 
-      const margin = 50;
-      const width = 500;
+      const margin = 60;
+      const width = 680;
       const height = 300;
       const scaleX = width / Math.max(calc.xMax, 10);
-      const scaleY = height / Math.max(calc.yMax * 1.2, 10);
+      const scaleY = height / Math.max(calc.yMax * 1.25, 10);
 
       const toSvgX = (x) => margin + x * scaleX;
-      const toSvgY = (y) => 350 - y * scaleY;
+      const toSvgY = (y) => 336 - y * scaleY;
+
+      // REGLA graduada en la cancha
+      ticksGroup.innerHTML = "";
+      const stepMark = Math.max(5, Math.round(calc.xMax / 8));
+      for (let xM = 0; xM <= calc.xMax * 1.1; xM += stepMark) {
+        const sx = toSvgX(xM);
+        if (sx <= 780) {
+          const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", sx); line.setAttribute("y1", 336);
+          line.setAttribute("x2", sx); line.setAttribute("y2", 344);
+          line.setAttribute("stroke", "var(--primary)");
+          line.setAttribute("stroke-width", "2");
+
+          const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+          text.setAttribute("x", sx); text.setAttribute("y", 358);
+          text.setAttribute("fill", "var(--text-muted)");
+          text.setAttribute("font-size", "10");
+          text.setAttribute("font-weight", "600");
+          text.setAttribute("font-family", "JetBrains Mono");
+          text.setAttribute("text-anchor", "middle");
+          text.textContent = `${Math.round(xM)}m`;
+
+          ticksGroup.appendChild(line);
+          ticksGroup.appendChild(text);
+        }
+      }
 
       let pathStr = "";
       let trailStr = "";
@@ -766,10 +973,17 @@
         const apexY = toSvgY(calc.yMax);
         document.getElementById("apex-point").setAttribute("cx", apexX);
         document.getElementById("apex-point").setAttribute("cy", apexY);
+        
+        const lineV = document.getElementById("apex-line-v");
+        if (lineV) {
+          lineV.setAttribute("x1", apexX); lineV.setAttribute("y1", apexY);
+          lineV.setAttribute("x2", apexX); lineV.setAttribute("y2", 336);
+        }
+
         const apexText = document.getElementById("apex-text");
         apexText.setAttribute("x", apexX - 20);
         apexText.setAttribute("y", apexY - 10);
-        apexText.textContent = `Hmax: ${calc.yMax.toFixed(1)}m`;
+        apexText.textContent = `Ymax: ${calc.yMax.toFixed(1)}m`;
       }
 
       const px = toSvgX(calc.curX);
@@ -788,77 +1002,141 @@
       vecV.setAttribute("x1", px); vecV.setAttribute("y1", py);
       vecV.setAttribute("x2", px + calc.curVx * vScale);
       vecV.setAttribute("y2", py - calc.curVy * vScale);
+
+      // Actualizar estado instantáneo
+      document.getElementById("live-v").textContent = `${calc.curV.toFixed(2)} m/s`;
+      document.getElementById("live-angle").textContent = `${calc.curAngle.toFixed(1)}°`;
+    }
+
+    function updateLiveChartPointers() {
+      const calc = getCalculations();
+      const idx = Math.min(Math.floor((currentTime / calc.tVuelo) * 40), 40);
+
+      [chartYInstance, chartVyInstance, chartVxInstance, chartYModalInstance, chartVyModalInstance, chartVxModalInstance].forEach(inst => {
+        if (!inst) return;
+        const radii = new Array(41).fill(0);
+        radii[idx] = 6;
+        inst.data.datasets[0].pointRadius = radii;
+        inst.data.datasets[0].pointBackgroundColor = '#3D2540';
+        inst.data.datasets[0].pointBorderColor = '#FFFFFF';
+        inst.data.datasets[0].pointBorderWidth = 2;
+        inst.update('none');
+      });
     }
 
     function updatePhysicsAnimation() {
       if (!isRunning) return;
 
       const calc = getCalculations();
-      currentTime += 0.03;
+      currentTime += 0.03 * simSpeedMultiplier;
 
       if (currentTime >= calc.tVuelo) {
         currentTime = calc.tVuelo;
         isRunning = false;
+        if (animFrameId) cancelAnimationFrame(animFrameId);
       }
 
       document.getElementById("time-badge").textContent = `t = ${currentTime.toFixed(2)} s`;
       drawSVG(getCalculations());
-      updateChartData();
+      updateLiveChartPointers();
 
       if (isRunning) {
         animFrameId = requestAnimationFrame(updatePhysicsAnimation);
       }
     }
 
-    function updateChart(calc) {
-      const labels = [];
-      const dataY = [];
-      const steps = 20;
-      for (let i = 0; i <= steps; i++) {
-        const t = (calc.tVuelo / steps) * i;
-        labels.push(t.toFixed(1));
-        dataY.push((h0 + calc.v0y * t - 0.5 * g * t * t).toFixed(2));
-      }
-
+    function createChartConfig(label, color, bgColor, yMin, yMax) {
       const isDark = document.documentElement.classList.contains('dark');
       const gridColor = isDark ? '#422D4F' : '#E2D5EA';
       const textColor = isDark ? '#B3A0BF' : '#7E6B88';
-      const primaryColor = isDark ? '#B892D6' : '#9C77B8';
 
-      if (chartInstance) chartInstance.destroy();
-
-      const ctx = document.getElementById('kinematicsChart').getContext('2d');
-      chartInstance = new Chart(ctx, {
+      return {
         type: 'line',
         data: {
-          labels: labels,
+          labels: [],
           datasets: [{
-            label: 'Altura y(t) [m]',
-            data: dataY,
-            borderColor: primaryColor,
-            backgroundColor: 'rgba(156, 119, 184, 0.15)',
+            label: label,
+            data: [],
+            borderColor: color,
+            backgroundColor: bgColor,
+            borderWidth: 2.5,
             fill: true,
-            borderWidth: 2,
-            tension: 0.3,
+            tension: 0.2,
             pointRadius: 0
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          animation: false,
           scales: {
-            y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9, family: 'JetBrains Mono' } } },
-            x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9, family: 'JetBrains Mono' } } }
+            y: {
+              grid: { color: gridColor },
+              ticks: { color: textColor, font: { size: 9, family: 'JetBrains Mono' } },
+              suggestedMin: yMin,
+              suggestedMax: yMax
+            },
+            x: {
+              grid: { color: gridColor },
+              ticks: { color: textColor, font: { size: 9, family: 'JetBrains Mono' } }
+            }
           },
           plugins: { legend: { display: false } }
         }
-      });
+      };
     }
 
-    function updateChartData() {
-      if (chartInstance) {
-        chartInstance.update();
+    function updateCharts() {
+      const labels = [];
+      const dataY = [];
+      const dataVy = [];
+      const dataVx = [];
+      const steps = 40;
+      const calc = getCalculations();
+
+      for (let i = 0; i <= steps; i++) {
+        const t = (calc.tVuelo / steps) * i;
+        labels.push(t.toFixed(1));
+
+        let curY = Math.max(0, h0 + calc.v0y * t - 0.5 * g * t * t);
+        let curVy = calc.v0y - g * t;
+        let curVx = calc.v0x;
+
+        dataY.push(curY.toFixed(2));
+        dataVy.push(curVy.toFixed(2));
+        dataVx.push(curVx.toFixed(2));
       }
+
+      if (chartYInstance) chartYInstance.destroy();
+      if (chartVyInstance) chartVyInstance.destroy();
+      if (chartVxInstance) chartVxInstance.destroy();
+
+      if (chartYModalInstance) chartYModalInstance.destroy();
+      if (chartVyModalInstance) chartVyModalInstance.destroy();
+      if (chartVxModalInstance) chartVxModalInstance.destroy();
+
+      const isDark = document.documentElement.classList.contains('dark');
+      const primaryColor = isDark ? '#B892D6' : '#9C77B8';
+      const chocolateColor = isDark ? '#F3ECF8' : '#3D2540';
+      const cyanColor = isDark ? '#60A5FA' : '#3A86FF';
+
+      chartYInstance = new Chart(document.getElementById('chartY').getContext('2d'), createChartConfig('y(t) [m]', primaryColor, 'rgba(156, 119, 184, 0.15)'));
+      chartVyInstance = new Chart(document.getElementById('chartVy').getContext('2d'), createChartConfig('vy(t) [m/s]', chocolateColor, 'rgba(61, 37, 64, 0.15)'));
+      chartVxInstance = new Chart(document.getElementById('chartVx').getContext('2d'), createChartConfig('vx(t) [m/s]', cyanColor, 'rgba(58, 134, 255, 0.15)'));
+
+      chartYModalInstance = new Chart(document.getElementById('chartYModal').getContext('2d'), createChartConfig('y(t) [m]', primaryColor, 'rgba(156, 119, 184, 0.15)'));
+      chartVyModalInstance = new Chart(document.getElementById('chartVyModal').getContext('2d'), createChartConfig('vy(t) [m/s]', chocolateColor, 'rgba(61, 37, 64, 0.15)'));
+      chartVxModalInstance = new Chart(document.getElementById('chartVxModal').getContext('2d'), createChartConfig('vx(t) [m/s]', cyanColor, 'rgba(58, 134, 255, 0.15)'));
+
+      [chartYInstance, chartVyInstance, chartVxInstance, chartYModalInstance, chartVyModalInstance, chartVxModalInstance].forEach((inst, idx) => {
+        inst.data.labels = labels;
+        if (idx % 3 === 0) inst.data.datasets[0].data = dataY;
+        else if (idx % 3 === 1) inst.data.datasets[0].data = dataVy;
+        else inst.data.datasets[0].data = dataVx;
+        inst.update();
+      });
+
+      updateLiveChartPointers();
     }
 
     function update() {
@@ -879,7 +1157,7 @@
       document.getElementById("res-vx").textContent = `${calc.v0x.toFixed(2)} m/s`;
 
       drawSVG(calc);
-      updateChart(calc);
+      updateCharts();
     }
 
     function exportToCSV() {
@@ -896,13 +1174,12 @@
       const encodedUri = encodeURI(csv);
       const link = document.createElement("a");
       link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "tiro_parabolico_resultados.csv");
+      link.setAttribute("download", "tiro_parabolico_tecnm.csv");
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
     }
 
-    // GENERACIÓN ALEATORIA DE 5 PREGUNTAS DESDE EL BANCO DE 20
     function generateQuiz() {
       const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
       currentQuizQuestions = shuffled.slice(0, 5);
