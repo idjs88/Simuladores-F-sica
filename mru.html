@@ -176,47 +176,33 @@
 </head>
 <body class="h-full bg-grid-pattern font-sans text-sm selection:bg-[var(--surface-subtle)] selection:text-[var(--primary)]">
 
-  <div class="min-h-screen flex flex-col md:flex-row">
+  <div class="min-h-screen flex flex-col w-full bg-grid-pattern">
 
-    <!-- SIDEBAR LATERAL -->
-    <aside class="w-full md:w-80 bg-[var(--surface)] border-r border-[var(--border)] flex flex-col justify-between p-5 shrink-0 z-20 transition-colors duration-300">
-      <div class="space-y-6">
-        <div class="flex items-center justify-between pb-4 border-b border-[var(--border)]">
-          <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-[var(--primary)] text-white flex items-center justify-center font-mono font-bold text-base shadow-sm">
-              ❀
-            </div>
-            <div>
-              <h1 class="font-semibold text-[var(--chocolate)] tracking-tight text-base leading-snug">Laboratorio Virtual</h1>
-              <p class="text-xs text-[var(--text-muted)] font-mono">Física General</p>
-            </div>
-          </div>
+  <header class="w-full bg-[var(--surface)] border-b border-[var(--border)] px-4 py-3 md:px-8 flex items-center justify-between z-20 transition-colors duration-300 shadow-sm shrink-0">
 
-          <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors" title="Cambiar tema">
-            <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
-          </button>
-        </div>
+    <div class="flex items-center gap-2 md:gap-3">
+      <a href="index.html" class="flex items-center gap-2 py-1.5 px-3 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <span class="hidden sm:inline">Regresar al Menú Principal</span>
+        <span class="sm:hidden">Menú</span>
+      </a>
 
-        <div>
-          <a href="index.html" class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i>
-            Regresar al Menú Principal
-          </a>
-        </div>
-      </div>
-    </aside>
+      <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors" title="Cambiar tema">
+        <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+  </header>
 
     <!-- ÁREA PRINCIPAL / CONTENIDO -->
-    <main class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto relative" id="mainContentScroll">
-
-      <!-- HEADER SUPERIOR DE SIMULADOR -->
-      <header class="bg-[var(--surface)] border-b border-[var(--border)] p-4 md:px-8 flex flex-col sm:flex-row gap-4 items-center justify-between sticky top-0 z-10 shadow-sm transition-colors duration-300">
+      <!-- HEADER SUPERIOR -->
+      <div class="bg-[var(--surface)] border-b border-[var(--border)] p-4 md:px-8 flex flex-col sm:flex-row gap-4 items-center justify-between sticky top-0 z-10 shadow-sm transition-colors duration-300">
         <div>
           <div class="flex items-center gap-2">
             <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--surface-subtle)] text-[var(--primary)] border border-[var(--border)]">
               Tema 2.1.2
             </span>
-            <h1 class="font-semibold text-[var(--chocolate)] text-base">Movimiento Rectilíneo Uniforme (MRU)</h1>
+            <h1 class="font-semibold text-[var(--chocolate)] text-base">Movimiento Rectilíneo Uniforme</h1>
           </div>
           <p class="text-xs text-[var(--text-muted)] mt-0.5">Analiza el comportamiento cinemático a velocidad constante y aceleración nula.</p>
         </div>
@@ -233,7 +219,7 @@
             Evaluación
           </button>
         </div>
-      </header>
+      </div>
 
       <div class="p-4 md:p-8 space-y-6 flex-1">
 
@@ -250,7 +236,7 @@
                 <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
                   <div class="flex items-center gap-2">
                     <i data-lucide="move-right" class="w-4 h-4 text-[var(--primary)]"></i>
-                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Carretera y Enfoque de Cámara</h2>
+                    <h2 class="font-semibold text-[var(--chocolate)] text-sm">Representación del Fenómeno</h2>
                   </div>
                   
                   <div class="flex items-center gap-2 font-mono">
@@ -309,10 +295,6 @@
 
                     <!-- CADA DE FONDO 1: CIELO MULTICOLOR -->
                     <rect x="0" y="0" width="800" height="200" fill="url(#skyGradient)"/>
-
-                    <!-- Sol/Astro al fondo -->
-                    <circle cx="680" cy="80" r="45" fill="url(#sunGradient)"/>
-                    <circle cx="680" cy="80" r="22" fill="#FFE5EC" opacity="0.9"/>
 
                     <!-- Nubes estéticas de fondo -->
                     <g opacity="0.6">
