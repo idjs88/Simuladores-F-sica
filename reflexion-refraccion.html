@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-[var(--bg)] text-[var(--text)] antialiased transition-colors duration-300">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador: Reflexión, Refracción y Fibra Óptica</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- KaTeX para renderizado matemático elegante en la teoría -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+  <!-- Fuentes de Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            academic: {
+              lilac: '#9C77B8',
+              lilacSoft: '#F3ECF8',
+              lilacLight: '#E8DDF0',
+              plum: '#3D2540',
+              offwhite: '#FBF9F5',
+              borderLilac: '#E2D5EA',
+              textPlum: '#2A182E',
+              mutedLilac: '#7E6B88'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --bg: #FBF9F5;
+      --surface: #FFFFFF; 
+      --surface-subtle: #F3ECF8;
+      --border: #E2D5EA; 
+      --text: #2A182E; 
+      --text-muted: #7E6B88; 
+      --primary: #9C77B8; 
+      --primary-hover: #825A9E;  
+      --chocolate: #3D2540;  
+      --accent-soft: #E8DDF0; 
+      --grid-color: rgba(61, 37, 64, 0.05);
+    }
+
+    .dark {
+      --bg: #140E17;   
+      --surface: #1E1624;  
+      --surface-subtle: #2C1F35;
+      --border: #422D4F; 
+      --text: #F3ECF8;  
+      --text-muted: #B3A0BF; 
+      --primary: #B892D6; 
+      --primary-hover: #D1B3E8;
+      --chocolate: #F3ECF8;
+      --accent-soft: #2A182E;
+      --grid-color: rgba(184, 146, 214, 0.06);
+    }
+
+    .bg-grid-pattern {
+      background-size: 24px 24px;
+      background-image: 
+        linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    input[type=range] {
+      width: 100%;
+      height: 6px;
+      border-radius: 6px;
+      background: var(--border);
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .optics-plane {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      box-shadow: inset 0 0 25px rgba(156, 119, 184, 0.05);
+      overflow: hidden;
+    }
+
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.82rem;
+    }
+
+    .quiz-option:hover {
+      border-color: var(--primary);
+      background: var(--surface-subtle);
+    }
+
+    .quiz-option.selected {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="h-full bg-grid-pattern font-sans text-sm selection:bg-[var(--surface-subtle)] selection:text-[var(--primary)]">
+
+<div class="min-h-screen flex flex-col w-full bg-grid-pattern">
+
+  <!-- BARRA SUPERIOR COMPACTA DE NAVEGACIÓN PRINCIPAL -->
+  <header class="w-full bg-[var(--surface)] border-b border-[var(--border)] px-4 py-3 md:px-8 flex items-center justify-between z-20 transition-colors duration-300 shadow-sm shrink-0">
+    <div class="flex items-center gap-2 md:gap-3">
+      <a href="index.html" class="flex items-center gap-2 py-1.5 px-3 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] hover:text-[var(--primary)] transition-all">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+        <span class="hidden sm:inline">Regresar al Menú Principal</span>
+        <span class="sm:hidden">Menú</span>
+      </a>
+
+      <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-[var(--bg)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--primary)] hover:border-[var(--primary)] transition-colors" title="Cambiar tema">
+        <i data-lucide="moon" id="themeIcon" class="w-4 h-4"></i>
+      </button>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <span class="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-[var(--surface-subtle)] text-[var(--primary)] border border-[var(--border)]">
+        Módulo 2
+      </span>
+      <span class="hidden md:inline font-mono text-xs text-[var(--text-muted)]">Óptica Geométrica & Física</span>
+    </div>
+  </header>
+
+  <!-- HEADER SECUNDARIO / TITULO DEL SIMULADOR Y PESTAÑAS -->
+  <div class="bg-[var(--surface)] border-b border-[var(--border)] p-4 md:px-8 flex flex-col sm:flex-row gap-4 items-center justify-between sticky top-0 z-10 shadow-sm transition-colors duration-300">
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-[var(--surface-subtle)] text-[var(--primary)] border border-[var(--border)]">
+          Tema 2
+        </span>
+        <h1 class="font-semibold text-[var(--chocolate)] text-base">Reflexión, Refracción (Ley de Snell) y Fibra Óptica</h1>
+      </div>
+      <p class="text-xs text-[var(--text-muted)] mt-0.5">Modelado dinámico de cambio de medio, ángulo crítico, reflexión total interna y guía de onda en fibra óptica.</p>
+    </div>
+
+    <!-- NAVEGACIÓN DE PESTAÑAS INTERNAS -->
+    <div class="flex items-center bg-[var(--bg)] border border-[var(--border)] rounded-lg p-1 gap-1 font-mono text-xs">
+      <button onclick="switchTab('simulador')" id="tab-btn-simulador" class="tab-btn px-3 py-1.5 rounded-md font-medium bg-[var(--primary)] text-white transition-all">
+        Simulador
+      </button>
+      <button onclick="switchTab('teoria')" id="tab-btn-teoria" class="tab-btn px-3 py-1.5 rounded-md font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-all">
+        Teoría
+      </button>
+      <button onclick="switchTab('evaluacion')" id="tab-btn-evaluacion" class="tab-btn px-3 py-1.5 rounded-md font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-all">
+        Evaluación
+      </button>
+    </div>
+  </div>
+
+  <div class="p-4 md:p-8 space-y-6 flex-1">
+
+    <!-- PESTAÑA 1: SIMULADOR -->
+    <div id="tab-simulador" class="tab-pane active space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- PANEL IZQUIERDO DE SIMULACIÓN (2 COLUMNAS EN LG) -->
+        <div class="lg:col-span-2 space-y-6">
+
+          <!-- CONTENEDOR DE LA SIMULACIÓN VISUAL (SVG INTERACTIVO) -->
+          <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-4 shadow-sm">
+            
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[var(--border)]">
+              <div class="flex items-center gap-2">
+                <i data-lucide="sun" class="w-4 h-4 text-[var(--primary)]"></i>
+                <h2 class="font-semibold text-[var(--chocolate)] text-sm">Banco Óptico de Refracción y Guía de Onda</h2>
+              </div>
+
+              <!-- SELECTOR DE EXP: SNELL VS FIBRA ÓPTICA -->
+              <div class="flex items-center gap-2 font-mono text-xs">
+                <label class="text-[var(--text-muted)] hidden sm:inline">Modo:</label>
+                <select id="exp-mode" onchange="changeExpMode(this.value)" class="p-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg)] text-[var(--chocolate)] font-semibold focus:outline-none focus:border-[var(--primary)]">
+                  <option value="snell">1. Ley de Snell y Ángulo Crítico</option>
+                  <option value="fiber">2. Confinamiento en Fibra Óptica</option>
+                </select>
+              </div>
+
+              <!-- CONTROLES DE ANIMACIÓN -->
+              <div class="flex items-center gap-2 font-mono">
+                <button id="btn-play" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white text-xs font-medium hover:bg-[var(--primary-hover)] transition-colors">
+                  <i data-lucide="play" class="w-3.5 h-3.5"></i> Iniciar
+                </button>
+                <button id="btn-pause" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] text-xs font-medium hover:border-[var(--primary)] transition-colors">
+                  <i data-lucide="pause" class="w-3.5 h-3.5"></i> Pausa
+                </button>
+                <button id="btn-stop" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] text-xs font-medium hover:border-[var(--primary)] transition-colors">
+                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reiniciar
+                </button>
+              </div>
+            </div>
+
+            <!-- CANVAS SVG CON RASTREADOR DE COORDENADAS DE ALTA PRECISIÓN -->
+            <div class="optics-plane relative group">
+              <div id="cursor-coords" class="absolute top-2 right-2 bg-[var(--surface)]/90 backdrop-blur border border-[var(--border)] px-2.5 py-1 rounded-md text-[10px] font-mono text-[var(--text-muted)] pointer-events-none z-10 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm">
+                X: <span id="coord-x" class="text-[var(--primary)] font-bold">0</span> mm | Y: <span id="coord-y" class="text-[var(--primary)] font-bold">0</span> mm
+              </div>
+              <svg id="optics-svg" viewBox="0 0 600 380" class="w-full h-full">
+                <defs>
+                  <marker id="arrow-ray" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse">
+                    <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--primary)"/>
+                  </marker>
+                  <linearGradient id="laser-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#3D2540"/>
+                    <stop offset="100%" stop-color="var(--primary)"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Capa de Fondos y Medios Materiales -->
+                <g id="bg-layer"></g>
+                <!-- Capa de Ejes, Transportador y Normales -->
+                <g id="grid-layer"></g>
+                <!-- Capa de Emisores Láser e Interfaces -->
+                <g id="emitters-layer"></g>
+                <!-- Capa de Trazado de Rayos (Incidente, Reflejado, Refractado) -->
+                <g id="rays-layer"></g>
+                <!-- Capa de Animación Fotónica -->
+                <g id="photons-layer"></g>
+                <!-- Capa de Etiquetas e Indicadores de Ángulo -->
+                <g id="labels-layer"></g>
+              </svg>
+            </div>
+
+            <!-- LEYENDA Y TIEMPO -->
+            <div class="flex flex-wrap items-center justify-between gap-2 bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl font-mono text-xs">
+              <div class="flex items-center gap-4">
+                <span class="text-[var(--primary)] font-semibold flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[var(--primary)]"></span> Haz Incidente / Reflejado
+                </span>
+                <span class="text-[var(--chocolate)] font-semibold flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[var(--chocolate)]"></span> Haz Refractado / Confinado
+                </span>
+              </div>
+              <span id="time-badge" class="px-2.5 py-1 rounded bg-[var(--surface-subtle)] text-[var(--chocolate)] font-bold">
+                Tiempo Simulación: 0.00 ns
+              </span>
+            </div>
+
+          </div>
+
+          <!-- CONTENEDOR DE GRÁFICAS (CHART.JS) -->
+          <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-4 shadow-sm">
+            <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+              <div class="flex items-center gap-2">
+                <i data-lucide="line-chart" class="w-4 h-4 text-[var(--primary)]"></i>
+                <h2 class="font-semibold text-[var(--chocolate)] text-sm">Curvas de Refracción y Coeficientes de Reflectancia</h2>
+              </div>
+              <div class="flex items-center gap-2">
+                <button id="btn-reset-params" onclick="resetDefaults()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] transition-colors" title="Restablecer Parámetros Predeterminados">
+                  <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Restablecer
+                </button>
+                <button id="btn-export-csv" onclick="exportCSV()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--primary)] text-white font-mono text-xs font-semibold hover:bg-[var(--primary-hover)] transition-colors">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i> Exportar CSV
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
+                <h3 id="chart1-title" class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Ángulo de Refracción θ₂ vs Incidencia θ₁</h3>
+                <div class="h-44 relative">
+                  <canvas id="chart1"></canvas>
+                </div>
+              </div>
+
+              <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl space-y-2">
+                <h3 id="chart2-title" class="font-mono text-xs font-semibold text-[var(--chocolate)] text-center">Reflectancia de Fresnel R(θ₁) [%]</h3>
+                <div class="h-44 relative">
+                  <canvas id="chart2"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PANEL DERECHO DE CONTROLES Y RESULTADOS (1 COLUMNA EN LG) -->
+        <div class="space-y-6">
+          <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-5 space-y-5 shadow-sm">
+            
+            <div class="flex items-center gap-2 pb-3 border-b border-[var(--border)]">
+              <i data-lucide="sliders" class="w-4 h-4 text-[var(--primary)]"></i>
+              <h2 class="font-semibold text-[var(--chocolate)] text-sm">Panel de Control de la Interfaz Óptica</h2>
+            </div>
+
+            <!-- CONTROLES DINÁMICOS SEGÚN MODO -->
+            <div id="controls-container" class="space-y-4 font-mono text-xs">
+              <!-- Inyectados dinámicamente mediante JS según modo Snell o Fibra -->
+            </div>
+
+            <!-- RESULTADOS EN VIVO -->
+            <div class="flex items-center gap-2 pt-2 border-t border-[var(--border)]">
+              <i data-lucide="calculator" class="w-4 h-4 text-[var(--primary)]"></i>
+              <h2 class="font-semibold text-[var(--chocolate)] text-sm">Mediciones y Ángulos Calculados</h2>
+            </div>
+
+            <div id="results-container" class="grid grid-cols-2 gap-3 font-mono">
+              <!-- Inyectados dinámicamente mediante JS -->
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PESTAÑA 2: TEORÍA COMPLETA CON KATEX -->
+    <div id="tab-teoria" class="tab-pane space-y-6">
+      <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 space-y-6 shadow-sm">
+        <div class="flex items-center gap-2 pb-3 border-b border-[var(--border)]">
+          <i data-lucide="book-open" class="w-5 h-5 text-[var(--primary)]"></i>
+          <h2 class="font-semibold text-[var(--chocolate)] text-base">Fundamentos Teóricos: Reflexión, Refracción y Guía de Onda</h2>
+        </div>
+
+        <p class="leading-relaxed text-[var(--text)]">
+          Cuando un rayo de luz incide sobre la interfaz que separa dos medios ópticos homogéneos e isótropos con índices de refracción $n_1$ y $n_2$, la energía luminosa se divide en dos haces: uno que regresa al medio original (rayo reflejado) y otro que se transmite modificando su dirección de propagación (rayo refractado).
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+            <h3 class="font-bold text-[var(--chocolate)] text-sm">1. Ley de la Reflexión Especular</h3>
+            <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+              El rayo incidente, la normal a la superficie en el punto de incidencia y el rayo reflejado yacen en un mismo plano. El ángulo de reflexión es exactamente igual al ángulo de incidencia:
+            </p>
+            <div class="bg-[var(--surface)] p-2 rounded border border-[var(--border)] font-mono text-center text-[var(--primary)] font-bold text-xs">
+              $$\theta_r = \theta_1$$
+            </div>
+          </div>
+
+          <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+            <h3 class="font-bold text-[var(--chocolate)] text-sm">2. Ley de Snell (Refracción)</h3>
+            <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+              Relaciona los índices de refracción de los dos medios con los senos de los ángulos medidos respecto a la normal perpendicular a la interfaz:
+            </p>
+            <div class="bg-[var(--surface)] p-2 rounded border border-[var(--border)] font-mono text-center text-[var(--chocolate)] font-bold text-xs">
+              $$n_1 \cdot \sin(\theta_1) = n_2 \cdot \sin(\theta_2)$$
+            </div>
+          </div>
+
+          <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+            <h3 class="font-bold text-[var(--chocolate)] text-sm">3. Ángulo Crítico y Reflexión Total Interna (RTI)</h3>
+            <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+              Cuando la luz intenta pasar de un medio más denso a uno menos denso ($n_1 > n_2$), el rayo se aleja de la normal. El ángulo crítico $\theta_c$ es aquel ángulo incidente para el cual el ángulo refractado es exactamente $\theta_2 = 90^\circ$:
+            </p>
+            <div class="bg-[var(--surface)] p-2 rounded border border-[var(--border)] font-mono text-center text-[var(--primary)] font-bold text-xs">
+              $$\theta_c = \arcsin\left(\frac{n_2}{n_1}\right)$$
+            </div>
+            <p class="text-xs text-[var(--text-muted)]">
+              Si $\theta_1 > \theta_c$, el rayo refractado desaparece por completo y el 100% de la energía se refleja dentro del primer medio (Reflexión Total Interna).
+            </p>
+          </div>
+
+          <div class="bg-[var(--bg)] border border-[var(--border)] p-4 rounded-xl space-y-2">
+            <h3 class="font-bold text-[var(--chocolate)] text-sm">4. Principio de la Fibra Óptica y Apertura Numérica</h3>
+            <p class="text-xs text-[var(--text-muted)] leading-relaxed">
+              Una fibra óptica consta de un núcleo central cilíndrico ($n_{\text{núcleo}}$) rodeado de un revestimiento ($n_{\text{revestimiento}} < n_{\text{núcleo}}$). Los rayos que ingresan con un ángulo de inyección menor al cono de aceptación sufren sucesivas reflexiones totales internas en las paredes, propagándose sin pérdidas a través de kilómetros.
+            </p>
+            <div class="bg-[var(--surface)] p-2 rounded border border-[var(--border)] font-mono text-center text-[var(--chocolate)] font-bold text-xs">
+              $$\text{AN} = \sin(\theta_{\text{máx}}) = \sqrt{n_{\text{núcleo}}^2 - n_{\text{revestimiento}}^2}$$
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- PESTAÑA 3: EVALUACIÓN (5 PREGUNTAS ALEATORIAS) -->
+    <div id="tab-evaluacion" class="tab-pane space-y-6">
+      <div class="bg-[var(--surface)] border border-[var(--border)] rounded-2xl p-6 space-y-6 shadow-sm">
+        <div class="flex items-center justify-between pb-3 border-b border-[var(--border)]">
+          <div class="flex items-center gap-2">
+            <i data-lucide="award" class="w-5 h-5 text-[var(--primary)]"></i>
+            <h2 class="font-semibold text-[var(--chocolate)] text-base">Cuestionario Evaluativo (5 Preguntas Aleatorias de Reflexión y Refracción)</h2>
+          </div>
+          <button id="btn-new-quiz" onclick="generateQuiz()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--bg)] border border-[var(--border)] text-[var(--chocolate)] font-mono text-xs font-semibold hover:border-[var(--primary)] transition-colors">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Generar Nuevo Cuestionario
+          </button>
+        </div>
+
+        <div id="quiz-container" class="space-y-4"></div>
+
+        <div class="flex items-center justify-between pt-4 border-t border-[var(--border)]">
+          <button id="btn-submit-quiz" onclick="evaluateQuiz()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--primary)] text-white font-mono text-xs font-bold hover:bg-[var(--primary-hover)] transition-colors">
+            <i data-lucide="check-circle" class="w-4 h-4"></i> Calificar Examen
+          </button>
+          <span id="quiz-score" class="font-mono text-base font-bold text-[var(--primary)]"></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- JAVASCRIPT CON LÓGICA Y MOTOR DE SIMULACIÓN ÓPTICA -->
+<script>
+  // ESTADO DEL SIMULADOR 2
+  let mode = 'snell'; // 'snell' o 'fiber'
+  let state = {
+    // Modo Snell
+    theta1: 45, // grados
+    n1: 1.00,  // Aire
+    n2: 1.50,  // Vidrio
+    // Modo Fibra
+    launchAngle: 20, // ángulo de inyección inicial
+    nCore: 1.62,
+    nClad: 1.40,
+    coreDiameter: 80 // mm en la simulación
+  };
+
+  let isRunning = false;
+  let animTime = 0;
+  let animFrameId = null;
+
+  let chart1Instance = null;
+  let chart2Instance = null;
+
+  // BANCO DE 20 PREGUNTAS SOBRE REFLEXIÓN, REFRACCIÓN Y FIBRA ÓPTICA
+  const questionBank = [
+    {
+      q: "1. Según la Ley de Snell, cuando la luz pasa de un medio menos denso a uno más denso (n₁ < n₂):",
+      options: ["El rayo refractado se acerca a la Normal (θ₂ < θ₁)", "El rayo refractado se aleja de la Normal (θ₂ > θ₁)", "El rayo se refleja totalmente sin refractarse", "El ángulo refractado se mantiene idéntico"],
+      correct: 0,
+      explanation: "Al ingresar a un medio con mayor índice n, la velocidad disminuye y el rayo se dobla aproximándose a la Normal."
+    },
+    {
+      q: "2. ¿Cuál es la condición INDISPENSABLE para que pueda ocurrir el fenómeno de Reflexión Total Interna (RTI)?",
+      options: ["La luz debe viajar de un medio más denso a uno menos denso (n₁ > n₂)", "La luz debe viajar de un medio menos denso a uno más denso (n₁ < n₂)", "Los dos medios deben tener el mismo índice n₁ = n₂", "El ángulo de incidencia debe ser exactamente 0°"],
+      correct: 0,
+      explanation: "Solo cuando n₁ > n₂ el ángulo refractado puede llegar a 90° para formar el ángulo crítico θc."
+    },
+    {
+      q: "3. ¿Cómo se calcula el ángulo crítico θc entre dos medios con n₁ > n₂?",
+      options: ["θc = arcsin(n₂ / n₁)", "θc = arcsin(n₁ / n₂)", "θc = n₁ · sin(θ₁)", "θc = arctan(n₂ / n₁)"],
+      correct: 0,
+      explanation: "Sustituyendo θ₂ = 90° en la ley de Snell: n₁ sin(θc) = n₂ sin(90°) = n₂ -> sin(θc) = n₂ / n₁."
+    },
+    {
+      q: "4. En una fibra óptica, ¿por qué razón el índice del núcleo (n_núcleo) DEBE SER MAYOR que el del revestimiento (n_revestimiento)?",
+      options: ["Para garantizar que ocurra Reflexión Total Interna atrapando la luz", "Para acelerar los fotones en el centro", "Para absorber el calor generado por el láser", "Para evitar la dispersión cromática"],
+      correct: 0,
+      explanation: "Al ser n_núcleo > n_revestimiento, los rayos que chocan con las paredes sufren RTI continua y no se fugan."
+    },
+    {
+      q: "5. ¿Qué representa la Apertura Numérica (AN) de una fibra óptica?",
+      options: ["El seno del ángulo máximo de aceptación para que la luz sea guiada", "El diámetro físico en micrómetros del núcleo", "El número de colores que puede transmitir simultáneamente", "La atenuación en decibelios por kilómetro"],
+      correct: 0,
+      explanation: "AN = sin(θ_máx) determina el cono de entrada dentro del cual la luz es confinada eficientemente."
+    },
+    {
+      q: "6. Si el ángulo de incidencia sobre un espejo plano es θ₁ = 35° respecto a la Normal, ¿cuál es el ángulo de reflexión?",
+      options: ["35°", "55°", "70°", "0°"],
+      correct: 0,
+      explanation: "Por la Ley de la Reflexión, el ángulo de reflexión es idéntico al ángulo de incidencia (θr = θ₁ = 35°)."
+    },
+    {
+      q: "7. ¿Qué le sucede al rayo refractado si el ángulo de incidencia θ₁ es EXACTAMENTE IGUAL al ángulo crítico θc?",
+      options: ["Sale rasante paralelo a la interfaz (θ₂ = 90°)", "Se refleja completamente hacia atrás a 180°", "Atraviesa en línea recta sin desviarse", "Se absorbe por completo en la frontera"],
+      correct: 0,
+      explanation: "Por definición de ángulo crítico, en θ₁ = θc el ángulo refractado alcanza los 90° desplazándose sobre la frontera."
+    },
+    {
+      q: "8. ¿Cuál es el ángulo de refracción θ₂ cuando un rayo incide perpendicularmente (θ₁ = 0°) sobre una superficie de cristal?",
+      options: ["0° (continúa sin desviación angular)", "90°", "45°", "Depende del índice de refracción del cristal"],
+      correct: 0,
+      explanation: "Si θ₁ = 0°, sin(θ₁) = 0 -> sin(θ₂) = 0 -> θ₂ = 0°. La luz no se desvía, aunque su velocidad sí cambia."
+    },
+    {
+      q: "9. Si n₁ = 2.0 y n₂ = 1.0, ¿cuál es el valor del ángulo crítico θc?",
+      options: ["30°", "45°", "60°", "90°"],
+      correct: 0,
+      explanation: "sin(θc) = n₂ / n₁ = 1.0 / 2.0 = 0.5 -> θc = arcsin(0.5) = 30°."
+    },
+    {
+      q: "10. El fenómeno por el cual una piscina parece más llana o profunda de lo que realmente es se debe a:",
+      options: ["Refracción de la luz al salir del agua al aire", "Reflexión total interna en el fondo", "Dispersión de Rayleigh en el agua", "Polarización por reflexión"],
+      correct: 0,
+      explanation: "Los rayos provenientes del fondo se alejan de la normal al salir al aire, creando una imagen virtual más elevada."
+    },
+    {
+      q: "11. ¿Cuál es el ángulo de Brewster (θ_B)?",
+      options: ["El ángulo de incidencia donde la luz reflejada queda 100% polarizada linealmente", "El ángulo límite para la fibra óptica", "El ángulo donde el rayo refractado desaparece", "El ángulo máximo de un prisma"],
+      correct: 0,
+      explanation: "En el ángulo de Brewster, el rayo reflejado y refractado son perpendiculares entre sí (θ_B = arctan(n₂/n₁))."
+    },
+    {
+      q: "12. La reflexión difusa ocurre cuando la luz incide sobre una superficie:",
+      options: ["Irregular o rugosa a escala microscópica", "Perfectamente pulida como un espejo de plata", "Líquida en reposo", "Transparente con n = 1"],
+      correct: 0,
+      explanation: "Las micro-asperezas reflejan los rayos incidentes paralelos en múltiples direcciones dispersas."
+    },
+    {
+      q: "13. ¿Qué ocurre con la energía del rayo refractado a medida que el ángulo de incidencia se aproxima al ángulo crítico?",
+      options: ["Disminuye progresivamente hasta hacerse cero en θc", "Aumenta hasta el 100%", "Permanece constante", "Se convierte en ondas de radio"],
+      correct: 0,
+      explanation: "La transmitancia T decae a cero conforme θ₁ se acerca a θc, transferiéndose toda la energía al rayo reflejado R."
+    },
+    {
+      q: "14. En una fibra óptica monomodo frente a una multimodo:",
+      options: ["La monomodo tiene un núcleo extremadamente delgado (~9 µm) propagando un único modo de luz", "La monomodo usa espejos curvos internos", "La multimodo no requiere revestimiento", "La monomodo solo transmite luz roja"],
+      correct: 0,
+      explanation: "Las fibras monomodo eliminan la dispersión intermodal al permitir únicamente el modo fundamental de propagación."
+    },
+    {
+      q: "15. Si un rayo viaja en agua (n = 1.33) e incide a 40° sobre una placa de diamante (n = 2.42), el rayo refractado:",
+      options: ["Se acerca a la Normal obteniendo θ₂ ≈ 20.7°", "Se aleja de la Normal obteniendo θ₂ ≈ 65°", "Sufre reflexión total interna", "Se refleja a 40° sin entrar"],
+      correct: 0,
+      explanation: "1.33 · sin(40°) = 2.42 · sin(θ₂) -> sin(θ₂) = 0.8549 / 2.42 = 0.353 -> θ₂ = 20.7°."
+    },
+    {
+      q: "16. El espejismo en la carretera durante días calurosos es provocado por:",
+      options: ["Gradiente de refracción en capas de aire a diferente temperatura haciendo que los rayos se curven hacia arriba", "Reflexión directa en el asfalto", "Sombra de las nubes", "Condensación de vapor de agua"],
+      correct: 0,
+      explanation: "El aire caliente cerca del suelo es menos denso (menor n), refractando gradualmente los rayos hacia arriba imitando un reflejo de agua."
+    },
+    {
+      q: "17. Las ecuaciones de Fresnel permiten calcular:",
+      options: ["Las fracciones de amplitud y potencia reflejada (R) y transmitida (T) en la interfaz", "La velocidad exacta de los fotones", "El número de fibras en un cable", "La focal de un espejo cóncavo"],
+      correct: 0,
+      explanation: "Las formulas de Fresnel determinan la reflectancia y transmitancia según la polarización (TE/TM) y los ángulos."
+    },
+    {
+      q: "18. Un endoscopio médico utiliza un haz de fibras ópticas para:",
+      options: ["Transmitir imágenes y luz del interior del cuerpo mediante reflexión total interna", "Emitir radiación X microscópica", "Calentar tejidos internos", "Medir la presión sanguínea por ultrasonido"],
+      correct: 0,
+      explanation: "Los haces de fibras ópticas flexibles guían la luz hacia el interior y retornan la imagen detallada a los sensores."
+    },
+    {
+      q: "19. ¿Qué sucede si el índice del núcleo de una fibra óptica es IGUAL al del revestimiento (n_núcleo = n_revestimiento)?",
+      options: ["No hay reflexión total interna y la luz se escapa a través del revestimiento", "La luz viaja al doble de velocidad", "Aumenta la apertura numérica a 1", "Se forma un espejo perfecto"],
+      correct: 0,
+      explanation: "Sin diferencia de índice, no existe interfaz refractiva ni ángulo crítico, por lo que no hay confinamiento."
+    },
+    {
+      q: "20. La velocidad de la luz en el agua es aproximadamente 225,000 km/s. Si un rayo pasa del aire (300,000 km/s) al agua con θ₁ = 30°, el ángulo refractado θ₂ es:",
+      options: ["22.1°", "45.0°", "15.0°", "30.0°"],
+      correct: 0,
+      explanation: "n₂ = 300,000 / 225,000 = 1.333. 1.00 · sin(30°) = 1.333 · sin(θ₂) -> sin(θ₂) = 0.5 / 1.333 = 0.375 -> θ₂ = 22.1°."
+    }
+  ];
+
+  let currentQuizQuestions = [];
+
+  // MODO OSCURO / CLARO
+  function toggleDarkMode() {
+    const html = document.documentElement;
+    const themeIcon = document.getElementById('themeIcon');
+    
+    html.classList.toggle('dark');
+    const isDark = html.classList.contains('dark');
+
+    localStorage.setItem('lab_theme', isDark ? 'dark' : 'light');
+
+    if (isDark) {
+      themeIcon.setAttribute('data-lucide', 'sun');
+    } else {
+      themeIcon.setAttribute('data-lucide', 'moon');
+    }
+    
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+    updateCharts();
+    renderSimulation();
+  }
+
+  function loadSavedTheme() {
+    const savedTheme = localStorage.getItem('lab_theme');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      if (themeIcon) themeIcon.setAttribute('data-lucide', 'sun');
+    } else {
+      document.documentElement.classList.remove('dark');
+      if (themeIcon) themeIcon.setAttribute('data-lucide', 'moon');
+    }
+  }
+
+  // NAVEGACIÓN DE PESTAÑAS
+  function switchTab(tabId) {
+    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.className = "tab-btn px-3 py-1.5 rounded-md font-medium text-[var(--text-muted)] hover:text-[var(--primary)] transition-all";
+    });
+
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+    const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+    if (activeBtn) {
+      activeBtn.className = "tab-btn px-3 py-1.5 rounded-md font-medium bg-[var(--primary)] text-white transition-all";
+    }
+  }
+
+  // CAMBIO ENTRE EXPERIMENTO SNELL Y FIBRA ÓPTICA
+  function changeExpMode(newMode) {
+    mode = newMode;
+    renderControls();
+    updateSim();
+  }
+
+  // RENDERIZAR PANEL DE CONTROLES DINÁMICO
+  function renderControls() {
+    const container = document.getElementById("controls-container");
+    container.innerHTML = "";
+
+    if (mode === 'snell') {
+      container.innerHTML = `
+        <div class="space-y-1.5">
+          <div class="flex justify-between">
+            <label class="text-[var(--text-muted)] font-medium">Ángulo de Incidencia (θ₁):</label>
+            <span id="lbl-theta1" class="font-bold text-[var(--primary)]">${state.theta1}°</span>
+          </div>
+          <input id="slider-theta1" type="range" min="0" max="89" step="1" value="${state.theta1}" oninput="onTheta1Input(this.value)">
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex justify-between">
+            <label class="text-[var(--text-muted)] font-medium">Índice Medio 1 (n₁):</label>
+            <span id="lbl-n1" class="font-bold text-[var(--chocolate)]">${state.n1.toFixed(3)}</span>
+          </div>
+          <input id="slider-n1" type="range" min="1.000" max="2.500" step="0.01" value="${state.n1}" oninput="onN1Input(this.value)">
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex justify-between">
+            <label class="text-[var(--text-muted)] font-medium">Índice Medio 2 (n₂):</label>
+            <span id="lbl-n2" class="font-bold text-[var(--primary)]">${state.n2.toFixed(3)}</span>
+          </div>
+          <input id="slider-n2" type="range" min="1.000" max="2.500" step="0.01" value="${state.n2}" oninput="onN2Input(this.value)">
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div class="space-y-1.5">
+          <div class="flex justify-between">
+            <label class="text-[var(--text-muted)] font-medium">Ángulo Inyección Entrada (θ_in):</label>
+            <span id="lbl-launch" class="font-bold text-[var(--primary)]">${state.launchAngle}°</span>
+          </div>
+          <input id="slider-launch" type="range" min="0" max="60" step="1" value="${state.launchAngle}" oninput="onLaunchInput(this.value)">
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex justify-between">
+            <label class="text-[var(--text-muted)] font-medium">Índice Núcleo (n_core):</label>
+            <span id="lbl-ncore" class="font-bold text-[var(--chocolate)]">${state.nCore.toFixed(3)}</span>
+          </div>
+          <input id="slider-ncore" type="range" min="1.300" max="2.000" step="0.01" value="${state.nCore}" oninput="onNCoreInput(this.value)">
+        </div>
+
+        <div class="space-y-1.5">
+          <div class="flex justify-between">
+            <label class="text-[var(--text-muted)] font-medium">Índice Revestimiento (n_clad):</label>
+            <span id="lbl-nclad" class="font-bold text-[var(--primary)]">${state.nClad.toFixed(3)}</span>
+          </div>
+          <input id="slider-nclad" type="range" min="1.000" max="1.800" step="0.01" value="${state.nClad}" oninput="onNCladInput(this.value)">
+        </div>
+      `;
+    }
+  }
+
+  // MANEJADORES DE INPUTS DE SLIDERS
+  function onTheta1Input(v) { state.theta1 = parseFloat(v); document.getElementById("lbl-theta1").textContent = `${state.theta1}°`; updateSim(); }
+  function onN1Input(v) { state.n1 = parseFloat(v); document.getElementById("lbl-n1").textContent = state.n1.toFixed(3); updateSim(); }
+  function onN2Input(v) { state.n2 = parseFloat(v); document.getElementById("lbl-n2").textContent = state.n2.toFixed(3); updateSim(); }
+
+  function onLaunchInput(v) { state.launchAngle = parseFloat(v); document.getElementById("lbl-launch").textContent = `${state.launchAngle}°`; updateSim(); }
+  function onNCoreInput(v) { state.nCore = parseFloat(v); document.getElementById("lbl-ncore").textContent = state.nCore.toFixed(3); updateSim(); }
+  function onNCladInput(v) { state.nClad = parseFloat(v); document.getElementById("lbl-nclad").textContent = state.nClad.toFixed(3); updateSim(); }
+
+  function resetDefaults() {
+    state = { theta1: 45, n1: 1.00, n2: 1.50, launchAngle: 20, nCore: 1.62, nClad: 1.40, coreDiameter: 80 };
+    renderControls();
+    stopAnimation();
+    updateSim();
+  }
+
+  function updateSim() {
+    renderSimulation();
+    updateLiveMetrics();
+    updateCharts();
+  }
+
+  // ACTUALIZACIÓN DE MÉTRICAS Y RESULTADOS EN VIVO
+  function updateLiveMetrics() {
+    const res = document.getElementById("results-container");
+
+    if (mode === 'snell') {
+      const rad1 = state.theta1 * Math.PI / 180;
+      const sin2 = (state.n1 / state.n2) * Math.sin(rad1);
+      const isRTI = sin2 > 1.0;
+      const rad2 = isRTI ? 0 : Math.asin(sin2);
+      const deg2 = isRTI ? "N/A (RTI)" : `${(rad2 * 180 / Math.PI).toFixed(2)}°`;
+
+      const critAngle = state.n1 > state.n2 ? `${(Math.asin(state.n2 / state.n1) * 180 / Math.PI).toFixed(2)}°` : "No existe (n₁ ≤ n₂)";
+      const brewsterAngle = `${(Math.atan(state.n2 / state.n1) * 180 / Math.PI).toFixed(2)}°`;
+
+      res.innerHTML = `
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
+          <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Ángulo Refractado θ₂</span>
+          <span class="text-xs font-bold ${isRTI ? 'text-red-500' : 'text-[var(--primary)]'}">${deg2}</span>
+        </div>
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
+          <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Ángulo Crítico θ_c</span>
+          <span class="text-xs font-bold text-[var(--chocolate)]">${critAngle}</span>
+        </div>
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
+          <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Ángulo de Brewster θ_B</span>
+          <span class="text-xs font-bold text-[var(--text)]">${brewsterAngle}</span>
+        </div>
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
+          <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Estado del Rayo</span>
+          <span class="text-xs font-bold ${isRTI ? 'text-red-600' : 'text-emerald-600'}">${isRTI ? 'Reflexión Total' : 'Refracción Activa'}</span>
+        </div>
+      `;
+    } else {
+      // Modo Fibra
+      const radIn = state.launchAngle * Math.PI / 180;
+      const sinCore = (1.00 / state.nCore) * Math.sin(radIn);
+      const radCore = Math.asin(sinCore);
+      const thetaInt = Math.PI / 2 - radCore; // ángulo respecto a la normal del revestimiento
+      const thetaIntDeg = (thetaInt * 180 / Math.PI).toFixed(2);
+
+      const isRTIValid = state.nCore > state.nClad;
+      const critRad = isRTIValid ? Math.asin(state.nClad / state.nCore) : Math.PI/2;
+      const critDeg = isRTIValid ? (critRad * 180 / Math.PI).toFixed(2) + "°" : "N/A";
+
+      const isGuided = isRTIValid && thetaInt >= critRad;
+
+      // Apertura Numérica AN = sqrt(nCore^2 - nClad^2)
+      const NA = isRTIValid ? Math.sqrt(state.nCore*state.nCore - state.nClad*state.nClad) : 0;
+      const maxLaunchDeg = isRTIValid ? (Math.asin(Math.min(1.0, NA)) * 180 / Math.PI).toFixed(2) + "°" : "0°";
+
+      res.innerHTML = `
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
+          <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Ángulo Impacto Pared</span>
+          <span class="text-xs font-bold text-[var(--primary)]">${thetaIntDeg}°</span>
+        </div>
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
+          <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Ángulo Crítico Pared</span>
+          <span class="text-xs font-bold text-[var(--chocolate)]">${critDeg}</span>
+        </div>
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
+          <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Apertura Numérica (AN)</span>
+          <span class="text-xs font-bold text-[var(--text)]">${NA.toFixed(3)}</span>
+        </div>
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl">
+          <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Cono de Aceptación</span>
+          <span class="text-xs font-bold text-amber-600">θ_máx = ${maxLaunchDeg}</span>
+        </div>
+        <div class="bg-[var(--bg)] border border-[var(--border)] p-3 rounded-xl col-span-2">
+          <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Confinamiento de Onda</span>
+          <span class="text-xs font-bold ${isGuided ? 'text-emerald-600' : 'text-red-500'}">${isGuided ? '✔ Guiado Eficiente (RTI Continua)' : '✖ Pérdida por Refracción Exterior'}</span>
+        </div>
+      `;
+    }
+  }
+
+  // MOTOR DE RENDERIZADO VISUAL EN CANVAS SVG
+  function renderSimulation() {
+    const bg = document.getElementById("bg-layer");
+    const grid = document.getElementById("grid-layer");
+    const emitters = document.getElementById("emitters-layer");
+    const rays = document.getElementById("rays-layer");
+    const photons = document.getElementById("photons-layer");
+    const labels = document.getElementById("labels-layer");
+
+    bg.innerHTML = ""; grid.innerHTML = ""; emitters.innerHTML = "";
+    rays.innerHTML = ""; photons.innerHTML = ""; labels.innerHTML = "";
+
+    const centerX = 300;
+    const centerY = 190;
+
+    if (mode === 'snell') {
+      // 1. EXPERIMENTO SNELL
+      const n2Alpha = Math.min(0.6, 0.05 + (state.n2 - 1.0) * 0.3);
+      bg.innerHTML = `
+        <rect x="0" y="0" width="600" height="190" fill="rgba(156, 119, 184, 0.05)"/>
+        <rect x="0" y="190" width="600" height="190" fill="rgba(61, 37, 64, ${n2Alpha})"/>
+      `;
+
+      grid.innerHTML = `
+        <!-- Interfaz horizontal -->
+        <line x1="20" y1="190" x2="580" y2="190" stroke="var(--chocolate)" stroke-width="2"/>
+        <!-- Normal vertical -->
+        <line x1="300" y1="30" x2="300" y2="350" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <!-- Transportador de Ángulo semicircular -->
+        <circle cx="300" cy="190" r="120" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="2,2"/>
+      `;
+
+      const rad1 = state.theta1 * Math.PI / 180;
+      const sin2 = (state.n1 / state.n2) * Math.sin(rad1);
+      const isRTI = sin2 > 1.0;
+      const rad2 = isRTI ? rad1 : Math.asin(sin2);
+
+      // Rayo Incidente
+      const incL = 160;
+      const ix = centerX - incL * Math.sin(rad1);
+      const iy = centerY - incL * Math.cos(rad1);
+
+      // Rayo Reflejado
+      const rx = centerX + incL * Math.sin(rad1);
+      const ry = centerY - incL * Math.cos(rad1);
+
+      // Rayo Refractado
+      const refx = centerX + incL * Math.sin(rad2);
+      const refy = centerY + incL * Math.cos(rad2);
+
+      emitters.innerHTML = `
+        <rect x="${ix - 20}" y="${iy - 15}" width="40" height="30" rx="6" fill="url(#laser-grad)" stroke="var(--chocolate)" stroke-width="1.5" transform="rotate(${-state.theta1}, ${ix}, ${iy})"/>
+      `;
+
+      let rayStr = `
+        <!-- Rayo Incidente -->
+        <line x1="${ix}" y1="${iy}" x2="${centerX}" y2="${centerY}" stroke="var(--primary)" stroke-width="3" marker-end="url(#arrow-ray)"/>
+        <!-- Rayo Reflejado -->
+        <line x1="${centerX}" y1="${centerY}" x2="${rx}" y2="${ry}" stroke="var(--primary)" stroke-width="${isRTI ? 3 : 1.5}" opacity="${isRTI ? 1.0 : 0.4}"/>
+      `;
+
+      if (!isRTI) {
+        rayStr += `
+          <!-- Rayo Refractado -->
+          <line x1="${centerX}" y1="${centerY}" x2="${refx}" y2="${refy}" stroke="var(--chocolate)" stroke-width="3"/>
+        `;
+      }
+
+      rays.innerHTML = rayStr;
+
+      // Fotón animado
+      if (isRunning) {
+        const cycle = (animTime % 2.0) / 2.0;
+        let px, py;
+        if (cycle < 0.5) {
+          const t = cycle * 2.0;
+          px = ix + (centerX - ix) * t;
+          py = iy + (centerY - iy) * t;
+        } else {
+          const t = (cycle - 0.5) * 2.0;
+          if (isRTI) {
+            px = centerX + (rx - centerX) * t;
+            py = centerY + (ry - centerY) * t;
+          } else {
+            px = centerX + (refx - centerX) * t;
+            py = centerY + (refy - centerY) * t;
+          }
+        }
+        photons.innerHTML = `<circle cx="${px}" cy="${py}" r="6" fill="var(--primary)" stroke="#FFF" stroke-width="2"/>`;
+      }
+
+      const deg2Str = isRTI ? "RTI" : `${(rad2 * 180 / Math.PI).toFixed(1)}°`;
+      labels.innerHTML = `
+        <text x="30" y="50" fill="var(--chocolate)" font-bold="true" font-size="12">Medio 1: n₁ = ${state.n1.toFixed(2)}</text>
+        <text x="30" y="220" fill="var(--chocolate)" font-bold="true" font-size="12">Medio 2: n₂ = ${state.n2.toFixed(2)}</text>
+        <text x="310" y="100" fill="var(--primary)" font-size="11">θ₁ = ${state.theta1}°</text>
+        <text x="310" y="280" fill="var(--chocolate)" font-size="11">θ₂ = ${deg2Str}</text>
+      `;
+
+    } else {
+      // 2. EXPERIMENTO FIBRA ÓPTICA
+      const coreH = state.coreDiameter;
+      const cladH = 140;
+
+      bg.innerHTML = `
+        <!-- Revestimiento Superior e Inferior -->
+        <rect x="50" y="${centerY - cladH/2}" width="500" height="${cladH}" fill="rgba(61, 37, 64, 0.08)" rx="10"/>
+        <!-- Núcleo Central -->
+        <rect x="50" y="${centerY - coreH/2}" width="500" height="${coreH}" fill="rgba(156, 119, 184, 0.22)"/>
+      `;
+
+      grid.innerHTML = `
+        <line x1="50" y1="${centerY - coreH/2}" x2="550" y2="${centerY - coreH/2}" stroke="var(--primary)" stroke-width="2"/>
+        <line x1="50" y1="${centerY + coreH/2}" x2="550" y2="${centerY + coreH/2}" stroke="var(--primary)" stroke-width="2"/>
+        <line x1="50" y1="${centerY}" x2="550" y2="${centerY}" stroke="var(--border)" stroke-dasharray="4,4"/>
+      `;
+
+      const radIn = state.launchAngle * Math.PI / 180;
+      const sinCore = (1.00 / state.nCore) * Math.sin(radIn);
+      const radCore = Math.asin(sinCore);
+      const thetaInt = Math.PI / 2 - radCore;
+
+      const isRTIValid = state.nCore > state.nClad;
+      const critRad = isRTIValid ? Math.asin(state.nClad / state.nCore) : Math.PI/2;
+      const isGuided = isRTIValid && thetaInt >= critRad;
+
+      // Cálculo de la trayectoria zig-zag del rayo
+      let pathPoints = [[20, centerY + 30 * Math.sin(radIn)]];
+      pathPoints.push([50, centerY]); // Entrada a la fibra
+
+      let curX = 50, curY = centerY;
+      let stepX = (coreH / 2) * Math.tan(thetaInt);
+      let dirY = -1;
+
+      curX += stepX;
+      curY = centerY + dirY * (coreH / 2);
+      pathPoints.push([curX, curY]);
+
+      while (curX < 550) {
+        dirY *= -1;
+        if (!isGuided) {
+          // Rayo se escapa hacia el revestimiento
+          curX += stepX * 1.5;
+          curY = centerY + dirY * (cladH / 2 + 20);
+          pathPoints.push([curX, curY]);
+          break;
+        } else {
+          curX += stepX * 2;
+          curY = centerY + dirY * (coreH / 2);
+          pathPoints.push([Math.min(550, curX), curY]);
+        }
+      }
+
+      let dStr = `M ${pathPoints[0][0]} ${pathPoints[0][1]} `;
+      for (let p = 1; p < pathPoints.length; p++) {
+        dStr += `L ${pathPoints[p][0]} ${pathPoints[p][1]} `;
+      }
+
+      rays.innerHTML = `<path d="${dStr}" stroke="${isGuided ? 'var(--primary)' : 'rgba(220, 38, 38, 0.8)'}" stroke-width="2.5" fill="none"/>`;
+
+      labels.innerHTML = `
+        <text x="220" y="140" fill="var(--chocolate)" font-size="11">Revestimiento (n_clad = ${state.nClad.toFixed(2)})</text>
+        <text x="220" y="195" fill="var(--primary)" font-weight="bold" font-size="12">Núcleo (n_core = ${state.nCore.toFixed(2)})</text>
+      `;
+    }
+
+    document.getElementById("time-badge").textContent = `Tiempo Simulación: ${animTime.toFixed(2)} ns`;
+  }
+
+  // ACTUALIZACIÓN DE GRÁFICAS DE CHART.JS
+  function updateCharts() {
+    const isDark = document.documentElement.classList.contains('dark');
+    const textColor = isDark ? '#F3ECF8' : '#2A182E';
+    const gridColor = isDark ? 'rgba(184, 146, 214, 0.1)' : 'rgba(61, 37, 64, 0.08)';
+
+    let labels1 = [], data1 = [];
+    let labels2 = [], data2 = [];
+
+    if (mode === 'snell') {
+      document.getElementById("chart1-title").textContent = "Ángulo Refractado θ₂ vs Incidencia θ₁";
+      document.getElementById("chart2-title").textContent = "Reflectancia de Fresnel R(θ₁) [%]";
+
+      for (let a = 0; a <= 85; a += 5) {
+        labels1.push(`${a}°`);
+        labels2.push(`${a}°`);
+
+        const rad1 = a * Math.PI / 180;
+        const sin2 = (state.n1 / state.n2) * Math.sin(rad1);
+        if (sin2 <= 1.0) {
+          const rad2 = Math.asin(sin2);
+          data1.push((rad2 * 180 / Math.PI).toFixed(1));
+
+          // Coeficiente de Reflectancia de Fresnel promedio p-s
+          const rs = Math.pow(Math.sin(rad1 - rad2) / Math.sin(rad1 + rad2 + 1e-6), 2);
+          const rp = Math.pow(Math.tan(rad1 - rad2) / Math.tan(rad1 + rad2 + 1e-6), 2);
+          const R = a === 0 ? Math.pow((state.n1 - state.n2)/(state.n1 + state.n2), 2) * 100 : ((rs + rp)/2) * 100;
+          data2.push(R.toFixed(1));
+        } else {
+          data1.push(90.0);
+          data2.push(100.0); // 100% reflejado por RTI
+        }
+      }
+    } else {
+      document.getElementById("chart1-title").textContent = "Ángulo de Impacto Interno vs Inyección";
+      document.getElementById("chart2-title").textContent = "Apertura Numérica (AN) vs n_core";
+
+      for (let a = 0; a <= 50; a += 5) {
+        labels1.push(`${a}°`);
+        const radIn = a * Math.PI / 180;
+        const sinCore = (1.00 / state.nCore) * Math.sin(radIn);
+        const radCore = Math.asin(sinCore);
+        const thetaInt = (Math.PI / 2 - radCore) * 180 / Math.PI;
+        data1.push(thetaInt.toFixed(1));
+      }
+
+      const nCoreArr = [1.35, 1.45, 1.55, 1.65, 1.75, 1.85];
+      nCoreArr.forEach(nc => {
+        labels2.push(`n=${nc.toFixed(2)}`);
+        const isV = nc > state.nClad;
+        const na = isV ? Math.sqrt(nc*nc - state.nClad*state.nClad) : 0;
+        data2.push(na.toFixed(3));
+      });
+    }
+
+    if (!chart1Instance) {
+      const ctx1 = document.getElementById('chart1').getContext('2d');
+      chart1Instance = new Chart(ctx1, {
+        type: 'line',
+        data: {
+          labels: labels1,
+          datasets: [{ label: 'Métrica 1', data: data1, borderColor: '#9C77B8', backgroundColor: 'rgba(156, 119, 184, 0.2)', fill: true, tension: 0.3 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: { y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9 } } }, x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9 } } } },
+          plugins: { legend: { display: false } }
+        }
+      });
+    } else {
+      chart1Instance.data.labels = labels1;
+      chart1Instance.data.datasets[0].data = data1;
+      chart1Instance.update();
+    }
+
+    if (!chart2Instance) {
+      const ctx2 = document.getElementById('chart2').getContext('2d');
+      chart2Instance = new Chart(ctx2, {
+        type: 'bar',
+        data: {
+          labels: labels2,
+          datasets: [{ label: 'Métrica 2', data: data2, backgroundColor: '#3D2540', borderRadius: 6 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          scales: { y: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9 } } }, x: { grid: { color: gridColor }, ticks: { color: textColor, font: { size: 9 } } } },
+          plugins: { legend: { display: false } }
+        }
+      });
+    } else {
+      chart2Instance.data.labels = labels2;
+      chart2Instance.data.datasets[0].data = data2;
+      chart2Instance.update();
+    }
+  }
+
+  // CICLO DE ANIMACIÓN TEMPORAL (PLAY / PAUSA / STOP)
+  function startAnimation() {
+    if (!isRunning) {
+      isRunning = true;
+      let lastTime = performance.now();
+      function loop(now) {
+        if (!isRunning) return;
+        const dtReal = (now - lastTime) / 1000.0;
+        lastTime = now;
+        animTime += dtReal * 2.0;
+        renderSimulation();
+        animFrameId = requestAnimationFrame(loop);
+      }
+      animFrameId = requestAnimationFrame(loop);
+    }
+  }
+
+  function pauseAnimation() { isRunning = false; if (animFrameId) cancelAnimationFrame(animFrameId); }
+  function stopAnimation() { pauseAnimation(); animTime = 0; renderSimulation(); }
+
+  // EXPORTACIÓN A CSV
+  function exportCSV() {
+    let csvContent = "data:text/csv;charset=utf-8,Parametro,Valor\n";
+    csvContent += `Experimento_Modo,${mode}\n`;
+    for (const [k, v] of Object.entries(state)) {
+      csvContent += `${k},${v}\n`;
+    }
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `reflexion_refraccion_${mode}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // RASTREADOR DE COORDENADAS DE SVG
+  function initCoordTracker() {
+    const svgPlane = document.getElementById("optics-svg");
+    const coordX = document.getElementById("coord-x");
+    const coordY = document.getElementById("coord-y");
+
+    if (svgPlane && coordX && coordY) {
+      svgPlane.addEventListener("mousemove", (e) => {
+        const rect = svgPlane.getBoundingClientRect();
+        const x = Math.round((e.clientX - rect.left) * (600 / rect.width));
+        const y = Math.round((e.clientY - rect.top) * (380 / rect.height));
+        coordX.textContent = Math.max(0, Math.min(600, x));
+        coordY.textContent = Math.max(0, Math.min(380, y));
+      });
+    }
+  }
+
+  // CUESTIONARIO EVALUATIVO ALEATORIO (5 PREGUNTAS)
+  function generateQuiz() {
+    const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+    currentQuizQuestions = shuffled.slice(0, 5);
+    const container = document.getElementById("quiz-container");
+    container.innerHTML = "";
+
+    currentQuizQuestions.forEach((qObj, qIdx) => {
+      const qDiv = document.createElement("div");
+      qDiv.className = "p-4 border border-[var(--border)] rounded-xl bg-[var(--bg)] space-y-3";
+      qDiv.innerHTML = `<h4 class="font-semibold text-[var(--chocolate)] text-xs">${qIdx + 1}. ${qObj.q}</h4>`;
+      
+      const optsContainer = document.createElement("div");
+      optsContainer.className = "space-y-2";
+
+      qObj.options.forEach((opt, optIdx) => {
+        const label = document.createElement("label");
+        label.className = "quiz-option";
+        label.innerHTML = `<input type="radio" name="q_${qIdx}" value="${optIdx}" class="hidden"><span>${opt}</span>`;
+        label.addEventListener("click", () => {
+          qDiv.querySelectorAll(".quiz-option").forEach(s => s.classList.remove("selected"));
+          label.classList.add("selected");
+          label.querySelector("input").checked = true;
+        });
+        optsContainer.appendChild(label);
+      });
+
+      qDiv.appendChild(optsContainer);
+      container.appendChild(qDiv);
+    });
+    document.getElementById("quiz-score").textContent = "";
+  }
+
+  function evaluateQuiz() {
+    let score = 0;
+    currentQuizQuestions.forEach((qObj, qIdx) => {
+      const selected = document.querySelector(`input[name="q_${qIdx}"]:checked`);
+      if (selected && parseInt(selected.value) === qObj.correct) {
+        score++;
+      }
+    });
+    document.getElementById("quiz-score").textContent = `Calificación Final: ${score} / ${currentQuizQuestions.length} (${(score/currentQuizQuestions.length*100).toFixed(0)}%)`;
+  }
+
+  // INICIALIZACIÓN GLOBAL
+  window.addEventListener("DOMContentLoaded", () => {
+    loadSavedTheme();
+    renderControls();
+    updateSim();
+    generateQuiz();
+    initCoordTracker();
+
+    document.getElementById("btn-play").addEventListener("click", startAnimation);
+    document.getElementById("btn-pause").addEventListener("click", pauseAnimation);
+    document.getElementById("btn-stop").addEventListener("click", stopAnimation);
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  });
+</script>
+</body>
+</html>
